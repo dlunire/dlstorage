@@ -134,4 +134,34 @@ abstract class DataStorage {
 
         return $sum;
     }
+
+    /**
+     * Devuelve la longitud en formato hexadecimal de 32 bits (4 bytes).
+     *
+     * Convierte un número entero (longitud en bytes) en una representación
+     * hexadecimal de 4 bytes, compatible con estructuras binarias que requieren 
+     * encabezados o prefijos de tamaño con alineación de 32 bits.
+     *
+     * Por ejemplo, una longitud de `32` será devuelta como `00000020`.
+     * 
+     * Esto es útil para incluir encabezados de longitud en archivos binarios
+     * personalizados como DLStorage o protocolos definidos por el usuario.
+     *
+     * @internal Puede ser usada por funciones que escriban estructuras binarias compactas.
+     *
+     * @param int $length Longitud en bytes que se desea codificar.
+     * 
+     * @return string Cadena de texto hexadecimal (sin prefijos) representando la longitud codificada en 4 bytes.
+     *
+     * @throws ValueError Si el valor de entrada excede el rango permitido para 32 bits sin signo (opcional implementar).
+     *
+     * @version v0.0.1
+     * @author David E Luna M
+     * @license MIT
+     * @copyright 2025 David E Luna M
+     * @package DLStorage
+     */
+    private function get_length_to_hex32(int $length): string {
+        return "";
+    }
 }
