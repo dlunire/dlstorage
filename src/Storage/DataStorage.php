@@ -118,7 +118,7 @@ abstract class DataStorage {
      */
     private function get_entropy(?string $entropy = null): int {
 
-        if (!is_string($entropy)) {
+        if (!is_string($entropy) || empty(trim($entropy))) {
             return 0;
         }
 
