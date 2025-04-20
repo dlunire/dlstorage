@@ -102,12 +102,6 @@ abstract class DataStorage {
 
             /** @var string $binary_char */
             $binary_char = $this->get_binary_char($char);
-
-            /** @var int $char_code */
-            $char_code = ord($char);
-
-            /** @var string $char_hex_code */
-            $char_hex_code = dechex($char_code);
         }
 
         return $data;
@@ -120,7 +114,12 @@ abstract class DataStorage {
      * @return string
      */
     private function get_binary_char(string $char, ?string $entropy = null): string {
-        # Agregando la lógica acá.
-        return $char;
+        /** @var int $char_code */
+        $char_code = ord($char);
+
+        /** @var string $char_hex_code */
+        $char_hex_code = dechex($char_code);
+
+        return hex2bin($char_hex_code);
     }
 }
