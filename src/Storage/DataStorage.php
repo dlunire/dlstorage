@@ -32,19 +32,8 @@ abstract class DataStorage {
 
         $data = base64_encode($data);
 
-        /**
-         * Representación numérica de cada carácter
-         * 
-         * @var integer|null $number
-         */
-        $number = null;
-
-        /**
-         * Almacena una representación hexadecimal de los datos
-         * 
-         * @var string $hexadecimal
-         */
-        $hexadecimal = "";
+        /** @var string $binary */
+        $binary = "";
 
         /**
          * Longitud de caracteres
@@ -52,6 +41,9 @@ abstract class DataStorage {
          * @var integer $length
          */
         $length = strlen($data);
+
+        /** @var int $sum */
+        $sum = $this->get_entropy($entropy);
 
         for ($index = 0; $index < $length; ++$index) {
             /**
@@ -61,17 +53,10 @@ abstract class DataStorage {
              */
             $char = $data[$index];
 
-            $number = ord($char) + 100;
-            $hexadecimal .= dechex($number);
+            $binary .= $this->get_binary_char($char, $sum);
         }
 
-        /**
-         * Representación binaria de los datos
-         * 
-         * @var string $binary
-         */
-        $binary = hex2bin($hexadecimal);
-
+        $binary .= $this->get_signature();
         return (bool) file_put_contents($filename, $binary);
     }
 
@@ -84,12 +69,11 @@ abstract class DataStorage {
      * 
      * El contenido real de la firma se agregará posteriormente en la lógica interna.
      *
-     * @param string $data Datos base o plantilla sobre la cual se generará la firma.
      * @return string Firma generada en formato binario (sin codificar).
      * 
      * @access private
      */
-    private function get_signature(string $data): string {
+    public function get_signature(): string {
         /** @var string $library */
         $library = "DLStorage";
 
@@ -113,15 +97,41 @@ abstract class DataStorage {
      * Devuelve cada carácter a formato finario
      *
      * @param string $char Carácter a ser analizado
+     * @param int $entropy Valor sumatoria de la entropía
      * @return string
      */
-    private function get_binary_char(string $char, ?string $entropy = null): string {
+    private function get_binary_char(string $char, int $entropy = 0): string {
         /** @var int $char_code */
-        $char_code = ord($char);
+        $char_code = ord($char) + $entropy;
 
         /** @var string $char_hex_code */
         $char_hex_code = dechex($char_code);
 
         return hex2bin($char_hex_code);
+    }
+
+    /**
+     * Devuelve la entropía numérica a partir de una frase.
+     *
+     * @param string|null $entropy Frase a ser analizada para crear entropía.
+     * @return integer
+     */
+    private function get_entropy(?string $entropy = null): int {
+
+        if (!is_string($entropy)) {
+            return 0;
+        }
+
+        /** @var int $length */
+        $length = strlen($entropy);
+
+        /** @var int $sum */
+        $sum = 0;
+
+        for ($index = 0; $index < $length; ++$index) {
+            $sum += ord($entropy[$index]);
+        }
+
+        return $sum;
     }
 }
