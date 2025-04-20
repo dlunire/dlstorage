@@ -102,9 +102,11 @@ abstract class DataStorage {
 
             /** @var string $binary_char */
             $binary_char = $this->get_binary_char($char);
+
+            $library .= $binary_char;
         }
 
-        return $data;
+        return $library;
     }
 
     /**
