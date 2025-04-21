@@ -5,24 +5,20 @@ namespace DLStorage\Errors;
 use RuntimeException;
 
 /**
- * Clase de excepción lanzada cuando un valor proporcionado es inválido
- * en el contexto de operaciones internas de DLStorage.
+ * Clase personalizada de excepción para errores de valor.
  *
- * Esta clase extiende de RuntimeException y se utiliza para representar
- * errores relacionados con valores fuera de rango, tipos no aceptados, 
- * o parámetros incorrectos en operaciones binarias personalizadas.
+ * Se lanza cuando un valor proporcionado no cumple con las condiciones requeridas
+ * por una operación específica dentro del sistema DLStorage.
  *
- * Puede utilizarse para validar entradas en métodos que trabajen con estructuras 
- * binarias de bajo nivel, formatos personalizados, o procesos de serialización/deserialización.
+ * Forma parte del núcleo de manejo de errores del framework DLUnire.
  *
- * @example
- * throw new ValueError("El tamaño excede el límite permitido para 32 bits.");
- *
- * @version v0.0.1
- * @package DLStorage\Errors
- * @author David E Luna M
+ * @version v0.1.0
+ * @author David E Luna M <dlunireframework@gmail.com>
  * @license MIT
  * @copyright 2025 David E Luna M
+ * @package DLStorage
+ * @project Códigos del Futuro
+ * @organization DLUnire Framework
  */
 final class ValueError extends RuntimeException {
 }

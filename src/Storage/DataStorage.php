@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace DLStorage\Storage;
 
+use ValueError;
+
 /**
  * Define una base para almacenar datos en archivos binarios u otros medios persistentes,
  * sin utilizar una base de datos.
@@ -20,6 +22,13 @@ namespace DLStorage\Storage;
  * @abstract
  */
 abstract class DataStorage {
+    /**
+     * Longitud máxima permitida de bytes asignable a cada sección del archivo en formato binario
+     * 
+     * @var int UINT32
+     */
+    public const UINT32 = 4294967295;
+
     /**
      * Convierte el contenido a su representación binaria con dígitos alterados
      *
@@ -136,32 +145,31 @@ abstract class DataStorage {
     }
 
     /**
-     * Devuelve la longitud en formato hexadecimal de 32 bits (4 bytes).
+     * Convierte una longitud en bytes a una representación binaria de 32 bits
+     * en formato hexadecimal, asegurando que no exceda el límite máximo
+     * permitido (4 GB).
      *
-     * Convierte un número entero (longitud en bytes) en una representación
-     * hexadecimal de 4 bytes, compatible con estructuras binarias que requieren 
-     * encabezados o prefijos de tamaño con alineación de 32 bits.
+     * Esta función se utiliza para codificar la longitud de una sección de
+     * datos en el formato DLStorage, respetando la especificación binaria de
+     * 32 bits (8 caracteres hexadecimales).
      *
-     * Por ejemplo, una longitud de `32` será devuelta como `00000020`.
-     * 
-     * Esto es útil para incluir encabezados de longitud en archivos binarios
-     * personalizados como DLStorage o protocolos definidos por el usuario.
-     *
-     * @internal Puede ser usada por funciones que escriban estructuras binarias compactas.
-     *
-     * @param int $length Longitud en bytes que se desea codificar.
-     * 
-     * @return string Cadena de texto hexadecimal (sin prefijos) representando la longitud codificada en 4 bytes.
-     *
-     * @throws ValueError Si el valor de entrada excede el rango permitido para 32 bits sin signo (opcional implementar).
-     *
-     * @version v0.0.1
-     * @author David E Luna M
-     * @license MIT
-     * @copyright 2025 David E Luna M
-     * @package DLStorage
+     * @param int $bytes Longitud en bytes que se desea representar
+     * @return string Cadena binaria de 4 bytes (32 bits) en orden big-endian
+     * @throws ValueError Si la longitud supera el valor máximo de 2^32 - 1 (4 GB).
      */
-    private function get_length_to_hex32(int $length): string {
-        return "";
+    private function get_length_to_bin(int $bytes): string {
+        if ($bytes > self::UINT32) {
+            throw new ValueError("El tamaño especificado excede el límite máximo permitido de 4GB de información para la sección DLStorage.");
+        }
+
+        /** @var string $hex */
+        $hex = str_pad(
+            string: dechex($bytes),
+            length: 8,
+            pad_string: "0",
+            pad_type: STR_PAD_LEFT
+        );
+
+        return hex2bin($hex);
     }
 }
