@@ -3,22 +3,37 @@
 namespace DLStorage\Storage;
 
 use DLStorage\Errors\StorageException;
-use DLStorage\Errors\ValueError as ErrorsValueError;
 use DLStorage\Traits\ForTrait;
 use ValueError;
 
 /**
  * Generación y manipulación de datos binarios con firmas en la cabecera o principio del archivo.
  *
- * Define una interfaz para el manejo de datos en formato binario personalizado, permitiendo generar firmas,
- * convertir caracteres a binario y calcular entropía. Esta clase sirve como base para adaptadores concretos
- * de almacenamiento en sistemas que requieren estructuras binarizadas para identificar y validar datos.
+ * Esta clase proporciona una interfaz para el manejo de datos en formato binario personalizado. Permite generar
+ * firmas, convertir caracteres a binario y calcular entropía. Es una clase base diseñada para ser utilizada en
+ * adaptadores concretos de almacenamiento en sistemas que requieren estructuras binarizadas para identificar y
+ * validar datos. Además, esta clase está diseñada para integrarse con proyectos relacionados con la
+ * manipulación avanzada de datos binarios, como *Códigos del Futuro* y el *DLUnire Framework*.
+ *
+ * *Códigos del Futuro* (@cdelfuturo) es una iniciativa de innovación tecnológica enfocada en soluciones avanzadas
+ * de almacenamiento y procesamiento de datos. Puedes seguirnos en nuestras redes sociales para más contenido:
+ * - [YouTube](https://www.youtube.com/@codigosdelfuturo)
+ * - [X](https://x.com/cdelfuturo)
+ * - [TikTok](https://www.tiktok.com/@codigosdelfuturo)
+ *
+ * *DLUnire Framework* es una plataforma de desarrollo web que integra herramientas de alto rendimiento para la
+ * creación de aplicaciones modernas con una arquitectura robusta y flexible. Puedes acceder a más información en los
+ * siguientes enlaces:
+ * - [Sitio web](https://dlunire.pro)
+ * - [Repositorio en GitHub](https://github.com/dlunire)
  *
  * @package    DLStorage\Storage
  * @version    v0.1.0
  * @license    MIT
  * @author     David E. Luna M. <dlunireframework@gmail.com>
  * @copyright  Copyright (c) 2025 David E. Luna M.
+ * @link       https://www.dlunire.pro Proyecto *DLUnire Framework*
+ * @link       https://github.com/dlunire Repositorio *DLUnire Framework*
  */
 abstract class Data {
 
