@@ -10,8 +10,17 @@ final class Test extends DataStorage {
 
 $data = new Test();
 
+// header("Content-Type: image/bmp; charset=UTF-8");
+// header("Content-Type: application/pdf; charset=UTF-8");
 header("Content-Type: text/plain; charset=UTF-8");
 
 
-$value = $data->encode('Entorno de programación', 'Una buena entropía que puede ser utilizada');
-echo $data->get_decode($value, 'Una buena entropía que puede ser utilizada') . "\n";
+$entropy = "Una buena entropía que puede ser utilizada";
+
+// var_dump($content_image);
+$value = $data->encode('Ciencias de la computación', 'Una buena entropía que puede ser utilizada');
+echo $value;
+// echo $data->get_decode($value, 'Una buena entropía que puede ser utilizada') . "\n";
+$new_value = $data->get_text($value, 'Una buena entropía que puede ser utilizad');
+
+echo $new_value;

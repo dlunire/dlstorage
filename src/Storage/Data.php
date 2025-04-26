@@ -2,6 +2,7 @@
 
 namespace DLStorage\Storage;
 
+use DLStorage\Errors\StorageException;
 use DLStorage\Errors\ValueError as ErrorsValueError;
 use DLStorage\Traits\ForTrait;
 use ValueError;
@@ -88,7 +89,6 @@ abstract class Data {
 
         /** @var string $string_data Cadena resultante tras la transformación. */
         $string_data = "";
-
         $this->set_entropy_value($sum, $entropy);
         $this->set_entropy($input, $string_data, $sum);
 
@@ -103,14 +103,26 @@ abstract class Data {
      * @param string $encoded Contenido codificado
      * @param string|null $entropy Entropía utilizada para la codificación previa
      * @return string
+     * 
+     * @throws StorageException
      */
     public function get_decode(string $encoded, ?string $entropy = null): string {
         $this->expand_zero($encoded);
         /** @var string[] $blocks */
         $blocks = str_split($encoded, 10);
+        $value = $this->get_reverse_entropy($blocks, $entropy);
 
-        print_r($blocks);
-        return $this->get_reverse_entropy($blocks, $entropy);
+        /** @var int $length */
+        $length = mb_strlen($value, 'UTF-8');
+
+        /** @var bool $is_pair */
+        $is_pair = ($length & 1) == 0;
+
+        if (!$is_pair) {
+            throw new StorageException("Es posible que la llave de la entropía sea inválida o los datos se hayan corrompidos", 403);
+        }
+
+        return $value;
     }
 
     /**
@@ -125,37 +137,12 @@ abstract class Data {
     }
 
     /**
-     * Cuenta la cantidad de ceros consecutivos que aparecen como relleno en una cadena de entrada.
-     *
-     * Este método busca la primera secuencia de ceros consecutivos dentro del texto proporcionado,
-     * y devuelve la longitud de dicha secuencia. Si no se encuentra ninguna secuencia de ceros,
-     * retorna cero.
-     *
-     * @param string $input Cadena de texto que será analizada para detectar ceros consecutivos.
-     *
-     * @return int Retorna la cantidad de ceros consecutivos encontrados como relleno. Si no hay, retorna 0.
-     */
-    protected function count_zero(string $input): int {
-        preg_match("/^0+/", $input, $match);
-
-        /** @var string|null $padding_zero Primer grupo de ceros consecutivos encontrados. */
-        $padding_zero = $match[0] ?? null;
-
-        if (!is_string($padding_zero)) {
-            return 0;
-        }
-
-        return mb_strlen($padding_zero);
-    }
-
-
-    /**
      * Compacta una secuencia continua de ceros convirtiéndola en una representación hexadecimal.
      *
      * Este método detecta la primera secuencia de ceros consecutivos en la cadena de entrada y la
      * reemplaza por una cadena de dos caracteres hexadecimales (`0x00`).
      *
-     * Por ejemplo, una entrada como `"00000ABC"` devolverá `"00ABC"`
+     * Por ejemplo, una entrada como `"00000ABC"` devolverá `"01ABC"`
      *
      * @param string $input Cadena de texto a ser analizada y compactada.
      *
@@ -163,7 +150,7 @@ abstract class Data {
      */
     protected function compact_zero(string &$input): void {
         /** @var string|false $input Reemplazo de la secuencia de ceros por la longitud en hexadecimal. */
-        $input = preg_replace("/^0+/", '00', $input);
+        $input = preg_replace("/^0+/", '01', $input);
 
         if (!is_string($input)) {
             return;
@@ -178,18 +165,18 @@ abstract class Data {
      */
     public function expand_zero(string &$input): void {
         /** @var string[] $blocks */
-        $blocks = explode("00", $input);
+        $blocks = explode("01", $input);
 
-        /** @var string $string_data */
-        $string_data = "";
+        /** @var string[] $buffer */
+        $buffer = [];
 
         foreach ($blocks as $block) {
             if (!is_string($block) || empty(trim($block))) continue;
-            $string_data .= $this->get_padding_zero($block);
+            $block = str_replace("ffff", "01", $block);
+            $buffer[] = $this->get_padding_zero($block);
         }
 
-        $input = $string_data;
-        print_r($input);
+        $input = implode("", $buffer);
     }
 
     /**
@@ -218,18 +205,25 @@ abstract class Data {
      */
     private function set_entropy(string $input, string &$string_data, int|float $sum = 0): void {
 
-        $this->foreach($input, function (string $char, int $index) use ($sum, &$string_data) {
+        /** @var string[] $buffer */
+        $buffer = [];
+
+        $this->foreach($input, function (string $char, int $index) use ($sum, &$buffer, &$string_data) {
+            /** @var int $value */
+            $value = $sum * $this->get_circular_value($index) + $this->get_circular_value($index);
+
             /** @var string $current_data */
-            $current_data = $this->to_hex(
-                $char,
-                $sum * $this->get_circular_value($index) + $this->get_circular_value($index)
-            );
 
-            $this->compact_zero($current_data);
+            $current_data = $this->to_hex($char, $value);
+            $current_data = str_replace("01", "ffff", $current_data);
+
             $this->last_offset = $index;
+            $this->compact_zero($current_data);
 
-            $string_data .= $current_data;
+            $buffer[] = $current_data;
         });
+
+        $string_data = implode("", $buffer);
     }
 
     /**
@@ -244,16 +238,16 @@ abstract class Data {
         /** @var int $sum */
         $sum = 0;
 
-        /** @var string $hex_value */
-        $hex_value = "";
-
         $this->set_entropy_value($sum, $entropy);
 
+        /** @var string[] $buffer */
+        $buffer = [];
+
         foreach ($blocks as $key => $block) {
-            $hex_value .= $this->get_hex_value($block, $key, $sum);
+            $buffer[] = $this->get_hex_value($block, $key, $sum);
         }
 
-        return $hex_value;
+        return implode("", $buffer);
     }
 
     /**
@@ -270,7 +264,15 @@ abstract class Data {
         /** @var int $block_value */
         $block_value = hexdec($block);
 
-        return dechex($block_value - $this->value - $entropy_value);
+        /** @var string $value */
+        $value = dechex($block_value - $this->value - $entropy_value);
+
+        return str_pad(
+            string: $value,
+            length: 2,
+            pad_string: '0',
+            pad_type: STR_PAD_LEFT
+        );
     }
 
     /**
@@ -293,6 +295,6 @@ abstract class Data {
      * @return integer
      */
     private function get_circular_value(int|float $value): int {
-        return floor(abs(sin($value) * 100)) + floor(abs(sin($value) * 10));
+        return ($value * 31 + 17) % 100 + 10;
     }
 }

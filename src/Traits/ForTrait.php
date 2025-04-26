@@ -52,7 +52,7 @@ trait ForTrait {
      * Si se proporciona una cadena, la iteración se realiza carácter por carácter (como un bucle `for`).
      * Si se proporciona un arreglo, se itera elemento por elemento.
      *
-     * @param string|array $data     Datos a iterar. Puede ser una cadena (`string`) o un arreglo (`array`).
+     * @param string|string[] $data     Datos a iterar. Puede ser una cadena (`string`) o un arreglo (`array`).
      * @param callable     $callback Función anónima que se ejecuta por cada elemento. Recibe como parámetro
      *                               el carácter o valor actual de la iteración.
      *
