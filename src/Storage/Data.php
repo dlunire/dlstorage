@@ -98,13 +98,31 @@ abstract class Data {
 
 
     /**
-     * Decodifica el mensaje codificado
-     *
-     * @param string $encoded Contenido codificado
-     * @param string|null $entropy Entropía utilizada para la codificación previa
-     * @return string
+     * Decodifica un mensaje previamente codificado utilizando un esquema de entropía.
      * 
-     * @throws StorageException
+     * Este método toma una cadena de datos codificados y, si se proporciona la entropía utilizada durante 
+     * la codificación, intenta revertir la transformación para recuperar el mensaje original. Si la entropía 
+     * es incorrecta o si los datos han sido corrompidos, el método lanzará una excepción.
+     *
+     * @param string $encoded El contenido codificado que se va a decodificar.
+     * @param string|null $entropy La entropía que se utilizó durante la codificación, si está disponible.
+     *                             Si no se proporciona, el proceso de decodificación puede fallar si se requiere.
+     * 
+     * @return string La cadena decodificada, es decir, el mensaje original antes de la codificación.
+     * 
+     * @throws StorageException Si la longitud del mensaje resultante no es un número par, lo que indica 
+     *                          que los datos podrían estar corruptos o que la entropía utilizada para la 
+     *                          codificación no es válida.
+     *
+     * @note Este método asume que los datos codificados fueron segmentados en bloques de 10 caracteres 
+     *       y que cualquier adición de ceros al final del mensaje original fue tratada previamente.
+     * 
+     * @example
+     * try {
+     *     $decoded_message = $data->get_decode($encodedData, $entropyKey);
+     * } catch (StorageException $e) {
+     *     echo "Error de decodificación: " . $e->getMessage();
+     * }
      */
     public function get_decode(string $encoded, ?string $entropy = null): string {
         $this->expand_zero($encoded);
@@ -119,20 +137,22 @@ abstract class Data {
         $is_pair = ($length & 1) == 0;
 
         if (!$is_pair) {
-            throw new StorageException("Es posible que la llave de la entropía sea inválida o los datos se hayan corrompidos", 403);
+            throw new StorageException("Es posible que la llave de la entropía sea inválida o los datos se hayan corrompidos.", 403);
         }
 
         return $value;
     }
 
     /**
-     * Devuelve el contenido legible en formato legible
+     * Reconstruye y devuelve el contenido original a partir de una cadena codificada.
      *
-     * @param string $encode Cadena codificada
-     * @param string|null $entropy Entropía utilizada previamente
-     * @return string
+     * La salida puede contener datos binarios o texto, dependiendo del contenido original.
+     * 
+     * @param string $encode  Cadena codificada en formato hexadecimal.
+     * @param string|null $entropy  Entropía utilizada durante la codificación, si corresponde.
+     * @return string  Contenido reconstruido en formato binario.
      */
-    public function get_text(string $encode, ?string $entropy = null): string {
+    public function get_content(string $encode, ?string $entropy = null): string {
         return hex2bin($this->get_decode($encode, $entropy));
     }
 
@@ -158,10 +178,33 @@ abstract class Data {
     }
 
     /**
-     * Permite revertir el proceso de compactación de ceros
+     * Revertir la compactación de ceros en una cadena de texto.
      *
-     * @param string $input Entrada a ser analizada
-     * @return void
+     * Este método toma una cadena de texto que ha sido previamente compactada, es decir, donde las secuencias 
+     * de ceros consecutivos han sido sustituidas por el marcador especial "01". El proceso de compactación se 
+     * realiza normalmente para reducir el tamaño de los datos, pero al decodificar o procesar la información 
+     * nuevamente, es necesario restaurar los ceros a su forma original.
+     *
+     * El método también maneja posibles transformaciones adicionales, como la restauración de valores "ffff" 
+     * a "01" dentro de los bloques de datos.
+     *
+     * @param string &$input Entrada que contiene la cadena compactada, la cual será modificada por el método 
+     *                       para restaurar los ceros originales. 
+     *                       Este parámetro se pasa por referencia y se actualizará con la cadena resultante.
+     * 
+     * @return void No retorna ningún valor. La cadena de entrada es modificada directamente.
+     * 
+     * @note Este proceso es necesario cuando los datos han sido compactados previamente y es esencial para 
+     *       restaurar su formato original antes de cualquier procesamiento adicional. Si la entrada contiene 
+     *       bloques de datos válidos, estos serán reconstruidos adecuadamente con ceros restaurados.
+     * 
+     * @example Ejemplo
+     * 
+     * ```
+     * $data = "01ABC01DE"; // Cadena compactada
+     * $data_processor->expand_zero($data);
+     * echo $data; // La cadena ahora tendrá los ceros restaurados.
+     * ```
      */
     public function expand_zero(string &$input): void {
         /** @var string[] $blocks */
@@ -180,11 +223,20 @@ abstract class Data {
     }
 
     /**
-     * Rellena de ceros una cadena de texto incompleta
+     * Rellena una cadena de texto incompleta con ceros hasta alcanzar una longitud de 10 caracteres.
      *
-     * @param string $input Entrada a ser analizada
-     * @param boolean $right Rellena de ceros hacia la derecha si vale `true`. El valor por defecto es `false`.
-     * @return string
+     * Este método agrega ceros al principio o al final de la cadena según el valor del parámetro `$right`. 
+     * Si `$right` es `true`, se rellenará con ceros al final de la cadena; si es `false`, se rellenará al principio. 
+     * El valor por defecto es `false`, lo que implica que los ceros se agregarán al principio.
+     *
+     * @param string $input Cadena de texto que se desea rellenar.
+     * @param bool $right Si es `true`, rellena con ceros a la derecha. Por defecto es `false`, lo que rellena a la izquierda.
+     * 
+     * @return string La cadena de texto original, completada con ceros hasta alcanzar una longitud de 10 caracteres.
+     *
+     * @example
+     * $padded = $this->get_padding_zero("123");  // Devuelve "0000000123"
+     * $padded_right = $this->get_padding_zero("123", true);  // Devuelve "1230000000"
      */
     private function get_padding_zero(string $input, bool $right = false): string {
         return str_pad(
@@ -196,12 +248,30 @@ abstract class Data {
     }
 
     /**
-     * Establece el valor de la entroía a la cadena
+     * Establece y construye la cadena de datos a partir de la entropía proporcionada.
      *
-     * @param string $input Entrada a ser analizada
-     * @param string $string_data Datos construidos a partir de la entropía
-     * @param integer $sum Valor base de la entropía.
+     * Este método procesa la cadena de entrada (`$input`) aplicando un algoritmo basado en entropía, 
+     * el cual ajusta cada carácter de la cadena según un valor calculado a partir de su índice y la 
+     * entropía base (`$sum`). El resultado de este proceso es una cadena codificada que se almacena 
+     * en la variable `$string_data`.
+     *
+     * Para cada carácter de la entrada, se calcula un valor en función de la entropía y se convierte 
+     * a su representación hexadecimal. Además, se realizan transformaciones adicionales, como la 
+     * compactación de secuencias de ceros y la sustitución de ciertos valores (p. ej., `01` por `ffff`).
+     *
+     * El resultado final es una cadena procesada que tiene en cuenta la entropía y otras transformaciones 
+     * necesarias para su almacenamiento o manipulación.
+     *
+     * @param string $input Cadena de entrada que será procesada y transformada.
+     * @param string &$string_data Cadena de salida construida a partir de la entropía. Este parámetro se modifica por referencia.
+     * @param int|float $sum Valor base de la entropía. Determina cómo se ajusta cada valor durante el proceso. El valor predeterminado es 0.
+     *
      * @return void
+     *
+     * @example
+     * // Construir la cadena a partir de un input y la entropía base.
+     * $data->set_entropy("Hello, World", $string_data, 5);
+     * echo $string_data;  // Resultado de la cadena transformada con la entropía aplicada.
      */
     private function set_entropy(string $input, string &$string_data, int|float $sum = 0): void {
 
@@ -227,11 +297,31 @@ abstract class Data {
     }
 
     /**
-     * Devuelve el valor original con la entropía revertida
+     * Revierte la entropía aplicada a los bloques y devuelve el valor original.
      *
-     * @param array $blocks Bloques de 40 bits a ser analizados
-     * @param integer $sum Suma de entropía a ser revertida
-     * @return string
+     * Este método procesa los bloques de datos, revertiendo el efecto de la entropía aplicada previamente 
+     * para obtener la cadena original. Cada bloque de 40 bits es analizado y transformado utilizando el valor 
+     * de entropía proporcionado o el valor calculado, en caso de que no se pase explícitamente. Los bloques 
+     * se reordenan y se procesan para recuperar los datos antes de ser codificados con la entropía.
+     *
+     * El valor de la entropía puede ser proporcionado como un parámetro opcional, o en su defecto, se utilizará 
+     * el valor predeterminado. Este proceso implica aplicar un cálculo inverso de la entropía y reconstruir la 
+     * cadena original a partir de los bloques dados.
+     *
+     * @param array $blocks Bloques de 40 bits que contienen los datos codificados, que serán procesados 
+     *                       para revertir la entropía.
+     * @param string|null $entropy (Opcional) Valor de entropía utilizado en la codificación. Si no se proporciona, 
+     *                             se utilizará un valor predeterminado o calculado automáticamente.
+     *
+     * @return string La cadena original obtenida después de revertir la entropía aplicada.
+     *
+     * @example Ejemplo
+     * ```
+     * // Revertir la entropía de una serie de bloques.
+     * $blocks = ["block1", "block2", "block3"];
+     * $original_data = $data->get_reverse_entropy($blocks, "entropy_value");
+     * echo $original_data;  // Resultado de la cadena original antes de la entropía.
+     * ```
      */
     private function get_reverse_entropy(array &$blocks, ?string $entropy = null): string {
 
@@ -251,11 +341,34 @@ abstract class Data {
     }
 
     /**
-     * Devuelve el valor hexadecimal de cada carácter
+     * Obtiene el valor hexadecimal de un bloque de bytes con entropía revertida.
      *
-     * @param string $block Bloque de bytes a ser analizado
-     * @param integer $key Indice que permite calcular el valor de la entropía
-     * @return string
+     * Este método toma un bloque de bytes representado como una cadena hexadecimal y calcula su valor
+     * después de revertir la entropía aplicada previamente. El valor de cada carácter se obtiene utilizando 
+     * un cálculo que involucra un valor de entropía, el cual se determina a partir del índice del bloque y un 
+     * valor base (`$sum`). Este valor se ajusta a un formato hexadecimal de dos dígitos para su posterior uso.
+     *
+     * El cálculo del valor final se basa en la resta de la entropía y un valor predeterminado, asegurando que 
+     * la cadena resultante sea correctamente ajustada en longitud para representar un valor hexadecimal válido.
+     *
+     * @param string $block Bloque de bytes representado en formato hexadecimal, que será procesado para 
+     *                      obtener el valor ajustado.
+     * @param integer $key Índice que permite calcular el valor de la entropía, utilizado para el ajuste 
+     *                     del valor hexadecimal.
+     * @param integer $sum Valor base de la entropía que se usará en el cálculo de ajuste del valor final.
+     *
+     * @return string El valor hexadecimal calculado, con la entropía revertida, representado como una cadena 
+     *                de dos dígitos.
+     *
+     * @example Ejemplo
+     * ```
+     * // Obtener el valor hexadecimal de un bloque con entropía revertida.
+     * $block = "abc123";
+     * $key = 1;
+     * $sum = 10;
+     * $hex_value = $data->get_hex_value($block, $key, $sum);
+     * echo $hex_value;  // Resultado de la cadena hexadecimal ajustada.
+     * ```
      */
     private function get_hex_value(string $block, int $key, int $sum): string {
         /** @var int $entropy_value */
@@ -276,9 +389,32 @@ abstract class Data {
     }
 
     /**
-     * Establece el valor de la entropía
+     * Establece el valor de la entropía basado en una cadena dada.
+     *
+     * Este método calcula un valor de entropía acumulado a partir de una cadena de caracteres. Para cada 
+     * carácter en la cadena de entropía, se obtiene su valor hexadecimal y se suma a un valor acumulado 
+     * (`$sum`). Además, se añade la longitud total de la cadena de entropía al valor acumulado. Este cálculo 
+     * permite ajustar el valor de entropía de forma incremental a medida que se procesan los caracteres de la 
+     * cadena.
+     *
+     * Si no se proporciona una cadena de entropía válida, el valor de `$sum` permanecerá sin cambios.
+     *
+     * @param int $sum Valor acumulado de la entropía que se actualizará con cada carácter procesado.
+     *                 Se pasa por referencia para que se modifique directamente.
+     * @param string|null $entropy Cadena de entropía cuyos caracteres se usarán para calcular el valor 
+     *                             de la entropía acumulada. Si no se proporciona o no es válida, el 
+     *                             cálculo no se realiza.
      *
      * @return void
+     *
+     * @example Example
+     * ```
+     * // Establecer un valor de entropía basado en una cadena.
+     * $sum = 0;
+     * $entropy = "Una llave de entropía por acá";
+     * $data->set_entropy_value($sum, $entropy);
+     * echo $sum;  // Resultado de la entropía acumulada.
+     * ```
      */
     private function set_entropy_value(int &$sum, ?string $entropy = null): void {
         if (!is_string($entropy)) return;
@@ -289,10 +425,25 @@ abstract class Data {
     }
 
     /**
-     * Devuelve valor circular
+     * Devuelve un valor circular modificado a partir del valor dado.
      *
-     * @param integer|float $value Valor a ser analizado
-     * @return integer
+     * Este método calcula un valor basado en una operación matemática circular sobre el valor de entrada. 
+     * El valor de entrada se multiplica por 31, se le suma 17, y luego se calcula el módulo 100. Finalmente, 
+     * se le añade 10 al resultado para obtener un valor dentro de un rango específico.
+     *
+     * Este tipo de transformación es útil para generar un patrón cíclico o no lineal, manteniendo el valor en 
+     * un rango controlado de valores entre 10 y 109.
+     *
+     * @param int|float $value Valor numérico (entero o decimal) que será analizado y transformado mediante 
+     *                         la operación circular.
+     * @return int El valor circular calculado, garantizando que se encuentre dentro del rango [10, 109].
+     *
+     * @example Example
+     * ```
+     * // Obtener el valor circular de un número
+     * $result = $data->get_circular_value(5);
+     * echo $result;  // Resultado será un número entre 10 y 109.
+     * ```
      */
     private function get_circular_value(int|float $value): int {
         return ($value * 31 + 17) % 100 + 10;
