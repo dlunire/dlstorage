@@ -25,6 +25,8 @@ abstract class Data {
 
     private int $last_offset = 0;
 
+    private int $value = 220000;
+
     /**
      * Convierte un carácter a su representación hexadecimal de 40 bits con la posibilidad de agregar entropía.
      *
@@ -57,7 +59,7 @@ abstract class Data {
         $hex = bin2hex($char);
 
         /** @var int|float $decimal */
-        $decimal = hexdec($hex) + $entropy + 220000;
+        $decimal = hexdec($hex) + $entropy + $this->value;
 
         // Asegurarse de que la salida sea de 40 bits (10 dígitos hexadecimales)
         return str_pad(
@@ -100,36 +102,26 @@ abstract class Data {
      *
      * @param string $encoded Contenido codificado
      * @param string|null $entropy Entropía utilizada para la codificación previa
-     * @return void
+     * @return string
      */
-    public function decode(string $encoded, ?string $entropy = null) {
+    public function get_decode(string $encoded, ?string $entropy = null): string {
         $this->expand_zero($encoded);
-
         /** @var string[] $blocks */
         $blocks = str_split($encoded, 10);
 
-        /** @var int|float $sum */
-        $sum = 0;
-
-        $this->set_entropy_value($sum, $entropy);
-
-        foreach ($blocks as $key => $block) {
-
-            $value = hexdec($block);
-        }
-
         print_r($blocks);
+        return $this->get_reverse_entropy($blocks, $entropy);
     }
 
     /**
-     * Convierte a formato legible el contenido binario encontrado en el archivo
+     * Devuelve el contenido legible en formato legible
      *
-     * @param string $string_data Dato en su estado original
+     * @param string $encode Cadena codificada
+     * @param string|null $entropy Entropía utilizada previamente
      * @return string
      */
-    public function to_text(string $string_data): string {
-
-        return "";
+    public function get_text(string $encode, ?string $entropy = null): string {
+        return hex2bin($this->get_decode($encode, $entropy));
     }
 
     /**
@@ -161,31 +153,17 @@ abstract class Data {
      * Compacta una secuencia continua de ceros convirtiéndola en una representación hexadecimal.
      *
      * Este método detecta la primera secuencia de ceros consecutivos en la cadena de entrada y la
-     * reemplaza por una cadena de dos caracteres hexadecimales (`0xn`), donde `n` representa
-     * la longitud de la secuencia original de ceros en formato hexadecimal, con relleno izquierdo.
+     * reemplaza por una cadena de dos caracteres hexadecimales (`0x00`).
      *
-     * Por ejemplo, una entrada como `"00000ABC"` devolverá `"05ABC"`, ya que `0x05` representa
-     * los cinco ceros iniciales, omitida la notación `0x` por simplicidad en la codificación.
+     * Por ejemplo, una entrada como `"00000ABC"` devolverá `"00ABC"`
      *
      * @param string $input Cadena de texto a ser analizada y compactada.
      *
      * @return void
      */
     protected function compact_zero(string &$input): void {
-
-        /** @var int $length Longitud de la secuencia de ceros encontrada. */
-        $length = $this->count_zero($input);
-
-        /** @var string $hex_length Longitud convertida a hexadecimal (2 dígitos). */
-        $hex_length = str_pad(
-            string: dechex($length),
-            length: 2,
-            pad_string: '0',
-            pad_type: STR_PAD_LEFT
-        );
-
         /** @var string|false $input Reemplazo de la secuencia de ceros por la longitud en hexadecimal. */
-        $input = preg_replace("/^0+/", $hex_length, $input);
+        $input = preg_replace("/^0+/", '00', $input);
 
         if (!is_string($input)) {
             return;
@@ -199,27 +177,35 @@ abstract class Data {
      * @return void
      */
     public function expand_zero(string &$input): void {
-        /** @var string $length_pattern */
-        $length_pattern = "/[0][a0-9]/i";
+        /** @var string[] $blocks */
+        $blocks = explode("00", $input);
 
-        preg_match_all($length_pattern, $input, $matches);
+        /** @var string $string_data */
+        $string_data = "";
 
-        /** @var string[] $bytes */
-        $bytes = $matches[0] ?? [];
-
-        /** @var array<string,string> $dictionary */
-        $dictionary = [];
-
-        foreach ($bytes as $byte) {
-            /** @var string $length */
-            $length = hexdec($byte);
-
-            $dictionary[$byte] = str_pad("", $length, '0');
+        foreach ($blocks as $block) {
+            if (!is_string($block) || empty(trim($block))) continue;
+            $string_data .= $this->get_padding_zero($block);
         }
 
-        foreach ($dictionary as $key => $zero) {
-            $input = str_replace($key, $zero, $input);
-        }
+        $input = $string_data;
+        print_r($input);
+    }
+
+    /**
+     * Rellena de ceros una cadena de texto incompleta
+     *
+     * @param string $input Entrada a ser analizada
+     * @param boolean $right Rellena de ceros hacia la derecha si vale `true`. El valor por defecto es `false`.
+     * @return string
+     */
+    private function get_padding_zero(string $input, bool $right = false): string {
+        return str_pad(
+            string: $input,
+            length: 10,
+            pad_string: '0',
+            pad_type: $right ? STR_PAD_RIGHT : STR_PAD_LEFT
+        );
     }
 
     /**
@@ -236,7 +222,7 @@ abstract class Data {
             /** @var string $current_data */
             $current_data = $this->to_hex(
                 $char,
-                $sum * ($index / 100) + sin($index + $sum)
+                $sum * $this->get_circular_value($index) + $this->get_circular_value($index)
             );
 
             $this->compact_zero($current_data);
@@ -247,15 +233,66 @@ abstract class Data {
     }
 
     /**
+     * Devuelve el valor original con la entropía revertida
+     *
+     * @param array $blocks Bloques de 40 bits a ser analizados
+     * @param integer $sum Suma de entropía a ser revertida
+     * @return string
+     */
+    private function get_reverse_entropy(array &$blocks, ?string $entropy = null): string {
+
+        /** @var int $sum */
+        $sum = 0;
+
+        /** @var string $hex_value */
+        $hex_value = "";
+
+        $this->set_entropy_value($sum, $entropy);
+
+        foreach ($blocks as $key => $block) {
+            $hex_value .= $this->get_hex_value($block, $key, $sum);
+        }
+
+        return $hex_value;
+    }
+
+    /**
+     * Devuelve el valor hexadecimal de cada carácter
+     *
+     * @param string $block Bloque de bytes a ser analizado
+     * @param integer $key Indice que permite calcular el valor de la entropía
+     * @return string
+     */
+    private function get_hex_value(string $block, int $key, int $sum): string {
+        /** @var int $entropy_value */
+        $entropy_value = $sum * $this->get_circular_value($key) + $this->get_circular_value($key);
+
+        /** @var int $block_value */
+        $block_value = hexdec($block);
+
+        return dechex($block_value - $this->value - $entropy_value);
+    }
+
+    /**
      * Establece el valor de la entropía
      *
      * @return void
      */
-    private function set_entropy_value(int &$sum, ?string &$entropy = null): void {
+    private function set_entropy_value(int &$sum, ?string $entropy = null): void {
         if (!is_string($entropy)) return;
 
         $this->foreach($entropy, function (string $char) use (&$sum, $entropy) {
             $sum += hexdec(bin2hex($char)) + strlen($entropy);
         });
+    }
+
+    /**
+     * Devuelve valor circular
+     *
+     * @param integer|float $value Valor a ser analizado
+     * @return integer
+     */
+    private function get_circular_value(int|float $value): int {
+        return floor(abs(sin($value) * 100)) + floor(abs(sin($value) * 10));
     }
 }
