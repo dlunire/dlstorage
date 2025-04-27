@@ -1,14 +1,18 @@
 <?php
 
-use DLStorage\Storage\DataStorage;
-
 include dirname(__DIR__) . "/vendor/autoload.php";
 
-// Zona de prueba
-final class Test extends DataStorage {
+use DLStorage\Storage\DataStorage;
+
+# Zona de prueba
+final class TuClase extends DataStorage {
 }
 
-$data = new Test();
+/** @var TuClase $data */
+$data = new TuClase();
+
+/** @var string $decoded */
+$decoded = $data->get_content('Tu hash a analizar aquí', 'Una buena entropía que puede ser utilizada');
 
 // header("Content-Type: image/bmp; charset=UTF-8");
 // header("Content-Type: application/pdf; charset=UTF-8");
@@ -20,7 +24,7 @@ $entropy = "Una buena entropía que puede ser utilizada";
 
 // var_dump($content_image);
 $value = $data->encode('Ciencias de la computación', 'Una buena entropía que puede ser utilizada');
-// echo $value;
+echo $value . "\n";
 // echo $data->get_decode($value, 'Una buena entropía que puede ser utilizada') . "\n";
 $new_value = $data->get_content($value, 'Una buena entropía que puede ser utilizada');
 
