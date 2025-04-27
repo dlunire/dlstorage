@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace DLStorage\Storage;
 
-use ValueError;
-
 /**
  * Define una base para almacenar datos en archivos binarios u otros medios persistentes,
  * sin utilizar una base de datos.
