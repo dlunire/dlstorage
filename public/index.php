@@ -11,7 +11,7 @@ final class TuClase extends DataStorage {
 /** @var TuClase $data */
 $data = new TuClase();
 
-$data->test(1, 1);
+$data->test(2500, 2700);
 
 /** @var string $decoded */
 $decoded = $data->get_content('Tu hash a analizar aquí', 'Una buena entropía que puede ser utilizada');

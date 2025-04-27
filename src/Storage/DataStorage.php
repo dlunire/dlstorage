@@ -162,20 +162,20 @@ abstract class DataStorage extends Data {
 
 
         /** @var int $length */
-        $length = $to - $from;
+        $length = $to - $from + 1;
 
         /** @var resource $file */
         $file = fopen($filename, 'rb');
 
         /** @var bool $pointer */
-        // $pointer = fseek($file, 3000, SEEK_SET) !== 0;
-        // fclose($file);
+        $pointer = fseek($file, $from, SEEK_SET) !== 0;
 
+        if ($from > $size || $to > $size) {
+            throw new StorageException("El rango de lectura excede el tamaño del archivo «{$filename_only}».", 416);
+        }
 
-        var_dump(fseek($file, 6000000, SEEK_SET));
-        var_dump(ftell($file));
-        exit;
-        if (!$pointer) {
+        if ($pointer) {
+            fclose($file);
 
             throw new StorageException(
                 "No se pudo posicionar el puntero al byte {$from} del archivo «{$filename_only}».",
