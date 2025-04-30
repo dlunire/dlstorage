@@ -24,18 +24,98 @@ use DLStorage\Errors\StorageException;
 abstract class DataStorage extends Data {
 
     /**
-     * Tamaño en formato hexadecimal
-     *
-     * @var string $size
+     * Tamaño del archivo en formato decimal.
+     * 
+     * Esta propiedad almacena el tamaño del archivo en bytes, representado como un valor
+     * entero de 32 bits. El valor se utiliza para identificar y gestionar el tamaño
+     * del archivo dentro del sistema de almacenamiento de datos transformados. La propiedad
+     * está diseñada para manejar archivos de tamaño dentro del rango que puede ser
+     * representado por un valor de 32 bits (hasta 4 GB de datos).
+     * 
+     * **Consideraciones:**
+     * - El valor está en formato decimal, lo que facilita su interpretación
+     *   y uso en cálculos relacionados con la manipulación del archivo.
+     * - Se asegura que el tamaño esté representado de manera precisa y eficiente
+     *   dentro del sistema sin necesidad de utilizar unidades de medida adicionales
+     *   como kilobytes o megabytes.
+     * 
+     * **Ejemplo de uso:**
+     * ```php
+     * echo $this->size;  // Muestra el tamaño del archivo en bytes
+     * ```
+     * 
+     * **Nota:**
+     * Este campo es especialmente útil para la verificación de la integridad de
+     * archivos y para asegurar que el almacenamiento y la recuperación de datos
+     * sean correctos, ya que el tamaño se utiliza para controlar las operaciones
+     * de lectura y escritura en el archivo.
+     * 
+     * @var int $size
+     * @since 0.1.0 Introducción de la propiedad tamaño para gestionar el espacio de almacenamiento del archivo.
      */
-    private string $size = "00";
+    private int $size = 0;
+
 
     /**
-     * Firma de la cabecera del archivo
+     * Versión del archivo de almacenamiento de bytes transformados.
+     * 
+     * Esta propiedad almacena la versión actual del formato de archivo utilizado para
+     * la persistencia de los datos transformados mediante el sistema de transformación
+     * de bytes. El valor está representado en formato de cadena y puede ser utilizado 
+     * para identificar cambios en la estructura o el esquema de los datos, asegurando
+     * la compatibilidad entre versiones del sistema.
      *
+     * **Versión en formato hexadecimal:**  
+     * La versión "v0.1.0" está representada en hexadecimal como:
+     * 
+     * ```bash
+     * 76 30 2e 31 2e 30
+     * ```
+     *  
+     * Esta representación hexadecimal permite realizar comparaciones y verificaciones 
+     * a nivel de bytes, útil para tareas como la validación o la compatibilidad 
+     * entre diferentes versiones de archivos transformados.
+     * 
+     * **Ejemplo de uso:**
+     * ```php
+     * echo $this->version;  // Muestra la versión del archivo
+     * ```
+     * 
+     * @var string $version
+     * @since 0.1.0 Introducción del campo de versión en el archivo de almacenamiento.
+     */
+    private string $version = "v0.1.0";
+
+    /**
+     * Firma de la cabecera del archivo.
+     * 
+     * Esta propiedad almacena la firma que identifica de manera única el formato
+     * del archivo de almacenamiento de datos transformados. La firma es una secuencia
+     * de caracteres que se coloca al inicio del archivo, sirviendo como una "marca" 
+     * para indicar que el archivo es reconocido por el sistema y sigue el formato 
+     * adecuado.
+     * 
+     * **Representación en formato hexadecimal:**
+     * La firma "DLStorage" se representa en hexadecimal como:
+     * 
+     * ```bash
+     * 44 4c 53 74 6f 72 61 67 65
+     * ```
+     * 
+     * Este valor permite verificar la integridad del archivo y validar que el contenido
+     * corresponde a un archivo del sistema, facilitando la detección de archivos
+     * corruptos o de un formato incorrecto.
+     * 
+     * **Ejemplo de uso:**
+     * ```php
+     * echo $this->signature;  // Muestra la firma de la cabecera del archivo
+     * ```
+     * 
      * @var string $signature
+     * @since 0.1.0 Introducción de la firma de cabecera para validación de formato de archivo.
      */
     private string $signature = "DLStorage";
+
 
     public function save_binary_data(string $data, string $dir = "/", ?string $entropy = NULL) {
 
@@ -115,15 +195,17 @@ abstract class DataStorage extends Data {
      */
     private function get_headers(): string {
 
+        $version = "v0.1.0";
+
         return "";
     }
 
     /**
      * Devuelve el tamaño del archivo en formato hexadecimal
      *
-     * @return string
+     * @return int
      */
-    private function get_size(string $input): string {
+    private function get_size(string $input): int {
         return $this->size;
     }
 
