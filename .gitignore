@@ -11,3 +11,6 @@ node_modules
 .env.type.example
 .env
 .env.example
+
+# Almacenamiento
+storage

@@ -23,38 +23,6 @@ use DLStorage\Errors\StorageException;
  */
 abstract class DataStorage extends Data {
 
-    /**
-     * Tamaño del archivo en formato decimal.
-     * 
-     * Esta propiedad almacena el tamaño del archivo en bytes, representado como un valor
-     * entero de 32 bits. El valor se utiliza para identificar y gestionar el tamaño
-     * del archivo dentro del sistema de almacenamiento de datos transformados. La propiedad
-     * está diseñada para manejar archivos de tamaño dentro del rango que puede ser
-     * representado por un valor de 32 bits (hasta 4 GB de datos).
-     * 
-     * **Consideraciones:**
-     * - El valor está en formato decimal, lo que facilita su interpretación
-     *   y uso en cálculos relacionados con la manipulación del archivo.
-     * - Se asegura que el tamaño esté representado de manera precisa y eficiente
-     *   dentro del sistema sin necesidad de utilizar unidades de medida adicionales
-     *   como kilobytes o megabytes.
-     * 
-     * **Ejemplo de uso:**
-     * ```php
-     * echo $this->size;  // Muestra el tamaño del archivo en bytes
-     * ```
-     * 
-     * **Nota:**
-     * Este campo es especialmente útil para la verificación de la integridad de
-     * archivos y para asegurar que el almacenamiento y la recuperación de datos
-     * sean correctos, ya que el tamaño se utiliza para controlar las operaciones
-     * de lectura y escritura en el archivo.
-     * 
-     * @var int $size
-     * @since 0.1.0 Introducción de la propiedad tamaño para gestionar el espacio de almacenamiento del archivo.
-     */
-    private int $size = 0;
-
 
     /**
      * Versión del archivo de almacenamiento de bytes transformados.
@@ -82,9 +50,9 @@ abstract class DataStorage extends Data {
      * ```
      * 
      * @var string $version
-     * @since 0.1.0 Introducción del campo de versión en el archivo de almacenamiento.
+     * @since v0.1.0 Introducción del campo de versión en el archivo de almacenamiento.
      */
-    private string $version = "v0.1.0";
+    protected string $version = "76302e312e30";
 
     /**
      * Firma de la cabecera del archivo.
@@ -112,19 +80,9 @@ abstract class DataStorage extends Data {
      * ```
      * 
      * @var string $signature
-     * @since 0.1.0 Introducción de la firma de cabecera para validación de formato de archivo.
+     * @since v0.1.0 Introducción de la firma de cabecera para validación de formato de archivo.
      */
-    private string $signature = "DLStorage";
-
-
-    public function save_binary_data(string $data, string $dir = "/", ?string $entropy = NULL) {
-
-        /** @var string $encoded */
-        $encoded = $this->encode($data, $entropy);
-
-        /** @var string */
-        $root = $this->get_document_root();
-    }
+    protected string $signature = "444c53746f72616765";
 
     /**
      * Obtiene el directorio raíz del sistema.
@@ -184,8 +142,27 @@ abstract class DataStorage extends Data {
 
         fclose($file);
 
-        // 444c53746f72616765
-        return "DLStorage";
+        return bin2hex($this->signature);
+    }
+
+    /**
+     * Valida si se trata de un archivo estructura binaria válida
+     *
+     * @param string $file Archivo a ser analizado
+     * @return boolean
+     */
+    public function validate_saved_data(string $file): bool {
+        /** @var string $filepath */
+        $filepath = $this->get_file_path($file);
+
+        /** @var string $signature */
+        $signature = $this->read_filename($filepath, 1, 9);
+
+        if ($signature != $this->signature) {
+            throw new StorageException("El archivo no es un formato  DLStorage válido", 500);
+        }
+
+        return false;
     }
 
     /**
@@ -193,20 +170,12 @@ abstract class DataStorage extends Data {
      *
      * @return string
      */
-    private function get_headers(): string {
+    private function set_headers(): string {
 
-        $version = "v0.1.0";
+        /** @var string $version */
+        $version = bin2hex($this->version);
 
         return "";
-    }
-
-    /**
-     * Devuelve el tamaño del archivo en formato hexadecimal
-     *
-     * @return int
-     */
-    private function get_size(string $input): int {
-        return $this->size;
     }
 
     /**
@@ -228,6 +197,9 @@ abstract class DataStorage extends Data {
                 500
             );
         }
+
+        $from -= 1;
+        $to -= 1;
 
         /** @var int|false $size */
         $size = filesize($filename);
@@ -282,7 +254,7 @@ abstract class DataStorage extends Data {
     }
 
     /**
-     * Valida si el archivo 
+     * Valida si el archivo existe y no es un directorio, aparte de ser legible.
      *
      * @param string $filename Archivo a ser analizado
      * @return void
@@ -325,7 +297,10 @@ abstract class DataStorage extends Data {
         /** @var string $root */
         $root = $this->get_document_root();
 
-        $filename = "{$root}/README.md";
+        /** @var string $separator */
+        $separator = DIRECTORY_SEPARATOR;
+
+        $filename = "{$root}{$separator}README.md";
 
         $this->validate_filename($filename);
 
@@ -333,5 +308,71 @@ abstract class DataStorage extends Data {
 
         print_r($bytes);
         exit;
+    }
+
+    /**
+     * Devuelve la ruta absoluta completa donde se almacenará un archivo, dentro del
+     * sistema de almacenamiento gestionado por la clase. Puede opcionalmente crear
+     * el directorio contenedor si no existe.
+     *
+     * Si se establece `$create_dir` en `true`, la función asegura que el directorio
+     * padre del archivo exista, creándolo si es necesario. En caso de que exista un
+     * archivo con el mismo nombre que el directorio, se lanza una excepción.
+     *
+     * @param string $filename Nombre relativo del archivo (puede contener subdirectorios).
+     * @param bool $create_dir Si se debe crear el directorio contenedor si no existe. Por defecto es `false`.
+     *
+     * @return string Ruta absoluta del archivo dentro del almacenamiento gestionado.
+     *
+     * @throws StorageException Si `$create_dir` es `true` y existe un archivo con el mismo nombre que el directorio contenedor.
+     *
+     * @example Ejemplo de uso
+     * ```php
+     * $ruta = $storage->get_file_path("documentos/ejemplo.txt", true);
+     * // Resultado: /ruta/absoluta/al/proyecto/storage/documentos/ejemplo.txt
+     * ```
+     *
+     * @note Los separadores de directorio son normalizados automáticamente al formato del sistema operativo.
+     *
+     * @warning Si el nombre proporcionado en `$filename` genera una colisión con un archivo
+     * en lugar de un directorio, y `$create_dir` es `true`, la operación fallará.
+     */
+
+    public function get_file_path(string $filename, bool $create_dir = false): string {
+        /** @var string $root */
+        $root = $this->get_document_root();
+
+        /** @var string $separator */
+        $separator = DIRECTORY_SEPARATOR;
+
+        $filename = preg_replace("/[\\\\\/]+/", $separator, $filename);
+        $filename = trim($filename, "\{$separator}");
+
+        /** @var string $file */
+        $file = "{$root}{$separator}storage{$separator}{$filename}";
+
+        if (!$create_dir) {
+            return $file;
+        }
+
+        /** @var string $file_pattern */
+        $file_pattern = "/[\\\\\/][^\\\\\/]+$/i";
+
+
+        /** @var string $dir */
+        $dir = preg_replace($file_pattern, "", $file);
+
+        /** @var string $dirname_only */
+        $dirname_only = basename($dir);
+
+        if (file_exists($dir) && is_file($dir)) {
+            throw new StorageException("No se puede crear el directorio con el nombre «{$dirname_only}», porque ya existe un archivo con ese nombre", 500);
+        }
+
+        if (!file_exists($dir)) {
+            mkdir($dir, 0755, true);
+        }
+
+        return $file;
     }
 }

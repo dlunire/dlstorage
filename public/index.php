@@ -25,9 +25,12 @@ header("Content-Type: application/json; charset=UTF-8");
 $entropy = "Una buena entropía que puede ser utilizada";
 
 // var_dump($content_image);
-$value = $data->encode('ciencia', 'Una buena entropía que puede ser utilizada');
+$value = $data->encode('David Luna', $entropy);
 echo $value . "\n";
 // echo $data->get_decode($value, 'Una buena entropía que puede ser utilizada') . "\n";
-$new_value = $data->get_content($value, 'Una buena entropía que puede ser utilizada');
+$new_value = $data->get_content($value, $entropy);
 
 print_r($new_value);
+
+echo "\n";
+echo $data->validate_saved_data('file.dlstorage');
