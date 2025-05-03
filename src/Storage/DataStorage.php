@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace DLStorage\Storage;
 
 use DLStorage\Errors\StorageException;
-use Exception;
 
 /**
  * Define una base para almacenar datos en archivos binarios u otros medios persistentes,
@@ -164,24 +163,7 @@ abstract class DataStorage extends Data {
         /** @var string $signature */
         $signature = bin2hex($this->read_filename($filepath, 1, 9));
 
-        if ($signature != $this->signature) {
-            throw new StorageException("El archivo no es un formato  DLStorage válido", 415);
-        }
-
-        return false;
-    }
-
-    /**
-     * Devuelve la cabecera del archivo binario
-     *
-     * @return string
-     */
-    private function set_headers(): string {
-
-        /** @var string $version */
-        $version = bin2hex($this->version);
-
-        return "";
+        return $signature == $this->get_signature();
     }
 
     /**
@@ -276,7 +258,7 @@ abstract class DataStorage extends Data {
      * 
      * @throws StorageException
      */
-    private function validate_filename(string $filename): void {
+    protected function validate_filename(string $filename): void {
 
         /** @var string $filename_only */
         $filename_only = basename($filename);
@@ -298,31 +280,6 @@ abstract class DataStorage extends Data {
         if (!is_readable($filename)) {
             throw new StorageException("No se puede leer el archivo «{$filename_only}»: verifique los permisos de lectura.", 500);
         }
-    }
-
-    /**
-     * Función para realizar pruebas de lectura
-     *
-     * @return void
-     */
-    public function test(int $start = 1, int $end = 1): void {
-
-        header("content-type: text/plain; UTF-8");
-
-        /** @var string $root */
-        $root = $this->get_document_root();
-
-        /** @var string $separator */
-        $separator = DIRECTORY_SEPARATOR;
-
-        $filename = "{$root}{$separator}README.md";
-
-        $this->validate_filename($filename);
-
-        $bytes = $this->read_filename($filename, $start, $end);
-
-        print_r($bytes);
-        exit;
     }
 
     /**
