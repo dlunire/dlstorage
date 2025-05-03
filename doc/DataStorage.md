@@ -4,126 +4,107 @@
 
 ## Introducción
 
-La clase abstracta `DataStorage` define una base para almacenar datos transformados en archivos binarios u otros medios persistentes, sin utilizar una base de datos tradicional con la finalidad de proteger credenciales, como tokens, entre otras.
+La clase abstracta `DataStorage` define una base para almacenar datos transformados en archivos binarios u otros medios persistentes, evitando el uso de bases de datos tradicionales. Su objetivo principal es proteger credenciales sensibles, como tokens, claves o estructuras cifradas mediante transformaciones personalizadas.
 
-Esta clase extiende a `Data` y forma parte del paquete `DLStorage`. Está diseñada para ser utilizada como base para clases concretas que implementen mecanismos específicos de persistencia.
+Esta clase extiende a `Data` y forma parte del paquete `DLStorage`. Está diseñada para ser utilizada como clase base para implementaciones específicas que manejen la persistencia de datos en formatos estructurados binarios.
 
 ---
 
 ## Propiedades
 
+* **`private string $version = "v0.1.0"`:** Define la versión del formato de archivo. En este caso, la versión actual es `v0.1.0`.
 
-- **`private string $version = "v0.1.0`:** Almacena la versión del archivo, donde `v0.1.0`es la versión actual.
+* **`private string $signature = 'DLStorage'`**: Firma binaria de validación.
 
-- **`private string $signature = 'DLStorage'`:** Firma de la cabecera del archivo. 
+  Esta propiedad representa la firma que identifica de manera inequívoca los archivos pertenecientes al sistema de almacenamiento. Se ubica en la cabecera del archivo y permite al sistema reconocer que dicho archivo cumple con el formato esperado de `DLStorage`.
 
-    Esta propiedad almacena la firma que identifica de manera única el formato del archivo de almacenamiento de datos transformados. La firma es una secuencia de caracteres que se coloca al inicio del archivo, sirviendo como una "marca" para indicar que elarchivo ese reconocido por el sistema y sigue el formato adecuado.
+---
 
 ## Métodos protegidos
 
-Los métodos protegidos de la clase `DataStorage` están diseñados para ser utilizados por clases derivadas que extiendan esta clase abstracta.
+Los métodos protegidos de `DataStorage` proporcionan utilidades internas esenciales para el manejo seguro del almacenamiento binario. Están destinados a ser utilizados exclusivamente por las clases derivadas que extiendan esta abstracción.
 
-Estos métodos proporcionan funcionalidades internas clave, como el acceso a la firma y versión del formato de archivo en formato hexadecimal, y la lectura de rangos de bytes desde archivos binarios. Aunque no son accesibles directamente desde fuera de la clase, permiten a los desarrolladores que implementen clases hijas personalizar y aprovechar la lógica de almacenamiento de datos de manera segura y eficiente. A continuación, se describen los métodos protegidos disponibles, con ejemplos de cómo pueden usarse en clases derivadas.
+* **`protected function get_signature(): string`**
+  Devuelve la firma del archivo en formato hexadecimal, convirtiendo los bytes binarios de `$signature` a una representación legible.
 
-- **`protected function get_signature(): string`:** Devuelve la firma del archivo en formato hexadecimal. Convierte los bytes binarios de la propiedad `$signature` a una representación legible como hexadecimal.
+  **Ejemplo de uso:**
 
-    Ejemplo de uso:
+  ```php
+  $signature = $this->get_signature();
+  ```
 
-    ```php
-    $signature = $this->get_signature();
-    ```
+* **`protected function get_version(): string`**
+  Retorna la versión del archivo en formato hexadecimal, a partir de la propiedad `$version`.
 
-- **`protected function get_version(): string`:** Devuelve la versión del archivo en formato hexadecimal. Convierte los bytes binarios de la propiedad `$version` a una representación legible como cadena hexadecimal.
+  **Ejemplo de uso:**
 
-    Ejemplo de uso:
+  ```php
+  $version = $this->get_version();
+  ```
 
-    ```php
-    $version = $this->get_version();
-    ```
+* **`protected function read_filename(string $filename, int $from = 1, int $to = 1): string`**
+  Lee un rango de bytes dentro de un archivo binario, desde el índice `$from` hasta `$to`, ambos inclusive.
 
-- **`read_filename`**: Lee un rango de bytes de un archivo binario.
+  Lanza una excepción `StorageException` si el archivo no existe, no es legible o si el rango es inválido.
 
-    Este método permite leer una porción de un archivo binario, esepecificando los índices de inicio y fin del rango a leer. Si el rango es inválido o excede el tamaño del archivo se lanza la exceptión `StorageException`.
+  **Ejemplo de uso:**
 
-    **Sintaxis:**
+  ```php
+  $header = $this->read_filename("archivo.dlstorage", 1, 9);
+  ```
 
-    ```php
-    protected function read_filename(string $filename, int $from = 1, int $to = 1): string
-    ```
+* **`protected function validate_filename(string $filename): void`**
+  Valida que el archivo exista, no sea un directorio y sea legible. Lanza una `StorageException` en caso contrario.
 
-    **Ejemplo de uso**
+  **Ejemplo de uso:**
 
-    Leemos los primeros 9 bytes del archivo binario `.dlstorage`:
-    ```php
-    /** @var string $content */
-    $content = $this->get_filename($filename, 1, 9);
-    ```
+  ```php
+  $file_path = $this->get_file_path("clave.dlstorage");
+  $this->validate_filename($file_path);
+  ```
 
-- **`validate_filename`:** Valida si el archivo existe y no es un directorio. También valida si es legible.
-
-    **Sintaxis:**
-
-    ```php
-    protected function validate_filename(strin $filename): void;
-    ```
-
-    **Ejemplo de uso:**
-    
-    ```php
-    $file = $this->get_file_path($filename);
-    $this->validate_filename($file);
-    ```
+---
 
 ## Métodos públicos
 
-- **`get_document_root`:** Devuelve la ruta absoluta del directorio raíz de la aplicación. Esto es útil para establecer rutas base dentro de la aplicación evitando problemas de rutas relativas al trabajar con diferentes entornos de desarrollo.
+Los métodos públicos de `DataStorage` permiten la interacción controlada con el entorno de almacenamiento.
 
-    **Sintaxis:**
+* **`public function get_document_root(): string`**
+  Devuelve la ruta absoluta del directorio raíz del proyecto.
 
-    ```php
-    public function get_document_root(): string;
-    ```
+  Es útil para calcular rutas relativas y mantener coherencia al operar en distintos entornos de ejecución.
 
-    **Ejemplo de uso:**
+  **Ejemplo de uso:**
 
-    ```php
-    $root = $this->get_document_root(); // /var/www/html/my-app
-    ```
+  ```php
+  $root = $this->get_document_root(); // /var/www/html/mi-aplicacion
+  ```
 
-- **`validate_saved_data`:** Valida si se trata de un archivo estructura binaria válida
+* **`public function validate_saved_data(string $file): bool`**
+  Verifica si un archivo dado cumple con la estructura binaria esperada del formato `.dlstorage`.
 
-    **Sintaxis:**
+  Devuelve `true` si el archivo es válido; de lo contrario, `false`.
 
-    ```php
-    public function validate_saved_data(string $file): bool;
-    ```
+  **Ejemplo de uso:**
 
-    **Ejemplo de uso:**
+  ```php
+  if ($this->validate_saved_data("config.dlstorage")) {
+      echo "Archivo válido";
+  }
+  ```
 
-    ```php
-    $is_valid = $this->validate_saved_data('file.dlstorage');
-    ```
+* **`public function get_file_path(string $filename, bool $create_dir = false): string`**
+  Devuelve la ruta absoluta del archivo indicado, basado en la estructura de almacenamiento.
 
-- **`get_file_path`**: Devuelve la ruta absoluta completa donde se almacenará un archivo dentro delsistema de almacenamiento gestionado por la clase. Puede opcionalmente crear el directorio contenedor si no existe.
+  Si el directorio padre no existe y `$create_dir` es `true`, se intentará crearlo. Si existe un archivo en el lugar del directorio requerido, se lanza una `StorageException`.
 
-    Si se establece `$create_dir` a `true`, la función asegura que el directorio padre del archivo exista, creándolo si es necesario.
+  * **Parámetros:**
 
-    En el caso de que exista un archivo con el mismo nombre que el directorio se lanzará la excepción `StorageException`.
+    * `string $filename`: Ruta relativa del archivo (puede incluir subdirectorios).
+    * `bool $create_dir`: Indica si debe crearse el directorio si no existe. Por defecto es `false`.
 
-    - **Parámetros:**
+  **Ejemplo de uso:**
 
-        - `string $filename`: Nombre relativo del archivo (puede contener subdirectorio).
-        - `bool $create_dir`: Si se debe crear el directorio contenedor si no existe. Por defecto es `false`.
-
-    **Sintaxis:**
-
-    ```php
-    public functin get_file_path(string $filename, bool $create_dir = false): string;
-    ```
-
-    **Ejemplo de uso:**
-
-    ```php
-    $ruta = $storage->get_file_path("documentos/ejemplo.txt", true);
-    // Resultado: /ruta/absoluta/al/proyecto/storage/documentos/ejemplo.txt
-    ```
+  ```php
+  $path = $this->get_file_path("datos/credenciales.dlstorage", true);
+  ```

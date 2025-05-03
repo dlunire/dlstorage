@@ -1,232 +1,186 @@
-<?php
+# `SaveData`
 
-declare(strict_types=1);
+---
 
-namespace DLStorage\Storage;
+## Introducción
 
-use DLStorage\Errors\StorageException;
+La clase `SaveData` extiende `DataStorage` y proporciona una solución lista para usar en producción para guardar y recuperar datos binarios en archivos con extensión `.dlstorage`. Forma parte del paquete `DLStorage\Storage` y está diseñada para escenarios donde se requiere persistencia confiable sin depender de bases de datos, con énfasis en la protección de datos sensibles, como tokens o credenciales.
 
-/**
- * Permite guardar y recuperar datos binarios utilizando el sistema de almacenamiento gestionado,
- * sin necesidad de una implementación personalizada.
- *
- * Internamente aplica validaciones de integridad, control de versión, firma de datos
- * y manejo de directorios. Ideal para escenarios donde se necesita una solución lista
- * para uso directo en producción.
- *
- * Compatible con el sistema de transformación de bytes y validación automática del archivo.
- * Soporta escritura protegida, lectura estructurada y verificación de la huella binaria.
- *
- * @version v0.1.0
- * @package DLStorage\Storage
- * @license MIT
- * @author David E Luna M
- * @copyright 2025 David E Luna
- *
- * @see DataStorage Define los métodos y estructuras comunes de bajo nivel.
- * @see StorageException Maneja los errores específicos del almacenamiento binario.
- *
- * @example Guardar datos binarios
- * ```php
- * use DLStorage\Storage\SaveData;
- *
- * $storage = new SaveData();
- * $storage->save_binary_data("respaldo/config.bin", $contenido);
- * ```
- *
- * @example Leer datos previamente guardados
- * ```php
- * $contenido = $storage->read_filename("respaldo/config.bin");
- * ```
- *
- * @note Recomendado para entornos donde no se desea utilizar bases de datos,
- * pero se requiere persistencia confiable con control de integridad.
- */
-final class SaveData extends DataStorage {
+`SaveData` implementa validaciones de integridad, control de versión, firmas de datos y manejo automático de directorios. Soporta escritura protegida, lectura estructurada y verificación de la huella binaria, siendo ideal para entornos que necesitan un sistema de almacenamiento robusto y seguro.
 
+---
 
-    /**
-     * Guarda la información transformada en un archivo binario con encabezado estructurado.
-     *
-     * Este método:
-     * 1. Codifica los datos crudos y los convierte en una cadena hexadecimal segura.
-     * 2. Calcula y concatena la firma, tamaños de sección y versión.
-     * 3. Convierte todo el contenido hexadecimal resultante a binario.
-     * 4. Escribe el archivo con la extensión `.dlstorage`.
-     * 5. Verifica que el archivo se haya creado correctamente.
-     *
-     * @param string      $filename Nombre del archivo (sin extensión) donde se guardará la información.
-     * @param string      $data     Datos crudos que serán transformados byte por byte.
-     * @param string|null $entropy  Su uso se recmienda. Llave de entropía opcional para modificar el patrón de transformación.
-     * @return void
-     *
-     * @throws StorageException Si ocurre un error al crear el archivo o faltan permisos de escritura.
-     *
-     * @see encode()         Transforma los datos de entrada en una representación segura.
-     */
-    public function save_data(string $filename, string $data, ?string $entropy = NULL): void {
-        /** @var string $encode */
-        $encode = $this->encode($data, $entropy);
+## Propiedades
 
-        /** @var string $file */
-        $file = $this->get_file_path($filename, true) . ".dlstorage";
+La clase `SaveData` no define nuevas propiedades, sino que hereda las siguientes de `DataStorage`:
 
-        /** @var string $signature */
-        $signature = $this->get_signature();
+* **`private string $version = "v0.1.0"`**:
+Almacena la versión actual del formato de archivo binario (`v0.1.0`). Se usa en la cabecera del archivo para garantizar compatibilidad. Su representación hexadecimal es `76 30 2e 31 2e 30`.
 
-        /** @var string $version */
-        $version = $this->get_version();
+* **`private string $signature = "DLStorage"`**:
+Firma de la cabecera del archivo. Identifica el formato del archivo como válido para el sistema. Su representación hexadecimal es `44 4c 53 74 6f 72 61 67 65`.
 
-        /** @var string $header_size */
-        $header_size = $this->get_section_size($version);
+---
 
-        /** @var string $payload_size */
-        $payload_size = $this->get_section_size($encode);
+## Métodos Protegidos
 
-        $this->normalize_hex_payload($payload_size, $encode);
+`SaveData` es una clase `final` y no define nuevos métodos protegidos, pero hereda los siguientes de `DataStorage`:
 
-        /** @var string $new_data */
-        $new_data = $signature . $header_size . $version . $payload_size . $encode;
+* **`protected function get_signature(): string`**
+**Descripción**: Devuelve la firma del archivo en formato hexadecimal.
+**Ejemplo Interno**:
 
-        file_put_contents($file, hex2bin($new_data));
+```php
+$signature = $this->get_signature(); // Devuelve "444c53746f72616765"
+```
 
-        if (!file_exists($file)) {
-            throw new StorageException("Error al crear el archivo. Asegúrese de establecer los permisos de escritura", 500);
-        }
-    }
+* **`protected function get_version(): string`**
+**Descripción**: Devuelve la versión del archivo en formato hexadecimal.
+**Ejemplo Interno**:
 
-    /**
-     * Lee un archivo binario .dlstorage y recupera su contenido original por medio de una llave de entropía.
-     * 
-     * @internal Este método debe ser invocado únicamente por clases hijas o el framework principal.
-     *
-     * @param string $filename Nombre del archivo sin extensión (.dlstorage será añadido automáticamente).
-     * @param string|null $entropy Llave de entropía usada para revertir la transformación de bytes.
-     *
-     * @throws StorageException Si el archivo no existe o el contenido es inválido.
-     * @return string Retorna el contenido original recuperado tras aplicar la decodificación.
-     *
-     * @example Example
-     * ```php
-     * $contenido = $this->read_file_storage("reporte-secreto", "clave🔐");
-     * echo $contenido;
-     * ```
-     */
-    public function read_storage_data(string $filename, ?string $entropy = NULL): string {
+```php
+$version = $this->get_version(); // Devuelve "76302e312e30"
+```
 
-        $filename = "{$filename}.dlstorage";
+* **`protected function read_filename(string $filename, int $from = 1, int $to = 1): string`**
+**Descripción**: Lee un rango de bytes de un archivo binario. Lanza una `StorageException` si el rango es inválido o excede el tamaño del archivo.
+**Ejemplo Interno**:
 
-        /** @var string $file */
-        $file = $this->get_file_path($filename);
+```php
+$content = $this->read_filename($filename, 1, 9); // Lee los primeros 9 bytes
+```
 
-        /** @var string $filename_only */
-        $filename_only = basename($filename);
+---
 
-        if (!file_exists($file)) {
-            throw new StorageException("El archivo «{$filename_only}» no existe en la ruta indicada.", 404);
-        }
+## Métodos Públicos
 
-        /** @var string $signature */
-        $signature = bin2hex($this->read_filename($file, 1, 9));
+Los métodos públicos de la clase `SaveData` constituyen la interfaz principal para guardar y recuperar datos binarios. Estos métodos están diseñados para ser utilizados directamente por desarrolladores, ofreciendo una solución sencilla y segura para la persistencia de datos con validaciones automáticas y manejo de errores.
 
-        if ($signature != $this->get_signature()) {
-            throw new StorageException("El archivo «{$filename_only}» no es un archivo DLStorage.", 500);
-        }
+* **`public function save_data(string $filename, string $data, ?string $entropy = NULL): void`**
+**Descripción**: Guarda datos transformados en un archivo binario con extensión `.dlstorage`. Codifica los datos, genera una cabecera con firma, versión y tamaños, y escribe el archivo, verificando su creación.
+**Parámetros**:
 
-        /** @var int $header_size */
-        $header_size = hexdec(bin2hex($this->read_filename($file, 10, 13)));
+* `$filename`: Nombre del archivo (sin extensión).
+* `$data`: Datos crudos a transformar y guardar.
+* `$entropy`: Llave de entropía opcional para modificar la transformación (recomendada para mayor seguridad).
 
-        $from = 14 + $header_size;
-        $to = $from + 3;
+**Ejemplo**:
 
-        $payload_size = hexdec(bin2hex($this->read_filename($file, $from, $to)));
-
-        /** @var string $content */
-        $content = bin2hex($this->read_filename($file, $to + 1, $to + $payload_size));
-        $content = $this->delete_padding($content);
-
-        return $this->get_content($content, $entropy);
-    }
-
-    /**
-     * Normaliza el relleno de ceros en una cadena hexadecimal.
-     *
-     * Este método reemplaza cualquier cantidad de ceros iniciales en una cadena hexadecimal por un único `'0'`,
-     * cuando estos ceros fueron agregados como parte del relleno para asegurar una longitud par.
-     *
-     * ⚠️ Advertencia: Este método no valida si los ceros fueron parte del contenido original o añadidos como relleno.
-     * Debe usarse solo en contextos donde se controle el proceso de normalización y se conozca su origen.
-     *
-     * @version v0.0.1
-     * @package DLStorage
-     * @license MIT
-     * @author David E Luna M
-     * @copyright 2025 David E Luna
-     *
-     * @see encode() Método que puede generar longitud impar en hexadecimal.
-     * @see normalize_hex_payload() Método que antepone ceros si la longitud es impar.
-     *
-     * @param string $content Cadena hexadecimal posiblemente con ceros iniciales.
-     * @return string Cadena con un único '0' al inicio si existían múltiples ceros.
-     */
-    private function delete_padding(string $content): string {
-        return preg_replace('/^0+/', '0', $content);
-    }
-
-
-    /**
-     * Normaliza el contenido hexadecimal codificado para asegurar compatibilidad binaria.
-     *
-     * Este método será responsable de verificar y aplicar las condiciones necesarias para asegurar
-     * que la cadena hexadecimal generada por el proceso de codificación tenga una longitud par.
-     * Dicha normalización es crucial para evitar errores durante la conversión a binario, ya que
-     * `hex2bin()` requiere una longitud par para procesar correctamente los datos.
-     *
-     * Actualmente este método está en desarrollo y retorna únicamente el tamaño recibido sin
-     * realizar ninguna modificación. Se espera que modifique directamente las variables `$size`
-     * y `$content` por referencia en versiones posteriores.
-     *
-     *
-     * @param string &$size   Referencia al tamaño hexadecimal del payload (en longitud de cadena).
-     * @param string &$content Referencia al contenido hexadecimal codificado a normalizar.
-     *
-     * @return void
-     *
-     * @see delete_padding() Método complementario para revertir la normalización.
-     * @see encode() Método responsable de producir la salida hexadecimal original.
-     * 
-     * @todo Implementar la lógica de normalización de longitud par.
-     */
-    private function normalize_hex_payload(string &$size, string &$content): void {
-        /** @var int $payload_int */
-        $payload_int = hexdec($size);
-
-        /** @var bool $is_residue */
-        $is_residue = strlen($content) % 2 != 0;
-
-        if ($is_residue) {
-            $content = "0{$content}";
-            $size = str_pad(dechex($payload_int + 1), 8, '0', STR_PAD_LEFT);
-        }
-    }
-
-    /**
-     * Calcula la longitud de la sección a partir del contenido en hexadecimal
-     * y devuelve su representación como una cadena de 8 caracteres hexadecimales
-     * (32 bits, big-endian), rellenada con ceros a la izquierda.
-     *
-     * @param string $hex_content Contenido en formato hexadecimal cuyo tamaño
-     *                            en bytes se determinará al convertirlo a binario.
-     * @return string Cadena de 8 caracteres hexadecimales que representa el
-     *                tamaño en bytes del contenido original.
-     *
-     * @since v0.1.0
-     */
-    private function get_section_size(string $hex_content): string {
-
-        /** @var int $length_int */
-        $length_int = intdiv(strlen($hex_content), 2);
-
-        return str_pad(dechex($length_int), 8, '0', STR_PAD_LEFT);
-    }
+```php
+$storage = new SaveData();
+try {
+$storage->save_data("respaldo/config", "Datos sensibles", "clave🔐");
+echo "Archivo guardado correctamente.";
+} catch (StorageException $e) {
+echo "Error: " . $e->getMessage();
 }
+```
+
+**Notas**: Lanza una `StorageException` si no se puede crear el archivo o faltan permisos de escritura.
+
+* **`public function read_storage_data(string $filename, ?string $entropy = NULL): string`**
+**Descripción**: Lee un archivo `.dlstorage` y recupera su contenido original, utilizando una llave de entropía para decodificar los datos. Valida la firma y la estructura del archivo antes de procesarlo.
+**Parámetros**:
+
+* `$filename`: Nombre del archivo (sin extensión).
+* `$entropy`: Llave de entropía opcional para revertir la transformación.
+
+**Ejemplo**:
+
+```php
+try {
+$contenido = $storage->read_storage_data("respaldo/config", "clave🔐");
+echo $contenido; // Ejemplo: "Datos sensibles"
+} catch (StorageException $e) {
+echo "Error: " . $e->getMessage();
+}
+```
+
+**Notas**: Lanza una `StorageException` si el archivo no existe, no es un archivo DLStorage válido, o el contenido es inválido.
+
+* **`public function get_document_root(): string`** (Heredado de `DataStorage`)
+**Descripción**: Devuelve la ruta absoluta del directorio raíz de la aplicación.
+**Ejemplo**:
+
+```php
+$root = $storage->get_document_root(); // Ejemplo: /var/www/html/my-app
+```
+
+* **`public function validate_saved_data(string $file): bool`** (Heredado de `DataStorage`)
+**Descripción**: Valida si un archivo tiene una estructura binaria válida, comprobando la firma `DLStorage`.
+**Parámetros**:
+
+* `$file`: Nombre relativo del archivo a validar.
+**Ejemplo**:
+
+```php
+try {
+$is_valid = $storage->validate_saved_data("respaldo/config.dlstorage");
+echo $is_valid ? "Archivo válido" : "Archivo inválido";
+} catch (StorageException $e) {
+echo "Error: " . $e->getMessage();
+}
+```
+
+* **`public function get_file_path(string $filename, bool $create_dir = false): string`** (Heredado de `DataStorage`)
+**Descripción**: Devuelve la ruta absoluta para un archivo en el directorio `storage`. Si `$create_dir` es `true`, crea los directorios necesarios.
+**Parámetros**:
+
+* `$filename`: Nombre relativo del archivo.
+* `$create_dir`: Si se deben crear los directorios (por defecto `false`).
+
+**Ejemplo**:
+
+```php
+$ruta = $storage->get_file_path("respaldo/config.dlstorage", true);
+// Resultado: /ruta/absoluta/al/proyecto/storage/respaldo/config.dlstorage
+```
+
+* **`public function test(int $start = 1, int $end = 1): void`** (Heredado de `DataStorage`)
+**Descripción**: Método de prueba que lee un rango de bytes de `README.md` y lo muestra en texto plano.
+**Parámetros**:
+
+* `$start`: Offset de inicio (basado en 1).
+* `$end`: Offset final (basado en 1).
+
+**Ejemplo**:
+
+```php
+$storage->test(1, 10); // Muestra los primeros 10 bytes de README.md
+```
+
+---
+
+## Métodos Privados
+
+Los métodos privados de `SaveData` implementan lógica interna para normalizar datos, calcular tamaños y gestionar el formato de los archivos binarios. Se documentan aquí para desarrolladores que mantengan el sistema o necesiten entender su funcionamiento interno, aunque no son accesibles fuera de la clase.
+
+* **`private function delete_padding(string $content): string`**
+**Descripción**: Normaliza una cadena hexadecimal reemplazando múltiples ceros iniciales por un solo `0`, eliminando el relleno añadido durante la codificación.
+**Parámetros**:
+
+* `$content`: Cadena hexadecimal con posibles ceros iniciales.
+
+**Ejemplo Interno**:
+
+```php
+$normalized = $this->delete_padding("0000abc"); // Devuelve "0abc"
+```
+
+**Notas**: Usar con precaución, ya que no distingue entre ceros de relleno y ceros originales.
+
+* **`private function normalize_hex_payload(string &$size, string &$content): void`**
+**Descripción**: Asegura que una cadena hexadecimal tenga una longitud par, añadiendo un cero inicial si es necesario, para compatibilidad con `hex2bin()`. Actualiza el tamaño y contenido por referencia.
+**Parámetros**:
+
+* `$size`: Referencia al tamaño hexadecimal del payload.
+* `$content`: Referencia al contenido hexadecimal a normalizar.
+
+**Ejemplo Interno**:
+
+```php
+$size = "00000008";
+$content = "abc";
+$this->normalize_hex_payload($size, $content);
+// Resultado: $content...
+```
