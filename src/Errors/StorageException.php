@@ -3,6 +3,7 @@
 namespace DLStorage\Errors;
 
 use RuntimeException;
+use Throwable;
 
 /**
  * Excepción lanzada cuando un valor proporcionado no cumple con las condiciones
@@ -19,4 +20,14 @@ use RuntimeException;
  * @version v0.1.0
  */
 final class StorageException extends RuntimeException {
+    /**
+     * Constructor personalizado para StorageException.
+     *
+     * @param string         $message  Mensaje descriptivo del error.
+     * @param int            $code     Código de error (por defecto 500).
+     * @param Throwable|null $previous Excepción anterior, si la hay.
+     */
+    public function __construct(string $message, int $code = 500, ?Throwable $previous = null) {
+        parent::__construct($message, $code, $previous);
+    }
 }

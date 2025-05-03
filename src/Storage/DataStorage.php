@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DLStorage\Storage;
 
 use DLStorage\Errors\StorageException;
+use Exception;
 
 /**
  * Define una base para almacenar datos en archivos binarios u otros medios persistentes,
@@ -52,7 +53,7 @@ abstract class DataStorage extends Data {
      * @var string $version
      * @since v0.1.0 Introducción del campo de versión en el archivo de almacenamiento.
      */
-    protected string $version = "76302e312e30";
+    private string $version = "v0.1.0";
 
     /**
      * Firma de la cabecera del archivo.
@@ -82,7 +83,32 @@ abstract class DataStorage extends Data {
      * @var string $signature
      * @since v0.1.0 Introducción de la firma de cabecera para validación de formato de archivo.
      */
-    protected string $signature = "444c53746f72616765";
+    private string $signature = "DLStorage";
+
+    /**
+     * Devuelve la firma del archivo en formato hexadecimal.
+     *
+     * Convierte los bytes binarios de la propiedad `$signature`
+     * a una representación legible como cadena hexadecimal.
+     *
+     * @return string Firma binaria representada en hexadecimal.
+     */
+    protected function get_signature(): string {
+        return bin2hex($this->signature);
+    }
+
+    /**
+     * Devuelve la versión del archivo en formato hexadecimal.
+     *
+     * Convierte los bytes binarios de la propiedad `$version`
+     * a una representación legible como cadena hexadecimal.
+     *
+     * @return string Versión binaria representada en hexadecimal.
+     */
+    protected function get_version(): string {
+        return bin2hex($this->version);
+    }
+
 
     /**
      * Obtiene el directorio raíz del sistema.
@@ -126,26 +152,6 @@ abstract class DataStorage extends Data {
     }
 
     /**
-     * Devuelve la firma del archivo en formato binario
-     *
-     * @return string
-     */
-    private function get_signature(string $filename): string {
-
-        $this->validate_filename($filename);
-
-        /** @var resource $file */
-        $file = fopen($filename, 'rb');
-
-        /** @var string $bytes */
-        $bytes = fread($file, 18);
-
-        fclose($file);
-
-        return bin2hex($this->signature);
-    }
-
-    /**
      * Valida si se trata de un archivo estructura binaria válida
      *
      * @param string $file Archivo a ser analizado
@@ -156,10 +162,10 @@ abstract class DataStorage extends Data {
         $filepath = $this->get_file_path($file);
 
         /** @var string $signature */
-        $signature = $this->read_filename($filepath, 1, 9);
+        $signature = bin2hex($this->read_filename($filepath, 1, 9));
 
         if ($signature != $this->signature) {
-            throw new StorageException("El archivo no es un formato  DLStorage válido", 500);
+            throw new StorageException("El archivo no es un formato  DLStorage válido", 415);
         }
 
         return false;
@@ -179,14 +185,23 @@ abstract class DataStorage extends Data {
     }
 
     /**
-     * Lee un archivo en función de un rango de bytes establecido
+     * Lee un rango de bytes de un archivo binario.
      *
-     * @param string $filename Archivo a ser leído.
-     * @param integer $from Offset inicial del archivo.
-     * @param integer $to Offset final del archivo
-     * @return string
+     * Este método permite leer una porción de un archivo binario, especificando los índices de inicio y fin del rango a leer.
+     * Si el rango es inválido o excede el tamaño del archivo, se lanzan excepciones apropiadas.
+     * El archivo se abre en modo binario, asegurando que la lectura no se vea afectada por la codificación de caracteres.
+     *
+     * @param string $filename Ruta del archivo a leer.
+     * @param int $from Offset de inicio de la lectura (1 basado).
+     * @param int $to Offset final de la lectura (1 basado).
+     * @return string Los bytes leídos del archivo.
+     * 
+     * @throws StorageException Si el rango es inválido, el archivo no se puede acceder, o no se puede leer correctamente.
+     * @throws StorageException Si el rango de lectura excede el tamaño del archivo.
+     * @throws StorageException Si hay un error de entrada/salida al acceder a los metadatos del archivo.
+     * @throws StorageException Si no se puede posicionar el puntero al byte indicado en el archivo.
      */
-    private function read_filename(string $filename, int $from = 1, int $to = 1): string {
+    protected function read_filename(string $filename, int $from = 1, int $to = 1): string {
 
         /** @var string $filename_only */
         $filename_only = basename($filename);
