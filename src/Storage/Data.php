@@ -3,6 +3,7 @@
 namespace DLStorage\Storage;
 
 use DLStorage\Errors\StorageException;
+use DLStorage\Traits\BinaryLengthTrait;
 use DLStorage\Traits\ForTrait;
 use ValueError;
 
@@ -38,6 +39,7 @@ use ValueError;
 abstract class Data {
 
     use ForTrait;
+    use BinaryLengthTrait;
 
     private int $last_offset = 0;
 
@@ -431,10 +433,7 @@ abstract class Data {
      */
     private function set_entropy_value(int &$sum, ?string $entropy = null): void {
         if (!is_string($entropy)) return;
-
-        $this->foreach($entropy, function (string $char, int $index) use (&$sum) {
-            $sum += $this->get_char_code($char, $index + 1);
-        });
+        $sum = $this->get_binary_length($entropy);
     }
 
     /**
