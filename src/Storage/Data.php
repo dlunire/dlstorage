@@ -297,7 +297,7 @@ abstract class Data {
 
         $test = [];
 
-        $this->foreach_string($input, function (string $byte, int $index) use ($sum, &$buffer) {
+        $this->foreach_string($input, function (string $byte, int $index) use ($sum, &$buffer, &$test) {
 
             /** @var int $value */
             $value = $sum  + $this->get_circular_value($index) + $this->get_circular_value($index);
