@@ -70,7 +70,7 @@ abstract class Data {
         $length = mb_strlen($char, $encoding);
 
         if ($length != 1) {
-            throw new ValueError("Solo se permite un carácter a la vez", 500);
+            // throw new ValueError("Solo se permite un carácter a la vez", 500);
         }
 
         /** @var string $hex */
@@ -310,8 +310,6 @@ abstract class Data {
             $this->compact_zero($current_data);
 
             $buffer[] = $current_data;
-
-            $test[] = $byte;
         });
 
         print_r($test);
