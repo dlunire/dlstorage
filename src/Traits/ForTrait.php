@@ -76,12 +76,11 @@ trait ForTrait {
      */
     public function foreach_string(string $input, callable $callback): void {
 
-        /** @var string[] $bytes */
+        /** @var int[] $bytes */
         $bytes = array_values(unpack("C*", $input));
 
-        print_r($bytes);
         foreach ($bytes as $key => $byte) {
-            $callback($byte, (int) $key, $bytes);
+            $callback(dechex($byte), (int) $key, $bytes);
         }
     }
 }

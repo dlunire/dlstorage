@@ -295,7 +295,10 @@ abstract class Data {
         /** @var string[] $buffer */
         $buffer = [];
 
+        $test = [];
+
         $this->foreach_string($input, function (string $byte, int $index) use ($sum, &$buffer) {
+
             /** @var int $value */
             $value = $sum  + $this->get_circular_value($index) + $this->get_circular_value($index);
 
@@ -307,8 +310,11 @@ abstract class Data {
             $this->compact_zero($current_data);
 
             $buffer[] = $current_data;
+
+            $test[] = $byte;
         });
 
+        print_r($test);
         $string_data = implode("", $buffer);
     }
 
