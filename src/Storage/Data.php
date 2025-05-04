@@ -434,8 +434,11 @@ abstract class Data {
     private function set_entropy_value(int &$sum, ?string $entropy = null): void {
         if (!is_string($entropy)) return;
 
-        $this->foreach($entropy, function (string $char) use (&$sum, $entropy) {
-            $sum += hexdec(bin2hex($char)) + strlen($entropy);
+        /** @var int $count */
+        $count = 0;
+
+        $this->foreach($entropy, function (string $char) use (&$sum, $count) {
+            $sum += hexdec(bin2hex($char)) + (++$count);
         });
     }
 

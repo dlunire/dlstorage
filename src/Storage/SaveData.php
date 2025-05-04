@@ -177,26 +177,26 @@ final class SaveData extends DataStorage {
     /**
      * Normaliza el contenido hexadecimal codificado para asegurar compatibilidad binaria.
      *
-     * Este método será responsable de verificar y aplicar las condiciones necesarias para asegurar
-     * que la cadena hexadecimal generada por el proceso de codificación tenga una longitud par.
-     * Dicha normalización es crucial para evitar errores durante la conversión a binario, ya que
-     * `hex2bin()` requiere una longitud par para procesar correctamente los datos.
+     * Este método verifica si la longitud del contenido hexadecimal es impar. En tal caso,
+     * antepone un "0" al contenido para garantizar que la longitud final sea par, condición
+     * requerida por funciones como `hex2bin()` para evitar errores durante la conversión a binario.
      *
-     * Actualmente este método está en desarrollo y retorna únicamente el tamaño recibido sin
-     * realizar ninguna modificación. Se espera que modifique directamente las variables `$size`
-     * y `$content` por referencia en versiones posteriores.
+     * Dado que esta operación modifica el contenido del payload, también actualiza el valor
+     * de `$size`, el cual representa la longitud del payload en formato hexadecimal, para que
+     * refleje con precisión la nueva longitud real tras la normalización.
      *
+     * Esta operación es reversible mediante el método `delete_padding()`, que elimina el
+     * relleno agregado y restaura el tamaño original.
      *
-     * @param string &$size   Referencia al tamaño hexadecimal del payload (en longitud de cadena).
+     * @param string &$size    Referencia al tamaño hexadecimal del payload (en longitud de cadena).
      * @param string &$content Referencia al contenido hexadecimal codificado a normalizar.
      *
      * @return void
      *
      * @see delete_padding() Método complementario para revertir la normalización.
      * @see encode() Método responsable de producir la salida hexadecimal original.
-     * 
-     * @todo Implementar la lógica de normalización de longitud par.
      */
+
     private function normalize_hex_payload(string &$size, string &$content): void {
         /** @var int $payload_int */
         $payload_int = hexdec($size);
