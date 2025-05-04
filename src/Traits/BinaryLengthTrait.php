@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace DLStorage\Traits;
 
+use DLStorage\Errors\StorageException;
+
 /**
  * Copyright (c) 2025 David E Luna M
  * Licensed under the MIT License. See LICENSE file for details.
@@ -40,8 +42,16 @@ trait BinaryLengthTrait {
      * ```
      *
      * @note No utilizar este método para contenido en texto legible si se espera una longitud de caracteres.
+     * 
+     * @throws StorageException
      */
     public function get_binary_length(string $input): int {
-        return intdiv(strlen(bin2hex($input)), 2);
+        $value = intdiv(strlen(bin2hex($input)), 2);
+
+        if ($value > (2 ** 32)) {
+            throw new StorageException("La longitud de la entropía excede el límite permitido", 500);
+        }
+
+        return $value;
     }
 }
