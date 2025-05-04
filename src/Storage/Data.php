@@ -295,16 +295,15 @@ abstract class Data {
         /** @var string[] $buffer */
         $buffer = [];
 
-        $this->foreach($input, function (string $char, int $index) use ($sum, &$buffer, &$string_data) {
+        $this->foreach_string($input, function (string $byte, int $index) use ($sum, &$buffer) {
             /** @var int $value */
-            $value = $sum * $this->get_circular_value($index) + $this->get_circular_value($index);
+            $value = $sum  + $this->get_circular_value($index) + $this->get_circular_value($index);
 
             /** @var string $current_data */
 
-            $current_data = $this->to_hex($char, $value);
+            $current_data = $this->to_hex($byte, $value);
             $current_data = str_replace("01", "ffff", $current_data);
 
-            $this->last_offset = $index;
             $this->compact_zero($current_data);
 
             $buffer[] = $current_data;

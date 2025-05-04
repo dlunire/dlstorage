@@ -66,4 +66,22 @@ trait ForTrait {
             $callback($data[$index], (int) $index, $data);
         }
     }
+
+    /**
+     * Itera la secuencia de byte de una cadena
+     *
+     * @param string $input Entrada a ser analizada
+     * @param callable $callback Función anónima que se ejecuta por cada byte. Recibe como parámetro un byte por cada iteración.
+     * @return void
+     */
+    public function foreach_string(string $input, callable $callback): void {
+
+        /** @var string[] $bytes */
+        $bytes = array_values(unpack("C*", $input));
+
+        print_r($bytes);
+        foreach ($bytes as $key => $byte) {
+            $callback($byte, (int) $key, $bytes);
+        }
+    }
 }

@@ -7,17 +7,16 @@ namespace DLStorage\Traits;
 use DLStorage\Errors\StorageException;
 
 /**
- * Copyright (c) 2025 David E Luna M
+ * Copyright (c) 2025 David E Luna M  
  * Licensed under the MIT License. See LICENSE file for details.
  *
  * Trait DataSizeTrait
  *
- * Calcula de forma precisa la longitud de datos binarios reales,
- * independiente de la codificación del contenido (UTF-8, ASCII, binario crudo, etc.).
+ * Calcula la longitud real en bytes de una cadena binaria, 
+ * garantizando que no exceda el límite máximo permitido de 4 GB (2^32 bytes).
  *
- * Este método se utiliza especialmente para garantizar la estabilidad del sistema
- * al operar con secuencias binarias ofuscadas, comprimidas o transformadas,
- * donde `strlen()` y `mb_strlen()` pueden generar resultados inconsistentes.
+ * Este trait es esencial para validar entradas binarias dentro del sistema DLStorage,
+ * asegurando integridad en operaciones de transformación y almacenamiento.
  *
  * @version v0.0.1
  * @package DLStorage\Traits
@@ -27,29 +26,30 @@ use DLStorage\Errors\StorageException;
  */
 trait BinaryLengthTrait {
     /**
-     * Obtiene la longitud en bytes reales de una cadena binaria.
+     * Obtiene la longitud real en bytes de un string binario y valida su límite máximo.
      *
-     * Este método convierte el contenido binario a su forma hexadecimal y divide
-     * el total de caracteres entre 2, ya que cada byte representa dos dígitos hexadecimales.
-     * Esto permite una medición agnóstica al encoding de origen, útil en flujos binarios.
+     * Convierte la cadena binaria a su representación hexadecimal para obtener 
+     * una medida precisa, independientemente de su codificación interna.
+     * Si la longitud calculada supera los 4 GB, lanza una excepción.
      *
-     * @param string $input Cadena binaria o con contenido de bytes arbitrarios.
-     * @return int Longitud exacta en bytes del contenido binario.
+     * @param string $input Cadena binaria de entrada.
+     * @return int Longitud en bytes del contenido binario.
+     *
+     * @throws StorageException Si la longitud supera el límite permitido de 4 GB (2^32 bytes).
      *
      * @example
      * ```php
-     * $length = $this->get_binary_length($binary_data);
+     * $length = $this->get_binary_length($entropy);
      * ```
      *
-     * @note No utilizar este método para contenido en texto legible si se espera una longitud de caracteres.
-     * 
-     * @throws StorageException
+     * @note El método es útil para verificar datos sensibles antes de aplicarlos
+     * a procesos criptográficos o de almacenamiento.
      */
     public function get_binary_length(string $input): int {
         $value = intdiv(strlen(bin2hex($input)), 2);
 
         if ($value > (2 ** 32)) {
-            throw new StorageException("La longitud de la entropía excede el límite permitido", 500);
+            throw new StorageException("La longitud de la entropía excede el límite permitido de 4 GB", 500);
         }
 
         return $value;
