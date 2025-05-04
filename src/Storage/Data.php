@@ -433,7 +433,7 @@ abstract class Data {
      */
     private function set_entropy_value(int &$sum, ?string $entropy = null): void {
         if (!is_string($entropy)) return;
-        $sum = $this->get_binary_length($entropy);
+        // $sum = $this->get_binary_length($entropy);
     }
 
     /**
