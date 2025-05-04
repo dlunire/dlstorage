@@ -15,3 +15,6 @@ node_modules
 # Almacenamiento
 storage
 *.dlstorage
+
+# Otros
+Herramientas
