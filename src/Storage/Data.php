@@ -404,43 +404,87 @@ abstract class Data {
     }
 
     /**
-     * Establece el valor de la entropía basado en una cadena dada.
+     * Calcula y acumula un valor de entropía basado en los caracteres de una cadena dada.
      *
-     * Este método calcula un valor de entropía acumulado a partir de una cadena de caracteres. Para cada 
-     * carácter en la cadena de entropía, se obtiene su valor hexadecimal y se suma a un valor acumulado 
-     * (`$sum`). Además, se añade la longitud total de la cadena de entropía al valor acumulado. Este cálculo 
-     * permite ajustar el valor de entropía de forma incremental a medida que se procesan los caracteres de la 
-     * cadena.
+     * Recorre cada carácter de la cadena de entropía proporcionada, convirtiéndolo
+     * a su representación hexadecimal (mediante `bin2hex()`), luego a decimal (con `hexdec()`),
+     * y lo suma a un valor acumulado `$sum`, junto con un incremento progresivo según la posición.
      *
-     * Si no se proporciona una cadena de entropía válida, el valor de `$sum` permanecerá sin cambios.
+     * La suma resultante refleja una entropía combinada entre el valor binario de cada carácter
+     * y su posición relativa. Esto permite generar un valor final que varía incluso si los caracteres
+     * son iguales pero cambian de orden, contribuyendo así a una mayor dispersión numérica.
      *
-     * @param int $sum Valor acumulado de la entropía que se actualizará con cada carácter procesado.
-     *                 Se pasa por referencia para que se modifique directamente.
-     * @param string|null $entropy Cadena de entropía cuyos caracteres se usarán para calcular el valor 
-     *                             de la entropía acumulada. Si no se proporciona o no es válida, el 
-     *                             cálculo no se realiza.
+     * Si no se proporciona una cadena válida, el valor de `$sum` no se modifica.
+     *
+     * @param int &$sum Valor acumulado que se actualizará con la contribución de cada carácter.
+     * @param string|null $entropy Cadena base usada para calcular la entropía acumulada.
      *
      * @return void
      *
-     * @example Example
-     * ```
-     * // Establecer un valor de entropía basado en una cadena.
+     * @example Ejemplo de uso
+     * ```php
      * $sum = 0;
      * $entropy = "Una llave de entropía por acá";
      * $data->set_entropy_value($sum, $entropy);
-     * echo $sum;  // Resultado de la entropía acumulada.
+     * echo $sum; // Muestra el valor acumulado de entropía.
      * ```
      */
     private function set_entropy_value(int &$sum, ?string $entropy = null): void {
         if (!is_string($entropy)) return;
 
-        /** @var int $count */
-        $count = 0;
-
-        $this->foreach($entropy, function (string $char) use (&$sum, $count) {
-            $sum += hexdec(bin2hex($char)) + (++$count);
+        $this->foreach($entropy, function (string $char, int $index) use (&$sum) {
+            $sum += $this->get_char_code($char, $index + 1);
         });
     }
+
+    /**
+     * Obtiene el código numérico de un carácter basado en su representación binaria hexadecimal,
+     * ajustado por su posición en la cadena.
+     *
+     * Este método toma un carácter de tipo string y calcula su valor numérico acumulado. Primero,
+     * convierte el carácter a su representación binaria en formato hexadecimal mediante `bin2hex()`, 
+     * luego convierte esta representación a un valor decimal con `hexdec()`. A continuación, se ajusta 
+     * este valor sumando el índice del carácter incrementado en 1.
+     *
+     * La operación realizada en este método permite obtener un valor de entropía numérica basado en el 
+     * valor binario del carácter, mientras que también toma en cuenta la posición del carácter en la 
+     * cadena, lo que lo hace útil para cálculos de entropía acumulada.
+     *
+     * ### Fórmula aplicada:
+     * 
+     * Sea \( e_i \) un carácter en la cadena, su valor numérico ajustado será:
+     * 
+     * \[
+     * f(e_i, i) = \text{hexdec}(\text{bin2hex}(e_i)) + (i + 1)
+     * \]
+     * 
+     * Donde:
+     * - \( e_i \) es el carácter procesado.
+     * - \( i \) es el índice del carácter en la cadena.
+     * - La función \( f(e_i, i) \) representa el valor numérico ajustado del carácter, teniendo en cuenta su
+     *   valor binario y su posición en la cadena.
+     * 
+     * @param string $char Carácter de tipo string cuyo valor numérico se desea obtener.
+     * @param int $index Índice del carácter dentro de la cadena de entropía.
+     * 
+     * @return int Valor decimal que representa el código numérico ajustado del carácter basado en su
+     *         representación binaria en formato hexadecimal y su índice en la cadena.
+     * 
+     * @throws InvalidArgumentException Si el parámetro proporcionado no es una cadena de caracteres válida.
+     *
+     * @example For example
+     * ```php
+     * $char = 'A';
+     * $index = 0;
+     * $code = $data->get_char_code($char, $index);
+     * echo $code;  // Salida: 66 (65 + (0 + 1))
+     * ```
+     */
+    private function get_char_code(string $char, int $index): int {
+        return hexdec(bin2hex($char)) + $index;
+    }
+
+
 
     /**
      * Devuelve un valor circular modificado a partir del valor dado.
