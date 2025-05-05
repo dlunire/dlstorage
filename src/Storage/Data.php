@@ -43,8 +43,6 @@ abstract class Data {
 
     private int $last_offset = 0;
 
-    private int $value = 220000;
-
     /**
      * Codifica la cadena de texto a otro formato utilizando una entropía opcional.
      *
@@ -348,7 +346,7 @@ abstract class Data {
      * 
      * @return int Valor decimal que representa el código numérico ajustado del carácter basado en su
      *         representación binaria en formato hexadecimal y su índice en la cadena.
-     * 
+     *  
      * @throws InvalidArgumentException Si el parámetro proporcionado no es una cadena de caracteres válida.
      *
      * @example For example

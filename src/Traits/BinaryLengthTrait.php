@@ -26,6 +26,12 @@ use DLStorage\Errors\StorageException;
  */
 trait BinaryLengthTrait {
 
+    /** @var int $coefficient */
+    protected int $coefficient = 0;
+
+    /** @var int $entropy_value  */
+    protected int $entropy_value = 0;
+
     /**
      * Semilla base utilizada para cálculos internos relacionados con transformaciones numéricas.
      *
@@ -63,7 +69,19 @@ trait BinaryLengthTrait {
      * a procesos criptográficos o de almacenamiento.
      */
     public function get_binary_length(string $input): int {
+
+        /** @var float|int $vlaue */
         $value = intdiv(strlen(bin2hex($input)), 2);
+
+        if ($value < 10) {
+            $value = hexdec(bin2hex($input)) / $value ** 14;
+            $value = (int) $value;
+        }
+
+        /** @var string $seed */
+        $this->seed = ($value % 10 ** 6)  + 2 ** 17;
+
+        $this->coefficient = abs((31 * $value + 17) % 100 + 10);
 
         if ($value > (2 ** 32)) {
             throw new StorageException("La longitud de la entropía excede el límite permitido de 4 GB", 500);
@@ -234,6 +252,6 @@ trait BinaryLengthTrait {
      * ```
      */
     private function get_circular_value(int|float $value): int {
-        return ($value * 31 + 17) % 100 + 10;
+        return abs(($this->coefficient * $value + 17) % 100 + $this->coefficient);
     }
 }
