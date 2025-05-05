@@ -47,16 +47,34 @@ namespace DLStorage\Traits;
  */
 trait ForTrait {
     /**
-     * Itera sobre una cadena o arreglo y ejecuta un `callback` por cada carácter o elemento.
+     * Itera sobre una cadena de caracteres o un arreglo, ejecutando un callback por cada elemento.
      *
-     * Si se proporciona una cadena, la iteración se realiza carácter por carácter (como un bucle `for`).
-     * Si se proporciona un arreglo, se itera elemento por elemento.
+     * Este método proporciona una forma unificada de recorrer secuencialmente estructuras lineales
+     * (cadenas o arreglos). Para cada carácter (en cadenas) o elemento (en arreglos), se ejecuta 
+     * una función de devolución de llamada proporcionada por el usuario. La función recibe el valor 
+     * actual, su índice y la estructura completa como argumentos.
      *
-     * @param string|string[] $data     Datos a iterar. Puede ser una cadena (`string`) o un arreglo (`array`).
-     * @param callable     $callback Función anónima que se ejecuta por cada elemento. Recibe como parámetro
-     *                               el carácter o valor actual de la iteración.
+     * ### Comportamiento:
+     * - Si `$data` es una cadena, se itera carácter por carácter usando índices numéricos.
+     *   > ⚠️ Esto no es seguro para cadenas multibyte (UTF-8) con caracteres especiales. Utiliza `mb_*` si es necesario.
+     * - Si `$data` es un arreglo, se itera elemento por elemento por posición numérica.
      *
-     * @return void
+     * ### Ejemplo de uso:
+     * ```php
+     * $this->foreach(['a', 'b', 'c'], function ($value, $index, $all) {
+     *     echo "Elemento #{$index}: {$value}\n";
+     * });
+     *
+     * $this->foreach("XYZ", function ($char, $i) {
+     *     echo "Carácter {$i}: {$char}\n";
+     * });
+     * ```
+     *
+     * @param string|array $data     Datos a iterar. Puede ser una cadena (`string`) o un arreglo de cualquier tipo.
+     * @param callable     $callback Función anónima a ejecutar por cada carácter o elemento.
+     *                               Recibe tres parámetros: `mixed $value`, `int $index`, `string|array $original`.
+     *
+     * @return void No devuelve ningún valor; opera por efectos colaterales del callback.
      */
     public function foreach(string|array $data, callable $callback): void {
         /** @var int $length Longitud de la cadena o cantidad de elementos del arreglo */
@@ -67,20 +85,34 @@ trait ForTrait {
         }
     }
 
+
     /**
-     * Itera la secuencia de byte de una cadena
+     * Itera sobre cada byte de una cadena de texto en su representación binaria.
      *
-     * @param string $input Entrada a ser analizada
-     * @param callable $callback Función anónima que se ejecuta por cada byte. Recibe como parámetro un byte por cada iteración.
-     * @return void
+     * Esta función convierte la cadena de entrada en una secuencia de bytes (valores enteros entre 0 y 255)
+     * utilizando codificación binaria sin firmar. Por cada byte iterado, se invoca la función de devolución 
+     * de llamada proporcionada por el usuario, a la cual se le pasan el byte actual, su índice dentro de la 
+     * secuencia y el arreglo completo de bytes.
+     *
+     * ### Ejemplo de uso:
+     * ```php
+     * $this->foreach_string("ABC", function ($byte, $index, $bytes) {
+     *     echo "Byte en posición {$index}: {$byte}\n";
+     * });
+     * ```
+     *
+     * @param string   $input    Cadena de entrada a ser analizada como secuencia de bytes.
+     * @param callable $callback Función anónima (closure) que se ejecuta por cada byte.
+     *                           Recibe tres parámetros: `int $byte`, `int $index`, `int[] $bytes`.
+     *
+     * @return void No retorna ningún valor. Ejecuta el callback por efecto colateral.
      */
     public function foreach_string(string $input, callable $callback): void {
-
-        /** @var int[] $bytes */
+        /** @var array<int,int> $bytes */
         $bytes = array_values(unpack("C*", $input));
 
         foreach ($bytes as $key => $byte) {
-            $callback(dechex($byte), (int) $key, $bytes);
+            $callback($byte, $key, $bytes);
         }
     }
 }

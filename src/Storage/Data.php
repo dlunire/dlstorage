@@ -46,49 +46,6 @@ abstract class Data {
     private int $value = 220000;
 
     /**
-     * Convierte un carácter a su representación hexadecimal de 40 bits con la posibilidad de agregar entropía.
-     *
-     * Este método toma un carácter y lo convierte a una representación hexadecimal de 40 bits (con 10 dígitos hexadecimales).
-     * Además, permite ajustar el valor resultante mediante la adición de entropía (un valor entero).
-     * La función verifica que solo se pase un único carácter. Si no es así, lanza una excepción `ValueError`.
-     *
-     * @param string $char El carácter a convertir. Debe ser un solo carácter.
-     * @param int $entropy (opcional) Valor de entropía a agregar al valor hexadecimal. El valor predeterminado es 0.
-     * @param string $encoding (opcional) La codificación de caracteres. El valor predetermente es 'UTF-8'.
-     *
-     * @return string La representación hexadecimal de 40 bits del carácter, ajustada con la entropía.
-     *
-     * @throws ValueError Si el parámetro `$char` no contiene exactamente un solo carácter.
-     *
-     * @example
-     * $hex = $data->to_hex('A'); // Devuelve "0000000000000041"
-     * $hex_with_entropy = $data->to_hex40('A', 1); // Devuelve "0000000000000042" si se agrega una entropía de 1.
-     */
-    public function to_hex(string $char, int $entropy = 0, string $encoding = 'UTF-8'): string {
-
-        /** @var int $length */
-        $length = mb_strlen($char, $encoding);
-
-        if ($length != 1) {
-            // throw new ValueError("Solo se permite un carácter a la vez", 500);
-        }
-
-        /** @var string $hex */
-        $hex = bin2hex($char);
-
-        /** @var int|float $decimal */
-        $decimal = hexdec($hex) + $entropy + $this->value;
-
-        // Asegurarse de que la salida sea de 40 bits (10 dígitos hexadecimales)
-        return str_pad(
-            string: dechex($decimal),
-            length: 10,
-            pad_string: '0',
-            pad_type: STR_PAD_LEFT
-        );
-    }
-
-    /**
      * Codifica la cadena de texto a otro formato utilizando una entropía opcional.
      *
      * El método transforma cada carácter de la cadena de entrada en una representación hexadecimal
@@ -145,6 +102,7 @@ abstract class Data {
         $this->expand_zero($encoded);
         /** @var string[] $blocks */
         $blocks = str_split($encoded, 10);
+
         $value = $this->get_reverse_entropy($blocks, $entropy);
 
         /** @var int $length */
@@ -295,16 +253,15 @@ abstract class Data {
         /** @var string[] $buffer */
         $buffer = [];
 
-        $test = [];
+        $this->foreach_string($input, function (int $byte, int $index) use ($sum, &$buffer, &$test) {
 
-        $this->foreach_string($input, function (string $byte, int $index) use ($sum, &$buffer, &$test) {
-
-            /** @var int $value */
-            $value = $sum  + $this->get_circular_value($index) + $this->get_circular_value($index);
+            /** @var int $entropy */
+            $entropy = $this->get_entropy($index, $sum);
 
             /** @var string $current_data */
+            $current_data = $this->to_hex40($byte, $entropy);
 
-            $current_data = $this->to_hex($byte, $value);
+            // print_r($entropy . "\n");
             $current_data = str_replace("01", "ffff", $current_data);
 
             $this->compact_zero($current_data);
@@ -312,7 +269,6 @@ abstract class Data {
             $buffer[] = $current_data;
         });
 
-        print_r($test);
         $string_data = implode("", $buffer);
     }
 
@@ -354,89 +310,10 @@ abstract class Data {
         $buffer = [];
 
         foreach ($blocks as $key => $block) {
-            $buffer[] = $this->get_hex_value($block, $key, $sum);
+            $buffer[] = $this->from_hex40($block, $key, $sum);
         }
 
         return implode("", $buffer);
-    }
-
-    /**
-     * Obtiene el valor hexadecimal de un bloque de bytes con entropía revertida.
-     *
-     * Este método toma un bloque de bytes representado como una cadena hexadecimal y calcula su valor
-     * después de revertir la entropía aplicada previamente. El valor de cada carácter se obtiene utilizando 
-     * un cálculo que involucra un valor de entropía, el cual se determina a partir del índice del bloque y un 
-     * valor base (`$sum`). Este valor se ajusta a un formato hexadecimal de dos dígitos para su posterior uso.
-     *
-     * El cálculo del valor final se basa en la resta de la entropía y un valor predeterminado, asegurando que 
-     * la cadena resultante sea correctamente ajustada en longitud para representar un valor hexadecimal válido.
-     *
-     * @param string $block Bloque de bytes representado en formato hexadecimal, que será procesado para 
-     *                      obtener el valor ajustado.
-     * @param integer $key Índice que permite calcular el valor de la entropía, utilizado para el ajuste 
-     *                     del valor hexadecimal.
-     * @param integer $sum Valor base de la entropía que se usará en el cálculo de ajuste del valor final.
-     *
-     * @return string El valor hexadecimal calculado, con la entropía revertida, representado como una cadena 
-     *                de dos dígitos.
-     *
-     * @example Ejemplo
-     * ```
-     * // Obtener el valor hexadecimal de un bloque con entropía revertida.
-     * $block = "abc123";
-     * $key = 1;
-     * $sum = 10;
-     * $hex_value = $data->get_hex_value($block, $key, $sum);
-     * echo $hex_value;  // Resultado de la cadena hexadecimal ajustada.
-     * ```
-     */
-    private function get_hex_value(string $block, int $key, int $sum): string {
-        /** @var int $entropy_value */
-        $entropy_value = $sum * $this->get_circular_value($key) + $this->get_circular_value($key);
-
-        /** @var int $block_value */
-        $block_value = hexdec($block);
-
-        /** @var string $value */
-        $value = dechex($block_value - $this->value - $entropy_value);
-
-        return str_pad(
-            string: $value,
-            length: 2,
-            pad_string: '0',
-            pad_type: STR_PAD_LEFT
-        );
-    }
-
-    /**
-     * Calcula y acumula un valor de entropía basado en los caracteres de una cadena dada.
-     *
-     * Recorre cada carácter de la cadena de entropía proporcionada, convirtiéndolo
-     * a su representación hexadecimal (mediante `bin2hex()`), luego a decimal (con `hexdec()`),
-     * y lo suma a un valor acumulado `$sum`, junto con un incremento progresivo según la posición.
-     *
-     * La suma resultante refleja una entropía combinada entre el valor binario de cada carácter
-     * y su posición relativa. Esto permite generar un valor final que varía incluso si los caracteres
-     * son iguales pero cambian de orden, contribuyendo así a una mayor dispersión numérica.
-     *
-     * Si no se proporciona una cadena válida, el valor de `$sum` no se modifica.
-     *
-     * @param int &$sum Valor acumulado que se actualizará con la contribución de cada carácter.
-     * @param string|null $entropy Cadena base usada para calcular la entropía acumulada.
-     *
-     * @return void
-     *
-     * @example Ejemplo de uso
-     * ```php
-     * $sum = 0;
-     * $entropy = "Una llave de entropía por acá";
-     * $data->set_entropy_value($sum, $entropy);
-     * echo $sum; // Muestra el valor acumulado de entropía.
-     * ```
-     */
-    private function set_entropy_value(int &$sum, ?string $entropy = null): void {
-        if (!is_string($entropy)) return;
-        $sum = $this->get_binary_length($entropy);
     }
 
     /**
@@ -484,32 +361,5 @@ abstract class Data {
      */
     private function get_char_code(string $char, int $index): int {
         return hexdec(bin2hex($char)) + $index;
-    }
-
-
-
-    /**
-     * Devuelve un valor circular modificado a partir del valor dado.
-     *
-     * Este método calcula un valor basado en una operación matemática circular sobre el valor de entrada. 
-     * El valor de entrada se multiplica por 31, se le suma 17, y luego se calcula el módulo 100. Finalmente, 
-     * se le añade 10 al resultado para obtener un valor dentro de un rango específico.
-     *
-     * Este tipo de transformación es útil para generar un patrón cíclico o no lineal, manteniendo el valor en 
-     * un rango controlado de valores entre 10 y 109.
-     *
-     * @param int|float $value Valor numérico (entero o decimal) que será analizado y transformado mediante 
-     *                         la operación circular.
-     * @return int El valor circular calculado, garantizando que se encuentre dentro del rango [10, 109].
-     *
-     * @example Example
-     * ```
-     * // Obtener el valor circular de un número
-     * $result = $data->get_circular_value(5);
-     * echo $result;  // Resultado será un número entre 10 y 109.
-     * ```
-     */
-    private function get_circular_value(int|float $value): int {
-        return ($value * 31 + 17) % 100 + 10;
     }
 }
