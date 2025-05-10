@@ -26,11 +26,14 @@ use DLStorage\Errors\StorageException;
  */
 trait BinaryLengthTrait {
 
+    use StorageTrait;
+
     /** @var int $coefficient */
     protected int $coefficient = 0;
 
     /** @var int $entropy_value  */
     protected int $entropy_value = 0;
+
 
     /**
      * Semilla base utilizada para cálculos internos relacionados con transformaciones numéricas.
@@ -69,25 +72,10 @@ trait BinaryLengthTrait {
      * a procesos criptográficos o de almacenamiento.
      */
     public function get_binary_length(string $input): int {
+        /** @var array<int,int> $bytes */
+        $bytes = unpack("C*", $input);
 
-        /** @var float|int $vlaue */
-        $value = intdiv(strlen(bin2hex($input)), 2);
-
-        if ($value < 10) {
-            $value = hexdec(bin2hex($input)) / $value ** 14;
-            $value = (int) $value;
-        }
-
-        /** @var string $seed */
-        $this->seed = ($value % 10 ** 6)  + 2 ** 17;
-
-        $this->coefficient = abs((31 * $value + 17) % 100 + 10);
-
-        if ($value > (2 ** 32)) {
-            throw new StorageException("La longitud de la entropía excede el límite permitido de 4 GB", 500);
-        }
-
-        return $value;
+        return array_sum($bytes);
     }
 
     /**
@@ -228,6 +216,8 @@ trait BinaryLengthTrait {
     protected function set_entropy_value(int &$sum, ?string $entropy = null): void {
         if (!is_string($entropy)) return;
         $sum = $this->get_binary_length($entropy);
+
+        print_r($sum);
     }
 
     /**
@@ -253,5 +243,53 @@ trait BinaryLengthTrait {
      */
     private function get_circular_value(int|float $value): int {
         return abs(($this->coefficient * $value + 17) % 100 + $this->coefficient);
+    }
+
+    /**
+     * Calcula una métrica de "entropía" simplificada basada en el contenido de un archivo.
+     *
+     * Esta función intenta abrir un archivo y leer hasta un máximo de 16,777,215 bytes (0xFFFFFF).
+     * Si el archivo no se encuentra en la ruta original, se intenta localizar usando `get_file_path`.
+     * Una vez leído el contenido, se utiliza `unpack("C*", ...)` para obtener los valores
+     * byte a byte. Luego, la entropía es calculada como la suma de estos bytes más
+     * la longitud del contenido leído.
+     *
+     * Nota: Esta no es una medida de entropía criptográfica, sino una métrica heurística
+     * del contenido binario del archivo.
+     *
+     * @param string $filename Ruta del archivo a analizar.
+     * @return int Suma de los bytes del archivo y su longitud.
+     */
+    public function get_entropy_file(string $filename): int {
+        /** @var int $value Valor máximo de lectura en bytes (0xFFFFFF = 16,777,215) */
+        $value = 0xffffff;
+
+        /** @var string $file Ruta final del archivo a analizar */
+        $file = $filename;
+
+        if (!file_exists($filename)) {
+            $file = $this->get_file_path($filename);
+        }
+
+        if (!file_exists($file)) {
+            return 0;
+        }
+
+        /** @var int $size Tamaño total del archivo */
+        $size = filesize($file);
+
+        /** @var string $content Contenido del archivo leído hasta el máximo permitido */
+        $content = $this->read_filename($file, 1, $size > $value ? $value : $size);
+
+        /** @var array<int,int> $bytes Array de bytes (valores entre 0-255) del contenido */
+        $bytes = unpack("C*", $content);
+
+        /** @var int $sum Suma de todos los valores de los bytes */
+        $sum = array_sum($bytes);
+
+        /** @var int $length Longitud del contenido leído */
+        $length = strlen($content);
+
+        return $sum + $length;
     }
 }
