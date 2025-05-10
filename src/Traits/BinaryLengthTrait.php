@@ -261,7 +261,7 @@ trait BinaryLengthTrait {
      * @return int Suma de los bytes del archivo y su longitud.
      */
     public function get_entropy_file(string $filename): int {
-        /** @var int $value Valor máximo de lectura en bytes (0xFFFFFF = 16,777,215) */
+        /** @var int $value Valor máximo de lectura en bytes (0xFFFFFF = 16.777.215) */
         $value = 0xffffff;
 
         /** @var string $file Ruta final del archivo a analizar */
