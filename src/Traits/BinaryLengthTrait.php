@@ -215,9 +215,7 @@ trait BinaryLengthTrait {
      */
     protected function set_entropy_value(int &$sum, ?string $entropy = null): void {
         if (!is_string($entropy)) return;
-        $sum = $this->get_binary_length($entropy);
-
-        print_r($sum);
+        $sum = $this->get_entropy_value($entropy);
     }
 
     /**
@@ -281,15 +279,27 @@ trait BinaryLengthTrait {
         /** @var string $content Contenido del archivo leído hasta el máximo permitido */
         $content = $this->read_filename($file, 1, $size > $value ? $value : $size);
 
-        /** @var array<int,int> $bytes Array de bytes (valores entre 0-255) del contenido */
-        $bytes = unpack("C*", $content);
+        return $this->get_entropy_value($content);
+    }
 
-        /** @var int $sum Suma de todos los valores de los bytes */
+    /**
+     * Devuelve la entropía base o `seed` en función de los bytes como argumento.
+     *
+     * Esta implementación no calcula entropía estadística (como la fórmula de Shannon),
+     * sino un valor entero simple, derivado de la suma total de los bytes más la longitud
+     * del input. Es útil como valor base determinista para sistemas de validación,
+     * generación de semillas pseudoaleatorias u otras heurísticas.
+     *
+     * @param string $input Secuencia binaria que representa los datos a analizar.
+     * @return int Valor entero representando una entropía base aproximada.
+     */
+    public function get_entropy_value(string $input): int {
+        /** @var array<int,int> $bytes */
+        $bytes = unpack("C*", $input);
+
+        /** @var int $sum */
         $sum = array_sum($bytes);
 
-        /** @var int $length Longitud del contenido leído */
-        $length = strlen($content);
-
-        return $sum + $length;
+        return $sum + strlen($input);
     }
 }

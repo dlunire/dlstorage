@@ -13,16 +13,24 @@ $video = "/home/david/Vídeos/Película/videoplayback.mp4";
 
 $readme = $storage->get_file_path('README.md');
 // $content = file_get_contents($video);
-
 // $content = $storage->get_entropy_file($video);
-$content = "Test";
+
+
+// $entropy = $content;
+$entropy = "Test";
+$payload = "Esta es una prueba que estoy realizando con esto";
+
 // // $content = "entropía";
 // $payload = file_get_contents($foto);
 // // $payload = "ciencias de datos | computación";
 
-$payload = "Esta es una prueba";
+if (file_exists($readme)) {
+    $payload = file_get_contents($readme);
+}
 
-$storage->save_data('ciencia', $payload, $content);
+// $payload = file_get_contents($readme);
+
+// $storage->save_data('ciencia', $payload, $entropy);
 
 // header("content-type: image/jpg");
-echo $storage->read_storage_data('ciencia', $content);
+echo $storage->read_storage_data('ciencia', $entropy);
