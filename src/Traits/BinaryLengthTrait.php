@@ -219,29 +219,39 @@ trait BinaryLengthTrait {
     }
 
     /**
-     * Devuelve un valor circular modificado a partir del valor dado.
+     * Calcula un valor circular a partir de un valor numérico dado.
      *
-     * Este método calcula un valor basado en una operación matemática circular sobre el valor de entrada. 
-     * El valor de entrada se multiplica por 31, se le suma 17, y luego se calcula el módulo 100. Finalmente, 
-     * se le añade 10 al resultado para obtener un valor dentro de un rango específico.
+     * Este método aplica una transformación matemática al valor de entrada mediante la fórmula:
+     * `($this->coeficiente * valor + 17) % 100 + 17`. Esto garantiza que el valor resultante esté en un rango
+     * específico y controlado, útil para generar patrones cíclicos o distribuciones uniformes en un espacio
+     * acotado. La constante `17` actúa como desplazamiento para evitar valores demasiado bajos.
      *
-     * Este tipo de transformación es útil para generar un patrón cíclico o no lineal, manteniendo el valor en 
-     * un rango controlado de valores entre 10 y 109.
+     * Se lanza una excepción si el valor excede el límite de seguridad definido por `0xffffffffffffff`,
+     * protegiendo así contra entradas numéricas excesivamente grandes que puedan afectar el sistema.
      *
-     * @param int|float $value Valor numérico (entero o decimal) que será analizado y transformado mediante 
-     *                         la operación circular.
-     * @return int El valor circular calculado, garantizando que se encuentre dentro del rango [10, 109].
+     * @param int|float $value Valor numérico que será transformado mediante la operación circular.
+     * @return int Valor transformado dentro del rango [17, 116].
      *
-     * @example Example
-     * ```
-     * // Obtener el valor circular de un número
-     * $result = $data->get_circular_value(5);
-     * echo $result;  // Resultado será un número entre 10 y 109.
+     * @throws StorageException Si el valor supera el límite seguro.
+     *
+     * @example For example
+     * ```php
+     * // Ejemplo de uso del valor circular
+     * $resultado = $objeto->get_circular_value(5);
+     * echo $resultado; // Un número entero entre 17 y 116
      * ```
      */
     private function get_circular_value(int|float $value): int {
-        return abs(($this->coefficient * $value + 17) % 100 + $this->coefficient);
+        /** @var int|float $max_value */
+        $max_value = 0xffffffffffffff;
+
+        if ($value > $max_value) {
+            throw new StorageException("El valor proporcionado excede el límite máximo permitido ({$max_value}) y representa un riesgo para la integridad del sistema.", 500);
+        }
+
+        return abs(($this->coefficient * $value + 17) % 100 + 17);
     }
+
 
     /**
      * Calcula una métrica de "entropía" simplificada basada en el contenido de un archivo.
@@ -299,7 +309,35 @@ trait BinaryLengthTrait {
 
         /** @var int $sum */
         $sum = array_sum($bytes);
+        $this->calculate_coefficient($sum);
 
         return $sum + strlen($input);
+    }
+
+    /**
+     * Calcula y asigna un coeficiente seguro a partir de una semilla numérica.
+     *
+     * Este método genera un coeficiente acotado mediante una operación modular y lo asigna
+     * internamente a la propiedad `$this->coefficient`. El valor obtenido se asegura de estar dentro
+     * del rango seguro definido por [1, 1_000_000], evitando así valores nulos o excesivos que puedan
+     * comprometer operaciones posteriores.
+     *
+     * La fórmula utilizada es: `abs((semilla * 37 + 113) % max_coefficient)`, con un ajuste final
+     * para garantizar un valor mínimo de 1.
+     *
+     * @param int|float $seed Valor semilla utilizado para derivar el coeficiente de forma determinista.
+     * @return void
+     */
+    private function calculate_coefficient(int|float $seed): void {
+        /** @var int $min_coefficient */
+        $min_coefficient = 1;
+
+        /** @var int $max_coefficient */
+        $max_coefficient = 250000;
+
+        /** @var int|float $coefficient */
+        $coefficient = abs(intval(($seed * 37 + 113) % $max_coefficient));
+
+        $this->coefficient = max($coefficient, $min_coefficient);
     }
 }
