@@ -42,7 +42,7 @@ use DLStorage\Errors\StorageException;
  * @note Recomendado para entornos donde no se desea utilizar bases de datos,
  * pero se requiere persistencia confiable con control de integridad.
  */
-final class SaveData extends DataStorage {
+abstract class SaveData extends DataStorage {
 
 
     /**
