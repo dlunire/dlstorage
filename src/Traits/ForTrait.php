@@ -107,7 +107,7 @@ trait ForTrait {
      *
      * @return void No retorna ningún valor. Ejecuta el callback por efecto colateral.
      */
-    public function foreach_string(string $input, callable $callback): void {
+    protected function foreach_string(string $input, callable $callback): void {
         /** @var array<int,int> $bytes */
         $bytes = array_values(unpack("C*", $input));
 

@@ -222,7 +222,7 @@ trait BinaryLengthTrait {
      * Calcula un valor circular a partir de un valor numérico dado.
      *
      * Este método aplica una transformación matemática al valor de entrada mediante la fórmula:
-     * `($this->coeficiente * valor + 17) % 100 + 17`. Esto garantiza que el valor resultante esté en un rango
+     * `($this->coefficient * valor + 17) % 100 + 17`. Esto garantiza que el valor resultante esté en un rango
      * específico y controlado, útil para generar patrones cíclicos o distribuciones uniformes en un espacio
      * acotado. La constante `17` actúa como desplazamiento para evitar valores demasiado bajos.
      *
@@ -333,11 +333,10 @@ trait BinaryLengthTrait {
         $min_coefficient = 1;
 
         /** @var int $max_coefficient */
-        $max_coefficient = 250000;
+        $max_coefficient = 0xffffffffffff;
 
         /** @var int|float $coefficient */
         $coefficient = abs(intval(($seed * 37 + 113) % $max_coefficient));
-
         $this->coefficient = max($coefficient, $min_coefficient);
     }
 }

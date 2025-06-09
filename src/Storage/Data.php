@@ -251,7 +251,7 @@ abstract class Data {
         /** @var string[] $buffer */
         $buffer = [];
 
-        $this->foreach_string($input, function (int $byte, int $index) use ($sum, &$buffer, &$test) {
+        $this->foreach_string($input, function (int $byte, int $index) use ($sum, &$buffer) {
 
             /** @var int $entropy */
             $entropy = $this->get_entropy($index, $sum);

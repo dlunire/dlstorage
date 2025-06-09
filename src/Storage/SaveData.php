@@ -149,6 +149,62 @@ abstract class SaveData extends DataStorage {
     }
 
     /**
+     * Devuelve el contenido de un archivo almacenado en el directorio `storage` ubicado en el directorio raíz del proyecto.
+     *
+     * Este método construye la ruta absoluta hacia un archivo dentro del subdirectorio `storage`, a partir de su nombre
+     * relativo. La ruta se normaliza para garantizar compatibilidad con distintos sistemas de archivos. Si el archivo no
+     * existe, se lanza una excepción `StorageException` con un código de error HTTP 404.
+     *
+     * @method string get_file_content(string $filename)
+     *
+     * @param string $filename Nombre del archivo, relativo al directorio `storage`.
+     *                         Se permite el uso de separadores tipo UNIX (`/`) o Windows (`\`),
+     *                         los cuales serán normalizados automáticamente.
+     *
+     * @return string Contenido completo del archivo solicitado.
+     *
+     * @throws StorageException Si el archivo no existe o no se puede acceder.
+     *
+     * @example
+     * ```php
+     * // Lo puedes utilizar así:
+     * $content = $storage->get_file_content('credentials/token.dlstorage');
+     * 
+     * // O también así (sin `/`):
+     * $content = $storage->get_file_content('/credentials/token.dlstorage');
+     * echo $content;
+     * ```
+     *
+     * @internal Este método depende de la existencia del método `get_document_root()` dentro de la misma clase,
+     *           el cual debe devolver la ruta absoluta del directorio raíz del sistema.
+     */
+
+    public function get_file_content(string $filename): string {
+        $filename = trim($filename, "\/");
+
+        /** @var string $root */
+        $root = $this->get_document_root();
+
+        /** @var string $separator */
+        $separator = DIRECTORY_SEPARATOR;
+
+        /** @var string $filename */
+        $filename = preg_replace("/[\\\\\/]+/", $separator, $filename);
+
+        /** @var string $file */
+        $file = "{$root}{$separator}storage{$separator}{$filename}";
+
+        /** @var string $only_name_file */
+        $only_name_file = basename($filename);
+
+        if (!file_exists($file)) {
+            throw new StorageException("El archivo «{$only_name_file}» no existe", 404);
+        }
+
+        return file_get_contents($file);
+    }
+
+    /**
      * Normaliza el relleno de ceros en una cadena hexadecimal.
      *
      * Este método reemplaza cualquier cantidad de ceros iniciales en una cadena hexadecimal por un único `'0'`,
