@@ -259,7 +259,6 @@ abstract class Data {
             /** @var string $current_data */
             $current_data = $this->to_hex40($byte, $entropy);
 
-            // print_r($entropy . "\n");
             $current_data = str_replace("01", "ffff", $current_data);
 
             $this->compact_zero($current_data);

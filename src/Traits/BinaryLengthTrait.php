@@ -307,8 +307,6 @@ trait BinaryLengthTrait {
         /** @var array<int,int> $bytes */
         $bytes = unpack("C*", $input);
 
-        print_r(hash('sha512', $input) . "\n");
-
         /** @var int $sum */
         $sum = array_sum($bytes);
         $this->calculate_coefficient($sum);
