@@ -63,12 +63,36 @@ final class Storage extends SaveData {
         print_r($content);
         exit;
     }
+
+    /**
+     * Muestra el contenido codificado
+     *
+     * @param string $content Contenido codificado
+     * @return void
+     */
+    public function show_encoded_text(string $content): void {
+        /** @var string $encoded */
+        $encoded = $this->encode($content, $this->entropy);
+
+        /** @var string $original */
+        $original = bin2hex($content);
+
+        header("content-type: text/plain", true, 200);
+        print_r("\$encoded: {$encoded}");
+        echo "\n";
+        print_r("\$original: {$original}");
+
+        exit;
+    }
 }
 
 $storage = new Storage();
 // $storage->print('test.mp3', 'audio/mp3');
 
-$storage->entropy = $storage->get_file_content('test.mp3');
+// $storage->entropy = $storage->get_file_content('test.mp3');
+$storage->entropy = "Ciencias de la computaión";
+
+$storage->show_encoded_text("Esta es una prueba");
 $storage->entropy = "test";
 $storage->file_encode('dibujo', 'dibujo.pdf');
 $storage->file_decode('dibujo', 'application/pdf');
