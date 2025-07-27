@@ -29,7 +29,7 @@ trait BinaryLengthTrait {
     use StorageTrait;
 
     /** @var int $coefficient */
-    protected int $coefficient = 0;
+    public int $coefficient = 0;
 
     /** @var int $entropy_value  */
     protected int $entropy_value = 0;
@@ -269,7 +269,7 @@ trait BinaryLengthTrait {
      * @return int Suma de los bytes del archivo y su longitud.
      */
     public function get_entropy_file(string $filename): int {
-        /** @var int $value Valor máximo de lectura en bytes (0xFFFFFF = 16.777.215) */
+        /** @var int $value Valor máximo de lectura en bytes (0xFFFFFFFF = 4GB) */
         $value = 0xffffff;
 
         /** @var string $file Ruta final del archivo a analizar */
@@ -309,6 +309,7 @@ trait BinaryLengthTrait {
 
         /** @var int $sum */
         $sum = array_sum($bytes);
+
         $this->calculate_coefficient($sum);
 
         return $sum + strlen($input);
@@ -337,6 +338,7 @@ trait BinaryLengthTrait {
 
         /** @var int|float $coefficient */
         $coefficient = abs(intval(($seed * 37 + 113) % $max_coefficient));
+
         $this->coefficient = max($coefficient, $min_coefficient);
     }
 }

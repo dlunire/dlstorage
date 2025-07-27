@@ -90,9 +90,8 @@ $storage = new Storage();
 // $storage->print('test.mp3', 'audio/mp3');
 
 // $storage->entropy = $storage->get_file_content('test.mp3');
-$storage->entropy = "Ciencias de la computaión";
 
+$storage->entropy = "Esta es una prueba que estoy realizando.";
 $storage->show_encoded_text("Esta es una prueba");
-$storage->entropy = "test";
 $storage->file_encode('dibujo', 'dibujo.pdf');
 $storage->file_decode('dibujo', 'application/pdf');
