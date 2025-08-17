@@ -2,6 +2,8 @@
 
 ---
 
+[Índice de contenido](../README.md "Contenido principal")
+
 ## Introducción
 
 La clase abstracta `DataStorage` define una base para almacenar datos transformados en archivos binarios u otros medios persistentes, evitando el uso de bases de datos tradicionales. Su objetivo principal es proteger credenciales sensibles, como tokens, claves o estructuras cifradas mediante transformaciones personalizadas.

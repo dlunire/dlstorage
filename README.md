@@ -4,6 +4,14 @@
 
 ---
 
+## Guía de uso
+
+### Índice de contenido
+
+1. [DataStorage](./doc/DataStorage.md "Define una base para almacenar datos transformados")
+2. [SaveData](./doc/SaveData.md "La clase `SaveData` extiende `DataStorage` y proporciona una solución lista para usar")
+3. [FastArray](./doc/FastArray.md "")
+
 ## 📌 Propósito
 
 **DLStorage** permite almacenar, manipular y recuperar datos binarios de forma segura y eficiente. Está especialmente diseñada para escenarios donde se requieren operaciones sobre archivos binarios, como configuraciones, cachés u otros recursos que necesitan persistencia de bajo nivel.
