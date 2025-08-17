@@ -130,6 +130,6 @@ $storage = new Storage();
 // $storage->entropy = $storage->get_file_content('test.mp3');
 
 $storage->entropy = "Esta es una prueba que éstoy realizando.";
-$storage->show_encoded_text("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-// $storage->file_encode('dibujo', 'dibujo.pdf');
-// $storage->file_decode('dibujo', 'application/pdf');
+// $storage->show_encoded_text("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+$storage->file_encode('dibujo', 'dibujo.pdf');
+$storage->file_decode('dibujo', 'application/pdf');
