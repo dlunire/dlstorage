@@ -1,6 +1,8 @@
-# 📝 Guía de Uso de `FastArray`
+# Guía de Uso de `FastArray`
 
 `FastArray` es una clase avanzada de manipulación de arrays dentro de **DLStorage**. Proporciona métodos seguros, iteradores y operaciones inspiradas en arrays de alto nivel como en JavaScript, manteniendo compatibilidad con PHP moderno.
+
+Sin embargo, esta guía todavía no se encuentra actualizado del todo, pero proporciona los usos más comunes de `FastArray`.
 
 ---
 
@@ -12,7 +14,7 @@ use DLStorage\Utilities\FastArray;
 $array = new class([1, 2, 3, 4, 5]) extends FastArray {};
 ```
 
-> ⚠️ Nota: `FastArray` es abstracta, por lo que se debe instanciar mediante herencia anónima o una clase concreta que la extienda.
+> Importante: `FastArray` es abstracta, por lo que se debe instanciar mediante herencia anónima o una clase concreta que la extienda.
 
 ---
 
