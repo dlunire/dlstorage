@@ -40,14 +40,52 @@ final class Storage extends SaveData {
     }
 
     /**
-     * Codifica el archivo
+     * Codifica el contenido de un archivo origen y lo almacena en un archivo destino.
      *
-     * @param string $source Archivo fuente
-     * @param string $target_file Archivo de destino
-     * @return void
+     * El archivo origen es leído desde el directorio `storage` (por defecto) o desde la raíz
+     * del proyecto, según el valor del parámetro `$storage`. Su contenido se obtiene mediante
+     * {@see get_file_content()}, y posteriormente se procesa a través del método interno
+     * {@see save_data()} aplicando la entropía definida en la clase.
+     *
+     * El resultado de la codificación se guarda en el archivo destino especificado en `$target_file`.
+     *
+     * @method void file_encode(string $target_file, string $source, bool $storage = true)
+     *
+     * @param string $target_file Ruta relativa del archivo destino donde se almacenará el resultado
+     *                            de la codificación.
+     *
+     * @param string $source Nombre del archivo origen cuyo contenido será codificado.
+     *                       Puede ubicarse en el directorio raíz o en el subdirectorio `storage`,
+     *                       dependiendo del parámetro `$storage`.
+     *
+     * @param bool $storage Indica si `$source` se encuentra en el directorio `storage`.  
+     *                      Por defecto es `true`. Si es `false`, se buscará directamente en la raíz
+     *                      del proyecto.
+     *
+     * @return void No devuelve valor; el resultado de la codificación se escribe en `$target_file`.
+     *
+     * @throws StorageException Si el archivo origen (`$source`) no existe o no puede accederse.
+     *
+     * @example
+     * ```php
+     * // Codificar un archivo de origen ubicado en `storage` y guardar el resultado en otro destino:
+     * $storage->file_encode('encoded/source.dat', 'credentials/token.dlstorage');
+     *
+     * // Codificar un archivo de origen desde la raíz del proyecto:
+     * $storage->file_encode('encoded/config.sec', 'config/app.php', false);
+     * ```
+     *
+     * @internal Este método depende de:
+     *  - {@see get_file_content()} para obtener el contenido del archivo origen.
+     *  - {@see save_data()} para procesar y guardar el contenido codificado.
+     *  - La propiedad `$entropy` definida en la clase para reforzar el proceso de codificación.
      */
-    public function file_encode(string $source, string $target_file): void {
-        $this->save_data($source, $this->get_file_content($target_file), $this->entropy);
+    public function file_encode(string $target_file, string $source, bool $storage = true): void {
+        $this->save_data(
+            filename: $target_file,
+            data: $this->get_file_content($source, $storage),
+            entropy: $this->entropy
+        );
     }
 
     /**
@@ -91,7 +129,7 @@ $storage = new Storage();
 
 // $storage->entropy = $storage->get_file_content('test.mp3');
 
-$storage->entropy = "Esta es una prueba que estoy realizando.";
-$storage->show_encoded_text("Esta es una prueba");
-$storage->file_encode('dibujo', 'dibujo.pdf');
-$storage->file_decode('dibujo', 'application/pdf');
+$storage->entropy = "Esta es una prueba que éstoy realizando.";
+$storage->show_encoded_text("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+// $storage->file_encode('dibujo', 'dibujo.pdf');
+// $storage->file_decode('dibujo', 'application/pdf');

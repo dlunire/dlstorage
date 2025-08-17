@@ -57,19 +57,23 @@ abstract class SaveData extends DataStorage {
      *
      * @param string      $filename Nombre del archivo (sin extensión) donde se guardará la información.
      * @param string      $data     Datos crudos que serán transformados byte por byte.
-     * @param string|null $entropy  Su uso se recmienda. Llave de entropía opcional para modificar el patrón de transformación.
+     * @param string|null $entropy  Su uso se recomienda. Llave de entropía opcional para modificar el patrón de transformación.
+     * @param bool        $storage  Indica si el archivo debe guardarse dentro del directorio de almacenamiento
+     *                              gestionado por el framework (`true`), o en la ruta exacta indicada por `$filename` (`false`).
+     *
      * @return void
      *
      * @throws StorageException Si ocurre un error al crear el archivo o faltan permisos de escritura.
      *
-     * @see encode()         Transforma los datos de entrada en una representación segura.
+     * @see encode()        Transforma los datos de entrada en una representación segura.
+     * @see get_file_path() Resuelve la ubicación final del archivo según el valor de $storage.
      */
-    public function save_data(string $filename, string $data, ?string $entropy = NULL): void {
+    public function save_data(string $filename, string $data, ?string $entropy = NULL, bool $storage = true): void {
         /** @var string $encode */
         $encode = $this->encode($data, $entropy);
 
         /** @var string $file */
-        $file = $this->get_file_path($filename, true) . ".dlstorage";
+        $file = $this->get_file_path(filename: $filename, create_dir: true, storage: $storage) . ".dlstorage";
 
         /** @var string $signature */
         $signature = $this->get_signature();
@@ -96,28 +100,36 @@ abstract class SaveData extends DataStorage {
     }
 
     /**
-     * Lee un archivo binario .dlstorage y recupera su contenido original por medio de una llave de entropía.
+     * Lee un archivo binario `.dlstorage` y recupera su contenido original utilizando una llave de entropía.
      * 
-     * @internal Este método debe ser invocado únicamente por clases hijas o el framework principal.
+     * @internal Este método debe ser invocado únicamente por clases hijas o por el núcleo del framework.
      *
-     * @param string $filename Nombre del archivo sin extensión (.dlstorage será añadido automáticamente).
+     * @param string $filename Nombre base del archivo sin extensión (`.dlstorage` será añadido automáticamente).
      * @param string|null $entropy Llave de entropía usada para revertir la transformación de bytes.
+     * @param bool $storage Determina el directorio base de lectura:
+     *                      - `true`: El archivo se buscará en `/ruta/al/proyecto/storage`.
+     *                      - `false`: El archivo se buscará en `/ruta/al/proyecto`.
      *
-     * @throws StorageException Si el archivo no existe o el contenido es inválido.
+     * @throws StorageException Si el archivo no existe, no es un archivo válido de DLStorage o su contenido es ilegible.
      * @return string Retorna el contenido original recuperado tras aplicar la decodificación.
      *
-     * @example Example
+     * @example Ejemplo de uso
      * ```php
-     * $contenido = $this->read_file_storage("reporte-secreto", "clave🔐");
+     * // Recuperar archivo desde el directorio de almacenamiento
+     * $contenido = $this->read_storage_data("reporte-secreto", "clave🔐");
+     * echo $contenido;
+     *
+     * // Recuperar archivo desde el directorio raíz del proyecto
+     * $contenido = $this->read_storage_data("reporte-secreto", "clave🔐", false);
      * echo $contenido;
      * ```
      */
-    public function read_storage_data(string $filename, ?string $entropy = NULL): string {
+    public function read_storage_data(string $filename, ?string $entropy = NULL, bool $storage = true): string {
 
         $filename = "{$filename}.dlstorage";
 
         /** @var string $file */
-        $file = $this->get_file_path($filename);
+        $file = $this->get_file_path(filename: $filename, storage: $storage);
 
         /** @var string $filename_only */
         $filename_only = basename($filename);
@@ -149,37 +161,44 @@ abstract class SaveData extends DataStorage {
     }
 
     /**
-     * Devuelve el contenido de un archivo almacenado en el directorio `storage` ubicado en el directorio raíz del proyecto.
+     * Devuelve el contenido completo de un archivo a partir de su nombre relativo.
      *
-     * Este método construye la ruta absoluta hacia un archivo dentro del subdirectorio `storage`, a partir de su nombre
-     * relativo. La ruta se normaliza para garantizar compatibilidad con distintos sistemas de archivos. Si el archivo no
-     * existe, se lanza una excepción `StorageException` con un código de error HTTP 404.
+     * Construye la ruta absoluta hacia un archivo utilizando como base el directorio raíz
+     * del proyecto (retornado por `get_document_root()`). Si el parámetro `$storage` se establece en
+     * `true`, se buscará dentro del subdirectorio `storage`. En caso contrario, se buscará directamente
+     * en el directorio raíz del proyecto. Los separadores de ruta se normalizan para asegurar la
+     * compatibilidad entre sistemas UNIX y Windows.
      *
-     * @method string get_file_content(string $filename)
+     * @method string get_file_content(string $filename, bool $storage = true)
      *
-     * @param string $filename Nombre del archivo, relativo al directorio `storage`.
-     *                         Se permite el uso de separadores tipo UNIX (`/`) o Windows (`\`),
-     *                         los cuales serán normalizados automáticamente.
+     * @param string $filename Nombre del archivo, relativo al directorio raíz o al subdirectorio `storage`.
+     *                         Puede incluir separadores de tipo UNIX (`/`) o Windows (`\`), que serán
+     *                         convertidos automáticamente al separador correspondiente del sistema.
+     * 
+     * @param bool $storage Indica si el archivo se encuentra dentro del directorio `storage`.  
+     *                      Por defecto es `true`. Si es `false`, la ruta se resolverá directamente
+     *                      desde el directorio raíz del proyecto.
      *
      * @return string Contenido completo del archivo solicitado.
      *
-     * @throws StorageException Si el archivo no existe o no se puede acceder.
+     * @throws StorageException Si el archivo no existe o no se puede acceder.  
+     *                          El mensaje de la excepción incluirá el nombre del archivo
+     *                          y el código de error HTTP 404.
      *
      * @example
      * ```php
-     * // Lo puedes utilizar así:
+     * // Leer archivo dentro del directorio "storage":
      * $content = $storage->get_file_content('credentials/token.dlstorage');
-     * 
-     * // O también así (sin `/`):
-     * $content = $storage->get_file_content('/credentials/token.dlstorage');
+     *
+     * // Leer archivo en la raíz del proyecto (sin storage):
+     * $content = $storage->get_file_content('config/app.php', false);
      * echo $content;
      * ```
      *
-     * @internal Este método depende de la existencia del método `get_document_root()` dentro de la misma clase,
-     *           el cual debe devolver la ruta absoluta del directorio raíz del sistema.
+     * @internal Este método depende del método `get_document_root()`, el cual debe devolver
+     *           la ruta absoluta del directorio raíz del proyecto.
      */
-
-    public function get_file_content(string $filename): string {
+    public function get_file_content(string $filename, bool $storage = true): string {
         $filename = trim($filename, "\/");
 
         /** @var string $root */
@@ -192,7 +211,9 @@ abstract class SaveData extends DataStorage {
         $filename = preg_replace("/[\\\\\/]+/", $separator, $filename);
 
         /** @var string $file */
-        $file = "{$root}{$separator}storage{$separator}{$filename}";
+        $file = $storage
+            ? "{$root}{$separator}storage{$separator}{$filename}"
+            : "{$root}{$separator}{$filename}";
 
         /** @var string $only_name_file */
         $only_name_file = basename($filename);

@@ -2,10 +2,9 @@
 
 namespace DLStorage\Storage;
 
-use DLStorage\Errors\StorageException;
+use DLStorage\Errors\EncodeException;
 use DLStorage\Traits\BinaryLengthTrait;
 use DLStorage\Traits\ForTrait;
-use ValueError;
 
 /**
  * Generación y manipulación de datos binarios con firmas en la cabecera o principio del archivo.
@@ -16,8 +15,8 @@ use ValueError;
  * validar datos. Además, esta clase está diseñada para integrarse con proyectos relacionados con la
  * manipulación avanzada de datos binarios, como *Códigos del Futuro* y el *DLUnire Framework*.
  *
- * *Códigos del Futuro* (@cdelfuturo) es una iniciativa de innovación tecnológica enfocada en soluciones avanzadas
- * de almacenamiento y procesamiento de datos. Puedes seguirnos en nuestras redes sociales para más contenido:
+ * *Códigos del Futuro* (@cdelfuturo) es una iniciativa con el propoósito de crear series o cortometrajes de
+ * ciencia ficción, pero también publicar temas de programación de forma entretenida. Puedes seguir sus:
  * - [YouTube](https://www.youtube.com/@codigosdelfuturo)
  * - [X](https://x.com/cdelfuturo)
  * - [TikTok](https://www.tiktok.com/@codigosdelfuturo)
@@ -72,9 +71,10 @@ abstract class Data {
     /**
      * Decodifica un mensaje previamente codificado utilizando un esquema de entropía.
      * 
-     * Este método toma una cadena de datos codificados y, si se proporciona la entropía utilizada durante 
+     * Toma una cadena de datos codificados y, si se proporciona la entropía utilizada durante 
      * la codificación, intenta revertir la transformación para recuperar el mensaje original. Si la entropía 
-     * es incorrecta o si los datos han sido corrompidos, el método lanzará una excepción.
+     * es incorrecta o si los datos han sido corrompidos, el método lanzará una excepción y si no logra
+     * revertir la codificación, devolverá datos corruptos.
      *
      * @param string $encoded El contenido codificado que se va a decodificar.
      * @param string|null $entropy La entropía que se utilizó durante la codificación, si está disponible.
@@ -82,17 +82,17 @@ abstract class Data {
      * 
      * @return string La cadena decodificada, es decir, el mensaje original antes de la codificación.
      * 
-     * @throws StorageException Si la longitud del mensaje resultante no es un número par, lo que indica 
+     * @throws EncodeException Si la longitud del mensaje resultante no es un número par, lo que indica 
      *                          que los datos podrían estar corruptos o que la entropía utilizada para la 
      *                          codificación no es válida.
      *
-     * @note Este método asume que los datos codificados fueron segmentados en bloques de 10 caracteres 
+     * @note Este método asume que los datos codificados fueron segmentados en bloques de 10 bytes crudos 
      *       y que cualquier adición de ceros al final del mensaje original fue tratada previamente.
      * 
      * @example
      * try {
      *     $decoded_message = $data->get_decode($encodedData, $entropyKey);
-     * } catch (StorageException $e) {
+     * } catch (EncodeException $e) {
      *     echo "Error de decodificación: " . $e->getMessage();
      * }
      */
@@ -110,7 +110,7 @@ abstract class Data {
         $is_pair = ($length & 1) == 0;
 
         if (!$is_pair) {
-            throw new StorageException("Es posible que la llave de la entropía sea inválida o los datos se hayan corrompidos.", 403);
+            throw new EncodeException("Es posible que la llave de la entropía sea inválida o los datos se hayan corrompidos.", 403);
         }
 
         return $value;
@@ -132,7 +132,7 @@ abstract class Data {
     /**
      * Compacta una secuencia continua de ceros convirtiéndola en una representación hexadecimal.
      *
-     * Este método detecta la primera secuencia de ceros consecutivos en la cadena de entrada y la
+     * Detecta la primera secuencia de ceros consecutivos en la cadena de entrada y la
      * reemplaza por una cadena de dos caracteres hexadecimales (`0x00`).
      *
      * Por ejemplo, una entrada como `"00000ABC"` devolverá `"01ABC"`
@@ -153,7 +153,7 @@ abstract class Data {
     /**
      * Revertir la compactación de ceros en una cadena de texto.
      *
-     * Este método toma una cadena de texto que ha sido previamente compactada, es decir, donde las secuencias 
+     * Toma una cadena de texto que ha sido previamente compactada, es decir, donde las secuencias 
      * de ceros consecutivos han sido sustituidas por el marcador especial "01". El proceso de compactación se 
      * realiza normalmente para reducir el tamaño de los datos, pero al decodificar o procesar la información 
      * nuevamente, es necesario restaurar los ceros a su forma original.
@@ -196,20 +196,21 @@ abstract class Data {
     }
 
     /**
-     * Rellena una cadena de texto incompleta con ceros hasta alcanzar una longitud de 10 caracteres.
+     * Rellena una secuencia hexadecimal con ceros hasta alcanzar una longitud de 10 bytes (20 caracteres hexadecimales).
      *
-     * Este método agrega ceros al principio o al final de la cadena según el valor del parámetro `$right`. 
-     * Si `$right` es `true`, se rellenará con ceros al final de la cadena; si es `false`, se rellenará al principio. 
+     * Agrega ceros al principio o al final de la secuencia según el valor del parámetro `$right`. 
+     * Si `$right` es `true`, se rellenará con ceros al final de la secuencia; si es `false`, se rellenará al principio. 
      * El valor por defecto es `false`, lo que implica que los ceros se agregarán al principio.
      *
-     * @param string $input Cadena de texto que se desea rellenar.
+     * @param string $input Secuencia hexadecimal (sin prefijos) que se desea rellenar. 
+     *                      Debe contener un número par de caracteres (representando bytes).
      * @param bool $right Si es `true`, rellena con ceros a la derecha. Por defecto es `false`, lo que rellena a la izquierda.
      * 
-     * @return string La cadena de texto original, completada con ceros hasta alcanzar una longitud de 10 caracteres.
+     * @return string Secuencia hexadecimal rellenada hasta alcanzar 10 bytes (20 caracteres hexadecimales).
      *
      * @example
-     * $padded = $this->get_padding_zero("123");  // Devuelve "0000000123"
-     * $padded_right = $this->get_padding_zero("123", true);  // Devuelve "1230000000"
+     * $padded = $this->get_padding_zero("123");          // Devuelve "0000000123"
+     * $padded_right = $this->get_padding_zero("123", true); // Devuelve "1230000000"
      */
     private function get_padding_zero(string $input, bool $right = false): string {
         return str_pad(
@@ -223,7 +224,7 @@ abstract class Data {
     /**
      * Establece y construye la cadena de datos a partir de la entropía proporcionada.
      *
-     * Este método procesa la cadena de entrada (`$input`) aplicando un algoritmo basado en entropía, 
+     * Procesa la cadena de entrada (`$input`) aplicando un algoritmo basado en entropía, 
      * el cual ajusta cada carácter de la cadena según un valor calculado a partir de su índice y la 
      * entropía base (`$sum`). El resultado de este proceso es una cadena codificada que se almacena 
      * en la variable `$string_data`.
@@ -235,7 +236,7 @@ abstract class Data {
      * El resultado final es una cadena procesada que tiene en cuenta la entropía y otras transformaciones 
      * necesarias para su almacenamiento o manipulación.
      *
-     * @param string $input Cadena de entrada que será procesada y transformada.
+     * @param string $input Secuncia de entrada que será procesada y transformada. Se tratará como bytes crudos.
      * @param string &$string_data Cadena de salida construida a partir de la entropía. Este parámetro se modifica por referencia.
      * @param int|float $sum Valor base de la entropía. Determina cómo se ajusta cada valor durante el proceso. El valor predeterminado es 0.
      *
@@ -272,7 +273,7 @@ abstract class Data {
     /**
      * Revierte la entropía aplicada a los bloques y devuelve el valor original.
      *
-     * Este método procesa los bloques de datos, revertiendo el efecto de la entropía aplicada previamente 
+     * Procesa los bloques de datos, revertiendo el efecto de la entropía aplicada previamente 
      * para obtener la cadena original. Cada bloque de 40 bits es analizado y transformado utilizando el valor 
      * de entropía proporcionado o el valor calculado, en caso de que no se pase explícitamente. Los bloques 
      * se reordenan y se procesan para recuperar los datos antes de ser codificados con la entropía.

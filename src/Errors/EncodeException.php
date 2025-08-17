@@ -19,7 +19,7 @@ use Throwable;
  * @license MIT License
  * @version v0.1.0
  */
-final class StorageException extends RuntimeException {
+final class EncodeException extends RuntimeException {
     /**
      * Constructor personalizado para StorageException.
      *

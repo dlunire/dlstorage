@@ -77,17 +77,27 @@ trait StorageTrait {
      * padre del archivo exista, creándolo si es necesario. En caso de que exista un
      * archivo con el mismo nombre que el directorio, se lanza una excepción.
      *
-     * @param string $filename Nombre relativo del archivo (puede contener subdirectorios).
-     * @param bool $create_dir Si se debe crear el directorio contenedor si no existe. Por defecto es `false`.
+     * @param string $filename   Nombre relativo del archivo (puede contener subdirectorios).
+     * @param bool   $create_dir Indica si se debe crear el directorio contenedor si no existe.
+     *                           Por defecto es `false`.
+     * @param bool   $storage    Si es `true`, el archivo se almacenará dentro del directorio
+     *                           `storage/` gestionado por el sistema. Si es `false`, la ruta se
+     *                           resolverá directamente en la raíz del documento. Por defecto es `true`.
      *
      * @return string Ruta absoluta del archivo dentro del almacenamiento gestionado.
      *
      * @throws StorageException Si `$create_dir` es `true` y existe un archivo con el mismo nombre que el directorio contenedor.
      *
      * @example Ejemplo de uso
+     * 
      * ```php
+     * // Usando almacenamiento interno
      * $ruta = $storage->get_file_path("documentos/ejemplo.txt", true);
      * // Resultado: /ruta/absoluta/al/proyecto/storage/documentos/ejemplo.txt
+     *
+     * // Usando ruta directa (fuera de /storage)
+     * $ruta = $storage->get_file_path("documentos/ejemplo.txt", true, false);
+     * // Resultado: /ruta/absoluta/al/proyecto/documentos/ejemplo.txt
      * ```
      *
      * @note Los separadores de directorio son normalizados automáticamente al formato del sistema operativo.
@@ -95,8 +105,7 @@ trait StorageTrait {
      * @warning Si el nombre proporcionado en `$filename` genera una colisión con un archivo
      * en lugar de un directorio, y `$create_dir` es `true`, la operación fallará.
      */
-
-    public function get_file_path(string $filename, bool $create_dir = false): string {
+    public function get_file_path(string $filename, bool $create_dir = false, bool $storage = true): string {
         /** @var string $root */
         $root = $this->get_document_root();
 
@@ -107,7 +116,9 @@ trait StorageTrait {
         $filename = trim($filename, "\{$separator}");
 
         /** @var string $file */
-        $file = "{$root}{$separator}storage{$separator}{$filename}";
+        $file = $storage
+            ? "{$root}{$separator}storage{$separator}{$filename}"
+            : "{$root}{$separator}{$separator}{$filename}";
 
         if (!$create_dir) {
             return $file;
