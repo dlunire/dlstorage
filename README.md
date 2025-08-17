@@ -1,29 +1,37 @@
 # DLStorage
 
-**DLStorage** es una biblioteca desarrollada por **Códigos del Futuro** y **David E Luna M** como parte del ecosistema del **DLUnire Framework**. Su propósito es proporcionar una solución eficiente para el almacenamiento de datos binarios, tanto dentro como fuera del framework.
+**DLStorage** es una biblioteca desarrollada por **Códigos del Futuro** y **David E Luna M** como parte del ecosistema del **DLUnire Framework**. Su objetivo principal es ofrecer una solución eficiente para el almacenamiento y gestión de datos binarios, tanto dentro como fuera del framework.
+
+---
 
 ## 📌 Propósito
 
-**DLStorage** permite almacenar, gestionar y recuperar datos binarios de forma eficiente. Es ideal para escenarios donde se necesita manipular archivos binarios como configuraciones, cachés u otros recursos que requieren persistencia de bajo nivel.
+**DLStorage** permite almacenar, manipular y recuperar datos binarios de forma segura y eficiente. Está especialmente diseñada para escenarios donde se requieren operaciones sobre archivos binarios, como configuraciones, cachés u otros recursos que necesitan persistencia de bajo nivel.
 
-Aunque está optimizada para el framework **DLUnire**, puede usarse de forma completamente independiente en otros entornos PHP modernos.
+Aunque está optimizada para el framework **DLUnire**, **DLStorage** puede utilizarse de manera independiente en cualquier proyecto PHP moderno.
+
+---
 
 ## 🚀 Funcionalidades
 
-* 🔒 **Almacenamiento binario estructurado**
-* 🔀 **Compatibilidad directa con DLUnire Framework**
-* 📈 **Diseño escalable y modular**
-* 📂 **Lectura y escritura optimizada en archivos `.dlstorage`**
+* 🔒 **Almacenamiento binario estructurado**: gestión eficiente de datos binarios.
+* 🔀 **Compatibilidad directa con DLUnire Framework**.
+* 📈 **Diseño escalable y modular**, ideal para proyectos de distintos tamaños.
+* 📂 **Lectura y escritura optimizada en archivos `.dlstorage`**.
+
+---
 
 ## 📦 Instalación
 
-Puedes instalar **DLStorage** fácilmente usando **Composer**:
+Instalación mediante **Composer**:
 
 ```bash
 composer require dlunire/dlstorage
 ```
 
-Asegúrate de tener configurado Composer en tu proyecto. El paquete descargará automáticamente todas las dependencias necesarias.
+> Composer se encargará de descargar automáticamente todas las dependencias necesarias.
+
+---
 
 ## ✅ Requisitos
 
@@ -31,31 +39,44 @@ Asegúrate de tener configurado Composer en tu proyecto. El paquete descargará 
 * Composer
 * (Opcional) DLUnire Framework para integración directa
 
+---
+
 ## 📚 Documentación
 
 La documentación técnica de las clases principales está disponible en el directorio `doc/`:
 
-* [DataStorage](doc/DataStorage.md): Documentación base del sistema de almacenamiento binario.
-* [SaveData](doc/SaveData.md): Clase concreta para guardar y recuperar datos con control de cabecera.
+* [DataStorage](doc/DataStorage.md) – Documentación base del sistema de almacenamiento binario.
+* [SaveData](doc/SaveData.md) – Clase concreta para guardar y recuperar datos con control de cabecera.
 
-También se agregarán más archivos conforme avance el desarrollo.
+> Nuevos archivos y módulos serán añadidos conforme avance el desarrollo.
+
+---
 
 ## 🛠️ Uso
 
-> ⚠️ Este proyecto se encuentra en etapa inicial. Las interfaces pueden cambiar.
-> En futuras versiones se incluirán ejemplos detallados y una guía completa de integración.
+> ⚠️ Este proyecto se encuentra en etapa inicial. Las interfaces y métodos pueden cambiar en futuras versiones.
 
-Por el momento, puedes revisar los archivos mencionados en la sección de documentación para ver las estructuras y firmas actuales.
+Actualmente, se recomienda revisar los archivos de documentación para entender la estructura y firma de las clases.
+
+---
 
 ## 🤝 Contribuciones
 
-¡Tu participación es bienvenida! Puedes abrir un *pull request* o reportar un *issue* si encuentras errores o deseas proponer mejoras.
+Se agradece cualquier contribución. Puedes:
+
+* Abrir un *pull request*.
+* Reportar un *issue* para errores o sugerencias.
+* Proponer mejoras o nuevas funcionalidades.
+
+---
 
 ## 👤 Autor
 
-Este proyecto ha sido creado por **David E Luna M**, fundador de **Códigos del Futuro** y autor del **DLUnire Framework**.
+**David E Luna M** – Fundador de **Códigos del Futuro** y autor del **DLUnire Framework**.
 
 📧 Contacto: [dlunireframework@gmail.com](mailto:dlunireframework@gmail.com)
+
+---
 
 ## 📄 Licencia
 
@@ -67,16 +88,20 @@ Este proyecto ha sido creado por **David E Luna M**, fundador de **Códigos del 
 
 ```text
 src/
-├— Storage/       # Clases de almacenamiento principal
-├— Interfaces/    # Interfaces para implementación extensible
+├─ Storage/       # Clases de almacenamiento principal
+├─ Interfaces/    # Interfaces para implementación extensible
 doc/
-├— DataStorage.md
-├— SaveData.md
+├─ DataStorage.md
+├─ SaveData.md
 ```
 
 ---
 
 ## FastArray
+
+`FastArray` es una clase abstracta de **DLStorage** que proporciona una interfaz avanzada para manipulación de arrays, integrando iteradores, acceso seguro y métodos inspirados en estructuras de alto nivel.
+
+---
 
 ### 🗂️ Métodos actuales de FastArray
 
@@ -114,10 +139,11 @@ doc/
 * `keys(): FastArray` – Devuelve los índices.
 * `values(): FastArray` – Devuelve los valores.
 * `indexOf(mixed $value): int|null` – Devuelve el índice de un valor, `null` si no existe.
-* `includes(mixed $value): bool` – Retorna true si el valor está contenido.
+* `includes(mixed $value): bool` – Retorna `true` si el valor está contenido.
 
+---
 
 ## 📌 Notas Finales
 
-* Pronto se incluirán más módulos como validadores, conversores y controladores de versión de datos.
-* Si deseas soporte personalizado o tienes preguntas, contacta a través del correo del autor.
+* Próximamente se incluirán módulos adicionales como validadores, conversores y controladores de versión de datos.
+* Para soporte personalizado o consultas, contactar al autor vía correo electrónico.
