@@ -1,6 +1,6 @@
 # DLStorage
 
-**DLStorage** es una biblioteca desarrollada por **Códigos del Futuro** y **David E Luna M** como parte del ecosistema del **DLUnire Framework**. Su objetivo principal es ofrecer una solución eficiente para el almacenamiento y gestión de datos binarios, tanto dentro como fuera del framework.
+**DLStorage** es una biblioteca desarrollada por **David E Luna M**, creador del proyecto **Códigos del Futuro**, ahora **Código Entrópico** como parte del ecosistema del **DLUnire Framework**. Su objetivo principal es ofrecer una solución eficiente para el almacenamiento y gestión de datos binarios, tanto dentro como fuera del framework.
 
 ---
 
@@ -20,7 +20,7 @@ Aunque está optimizada para el framework **DLUnire**, **DLStorage** puede utili
 
 ---
 
-## 🚀 Funcionalidades
+## Funcionalidades
 
 * 🔒 **Almacenamiento binario estructurado**: gestión eficiente de datos binarios.
 * 🔀 **Compatibilidad directa con DLUnire Framework**.
@@ -29,7 +29,7 @@ Aunque está optimizada para el framework **DLUnire**, **DLStorage** puede utili
 
 ---
 
-## 📦 Instalación
+## Instalación
 
 Instalación mediante **Composer**:
 
@@ -41,7 +41,7 @@ composer require dlunire/dlstorage
 
 ---
 
-## ✅ Requisitos
+## Requisitos
 
 * PHP 8.2 o superior
 * Composer
@@ -49,7 +49,7 @@ composer require dlunire/dlstorage
 
 ---
 
-## 📚 Documentación
+## Documentación
 
 La documentación técnica de las clases principales está disponible en el directorio `doc/`:
 
@@ -62,7 +62,7 @@ La documentación técnica de las clases principales está disponible en el dire
 
 ## 🛠️ Uso
 
-> ⚠️ Este proyecto se encuentra en etapa inicial. Las interfaces y métodos pueden cambiar en futuras versiones.
+> Este proyecto se encuentra en etapa inicial. Las interfaces y métodos pueden cambiar en futuras versiones.
 
 Actualmente, se recomienda revisar los archivos de documentación para entender la estructura y firma de las clases.
 

@@ -183,7 +183,7 @@ trait BinaryLengthTrait {
      * @see self::get_circular_value()
      */
     protected function get_entropy(int $index, int $sum): int {
-        return $sum + $this->get_circular_value($index) + $this->get_circular_value($index);
+        return 2 * ($this->get_circular_value($index)) + $sum;
     }
 
 
@@ -337,7 +337,7 @@ trait BinaryLengthTrait {
         $max_coefficient = 0xffffffffffff;
 
         /** @var int|float $coefficient */
-        $coefficient = abs(intval(($seed * 37 + 113) % $max_coefficient));
+        $coefficient = abs(intval((37 * $seed + 113) % $max_coefficient));
 
         $this->coefficient = max($coefficient, $min_coefficient);
     }
