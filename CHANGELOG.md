@@ -2,6 +2,9 @@
 
 Todos los cambios importantes de este proyecto serán documentados en este archivo.
 
+## [v0.1.3] - 2025-10-29
+- Actualizaciones
+
 ## [Unreleased]
 ### Added
 - N/A
