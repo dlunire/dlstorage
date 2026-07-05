@@ -1,5 +1,28 @@
 <?php
 
+/**
+ * DLUnire
+ * Copyright (C) 2026 David E Luna M
+ *
+ * Operando bajo el establecimiento de comercio "DLUnire",
+ * NIT 700551569-1, matrícula mercantil Nº 10007069
+ * (matrícula mercantil personal Nº 10007068).
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public
+ * License along with this program. If not, see
+ * <https://www.gnu.org/licenses/>.
+ */
+
 declare(strict_types=1);
 
 namespace DLStorage\Storage;
@@ -7,40 +30,58 @@ namespace DLStorage\Storage;
 use DLStorage\Errors\StorageException;
 
 /**
- * Permite guardar y recuperar datos binarios utilizando el sistema de almacenamiento gestionado,
- * sin necesidad de una implementación personalizada.
+ * Implementa los mecanismos de persistencia binaria administrados por DLStorage.
  *
- * Internamente aplica validaciones de integridad, control de versión, firma de datos
- * y manejo de directorios. Ideal para escenarios donde se necesita una solución lista
- * para uso directo en producción.
+ * Esta clase proporciona una implementación base para almacenar y recuperar
+ * información utilizando el formato binario nativo de DLStorage (`.dlstorage`).
+ * Se encarga de construir la estructura física del archivo, gestionar sus
+ * metadatos y garantizar la integridad del contenido durante los procesos de
+ * escritura y lectura.
  *
- * Compatible con el sistema de transformación de bytes y validación automática del archivo.
- * Soporta escritura protegida, lectura estructurada y verificación de la huella binaria.
+ * Durante el almacenamiento, los datos son transformados mediante el sistema
+ * de codificación binaria de {@see Data}, encapsulados dentro de una estructura
+ * compuesta por una firma de identificación, información de versión y
+ * metadatos de longitud, permitiendo verificar posteriormente la validez del
+ * archivo antes de reconstruir su contenido original.
  *
- * @version v0.1.0
- * @package DLStorage\Storage
- * @license MIT
- * @author David E Luna M
- * @copyright 2025 David E Luna
+ * Esta clase sirve como implementación común para los componentes de
+ * persistencia del ecosistema **DLUnire Runtime**, proporcionando una base
+ * uniforme para desarrollar sistemas de almacenamiento seguros, portables e
+ * independientes de motores de bases de datos.
  *
- * @see DataStorage Define los métodos y estructuras comunes de bajo nivel.
- * @see StorageException Maneja los errores específicos del almacenamiento binario.
+ * Características principales:
  *
- * @example Guardar datos binarios
+ * - Escritura y lectura de archivos `.dlstorage`.
+ * - Verificación de firmas e integridad estructural.
+ * - Compatibilidad con codificación mediante entropía.
+ * - Gestión automática de rutas de almacenamiento.
+ * - Normalización de cargas binarias y metadatos internos.
+ *
+ * @package    DLStorage\Storage
+ * @version    2.0.0
+ * @license    AGPL-3.0-or-later
+ * @author     David E. Luna M. <info@dlunire.dev>
+ * @copyright  Copyright (c) 2026 David E. Luna M.
+ *
+ * @see        DataStorage Abstracción para sistemas de almacenamiento persistente.
+ * @see        StorageException Excepciones específicas del sistema de almacenamiento.
+ * @see        https://www.dlunire.dev DLUnire Runtime
+ * @see        https://github.com/dlunire Ecosistema DLUnire
+ *
+ * @example Guardar información
  * ```php
- * use DLStorage\Storage\SaveData;
- *
  * $storage = new SaveData();
- * $storage->save_binary_data("respaldo/config.bin", $contenido);
+ * $storage->save_data("backup/config", $contenido);
  * ```
  *
- * @example Leer datos previamente guardados
+ * @example Recuperar información
  * ```php
- * $contenido = $storage->read_filename("respaldo/config.bin");
+ * $contenido = $storage->read_storage_data("backup/config");
  * ```
  *
- * @note Recomendado para entornos donde no se desea utilizar bases de datos,
- * pero se requiere persistencia confiable con control de integridad.
+ * @note Esta clase constituye la implementación base del formato de archivo
+ *       nativo de DLStorage y está diseñada para ser extendida por
+ *       implementaciones concretas de almacenamiento.
  */
 abstract class SaveData extends DataStorage {
 
@@ -234,12 +275,6 @@ abstract class SaveData extends DataStorage {
      * ⚠️ Advertencia: Este método no valida si los ceros fueron parte del contenido original o añadidos como relleno.
      * Debe usarse solo en contextos donde se controle el proceso de normalización y se conozca su origen.
      *
-     * @version v0.0.1
-     * @package DLStorage
-     * @license MIT
-     * @author David E Luna M
-     * @copyright 2025 David E Luna
-     *
      * @see encode() Método que puede generar longitud impar en hexadecimal.
      * @see normalize_hex_payload() Método que antepone ceros si la longitud es impar.
      *
@@ -279,7 +314,7 @@ abstract class SaveData extends DataStorage {
         $payload_int = hexdec($size);
 
         /** @var bool $is_residue */
-        $is_residue = strlen($content) % 2 != 0;
+        $is_residue = \strlen($content) % 2 != 0;
 
         if ($is_residue) {
             $content = "0{$content}";
@@ -302,7 +337,7 @@ abstract class SaveData extends DataStorage {
     private function get_section_size(string $hex_content): string {
 
         /** @var int $length_int */
-        $length_int = intdiv(strlen($hex_content), 2);
+        $length_int = intdiv(\strlen($hex_content), 2);
 
         return str_pad(dechex($length_int), 8, '0', STR_PAD_LEFT);
     }

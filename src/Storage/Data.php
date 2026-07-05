@@ -1,5 +1,28 @@
 <?php
 
+/**
+ * DLUnire
+ * Copyright (C) 2026 David E Luna M
+ *
+ * Operando bajo el establecimiento de comercio "DLUnire",
+ * NIT 700551569-1, matrícula mercantil Nº 10007069
+ * (matrícula mercantil personal Nº 10007068).
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public
+ * License along with this program. If not, see
+ * <https://www.gnu.org/licenses/>.
+ */
+
 namespace DLStorage\Storage;
 
 use DLStorage\Errors\EncodeException;
@@ -7,33 +30,38 @@ use DLStorage\Traits\BinaryLengthTrait;
 use DLStorage\Traits\ForTrait;
 
 /**
- * Generación y manipulación de datos binarios con firmas en la cabecera o principio del archivo.
+ * Generación y manipulación de datos binarios con firmas en la cabecera del flujo de datos.
  *
- * Esta clase proporciona una interfaz para el manejo de datos en formato binario personalizado. Permite generar
- * firmas, convertir caracteres a binario y calcular entropía. Es una clase base diseñada para ser utilizada en
- * adaptadores concretos de almacenamiento en sistemas que requieren estructuras binarizadas para identificar y
- * validar datos. Además, esta clase está diseñada para integrarse con proyectos relacionados con la
- * manipulación avanzada de datos binarios, como *Códigos del Futuro* y el *DLUnire Framework*.
+ * Esta clase proporciona una abstracción para la creación, codificación y
+ * manipulación de estructuras binarias utilizadas por los componentes de
+ * almacenamiento de DLStorage.
  *
- * *Códigos del Futuro* (@cdelfuturo) es una iniciativa con el propoósito de crear series o cortometrajes de
- * ciencia ficción, pero también publicar temas de programación de forma entretenida. Puedes seguir sus:
- * - [YouTube](https://www.youtube.com/@codigosdelfuturo)
- * - [X](https://x.com/cdelfuturo)
- * - [TikTok](https://www.tiktok.com/@codigosdelfuturo)
+ * Implementa algoritmos para la transformación de datos mediante entropía,
+ * compactación de secuencias, reconstrucción de contenido binario y
+ * generación de representaciones hexadecimal optimizadas, sirviendo como
+ * clase base para los distintos adaptadores de almacenamiento del paquete.
  *
- * *DLUnire Framework* es una plataforma de desarrollo web que integra herramientas de alto rendimiento para la
- * creación de aplicaciones modernas con una arquitectura robusta y flexible. Puedes acceder a más información en los
- * siguientes enlaces:
- * - [Sitio web](https://dlunire.pro)
- * - [Repositorio en GitHub](https://github.com/dlunire)
+ * Forma parte del ecosistema **DLUnire Runtime**, proporcionando los
+ * componentes fundamentales para la serialización, persistencia y
+ * procesamiento eficiente de información binaria dentro de aplicaciones
+ * desarrolladas sobre la plataforma.
+ *
+ * Características principales:
+ *
+ * - Codificación y decodificación de datos mediante entropía configurable.
+ * - Manipulación de bloques binarios de longitud fija.
+ * - Compactación y expansión de secuencias de relleno.
+ * - Conversión entre datos binarios y representaciones hexadecimales.
+ * - Base para adaptadores de almacenamiento binario personalizados.
  *
  * @package    DLStorage\Storage
- * @version    v0.1.0
- * @license    MIT
- * @author     David E. Luna M. <dlunireframework@gmail.com>
- * @copyright  Copyright (c) 2025 David E. Luna M.
- * @link       https://www.dlunire.pro Proyecto *DLUnire Framework*
- * @link       https://github.com/dlunire Repositorio *DLUnire Framework*
+ * @version    2.0.0
+ * @license    AGPL-3.0-or-later
+ * @author     David E. Luna M. <info@dlunire.dev>
+ * @copyright  Copyright (c) 2026 David E. Luna M.
+ *
+ * @see        https://www.dlunire.dev DLUnire Runtime
+ * @see        https://github.com/dlunire Ecosistema DLUnire
  */
 abstract class Data {
 
