@@ -48,112 +48,118 @@ use DLStorage\Storage\SaveData;
  * Clase utilizada para probar la codificación y decodificación
  */
 final class Storage extends SaveData {
-    public string $entropy = "Llave de entropía";
 
     /**
-     * Devuelve el contenido en pantalla
+     * Contenido transformado
      *
-     * @return void
+     * @var string
      */
-    public function print(string $filename, string $mimetype = "text/plain"): void {
-        $content = $this->get_file_content($filename);
-        header("content-type: {$mimetype}", true, 200);
+    private readonly string $encoded;
 
-        echo $content;
-        exit;
+    /**
+     * Contenido original transformao
+     *
+     * @var string|false
+     */
+    private readonly string|false $original;
+
+    /**
+     * Llave de entropía cargada en el constructor
+     *
+     * @var string|null
+     */
+    private readonly string|null $entropy;
+
+    /**
+     * Permite ejecutar pruebas de alteración de bytes
+     *
+     * @param string $filename Archivo a ser leído
+     * @param string|null $entropy Llave de entropía
+     */
+    public function __construct(string $filename, ?string $entropy = null) {
+        $this->entropy = $entropy;
+        $this->encode_test($filename);
     }
 
     /**
-     * Codifica el contenido de un archivo origen y lo almacena en un archivo destino.
+     * Transforma los bytes del contenido original durante el instanciamiento
      *
-     * El archivo origen es leído desde el directorio `storage` (por defecto) o desde la raíz
-     * del proyecto, según el valor del parámetro `$storage`. Su contenido se obtiene mediante
-     * {@see get_file_content()}, y posteriormente se procesa a través del método interno
-     * {@see save_data()} aplicando la entropía definida en la clase.
-     *
-     * El resultado de la codificación se guarda en el archivo destino especificado en `$target_file`.
-     *
-     * @method void file_encode(string $target_file, string $source, bool $storage = true)
-     *
-     * @param string $target_file Ruta relativa del archivo destino donde se almacenará el resultado
-     *                            de la codificación.
-     *
-     * @param string $source Nombre del archivo origen cuyo contenido será codificado.
-     *                       Puede ubicarse en el directorio raíz o en el subdirectorio `storage`,
-     *                       dependiendo del parámetro `$storage`.
-     *
-     * @param bool $storage Indica si `$source` se encuentra en el directorio `storage`.  
-     *                      Por defecto es `true`. Si es `false`, se buscará directamente en la raíz
-     *                      del proyecto.
-     *
-     * @return void No devuelve valor; el resultado de la codificación se escribe en `$target_file`.
-     *
-     * @throws StorageException Si el archivo origen (`$source`) no existe o no puede accederse.
-     *
-     * @example
-     * ```php
-     * // Codificar un archivo de origen ubicado en `storage` y guardar el resultado en otro destino:
-     * $storage->file_encode('encoded/source.dat', 'credentials/token.dlstorage');
-     *
-     * // Codificar un archivo de origen desde la raíz del proyecto:
-     * $storage->file_encode('encoded/config.sec', 'config/app.php', false);
-     * ```
-     *
-     * @internal Este método depende de:
-     *  - {@see get_file_content()} para obtener el contenido del archivo origen.
-     *  - {@see save_data()} para procesar y guardar el contenido codificado.
-     *  - La propiedad `$entropy` definida en la clase para reforzar el proceso de codificación.
+     * @param string $filename Contenido de archivo a ser transformado
+     * @return void
      */
-    public function file_encode(string $target_file, string $source, bool $storage = true): void {
-        $this->save_data(
-            filename: $target_file,
-            data: $this->get_file_content($source, $storage),
-            entropy: $this->entropy
-        );
+    private function encode_test(string $filename): void {
+        if (!\file_exists($filename)) {
+            throw new Exception("El archivo «{$filename}» no existe. Revisa que esté bien escrito o que exista");
+        }
+
+        if (\is_dir($filename)) {
+            throw new Exception("El archivo «{$filename}» que intentas leer es un directorio");
+        }
+
+        /** @var string|false */
+        $this->original = \file_get_contents($filename);
+
+        if ($this->original === false) {
+            throw new Exception("Error en Input/Ouput al intentar leer el archivo «{$filename}»");
+        }
+        
+        $this->encoded = $this->encode($this->original, $this->entropy);
     }
 
     /**
-     * Decofica el archivo
+     * Devuelve el contneido codificado o transformado
      *
-     * @param string $filename Archivo binario a ser leído y decodificado.
-     * @param string $mimetype Formato de archivo 
-     * @return void
+     * @return string
      */
-    public function file_decode(string $filename, string $mimetype = "text/plain"): void {
-        $content = $this->read_storage_data($filename, $this->entropy);
-        header("content-type: {$mimetype}", true, 200);
-        print_r($content);
-        exit;
+    public function get_encoded(): string {
+        return $this->encoded;
     }
 
     /**
-     * Muestra el contenido codificado
+     * Devuelve el contenido original
      *
-     * @param string $content Contenido codificado
-     * @return void
+     * @return string
      */
-    public function show_encoded_text(string $content): void {
-        /** @var string $encoded */
-        $encoded = $this->encode($content, $this->entropy);
+    public function get_original(): string {
+        return $this->original;
+    }
 
-        /** @var string $original */
-        $original = bin2hex($content);
-
-        header("content-type: text/plain", true, 200);
-        print_r("\$encoded: {$encoded}");
-        echo "\n";
-        print_r("\$original: {$original}");
-
-        exit;
+    /**
+     * Devuelve la llave de entropía
+     *
+     * @return string|null
+     */
+    public function get_entropy_test(): ?string {
+        return $this->entropy;
     }
 }
 
-$storage = new Storage();
-// $storage->print('test.mp3', 'audio/mp3');
+$entropy_prefix = "Ciencias de la computació";
 
-// $storage->entropy = $storage->get_file_content('test.mp3');
+$data_test = [];
 
-$storage->entropy = "Esta es una prueba que éstoy realizando.";
-// $storage->show_encoded_text("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-$storage->file_encode('dibujo', 'dibujo.pdf');
-$storage->file_decode('dibujo', 'application/pdf');
+for ($byte = 0x00; $byte <= 0xFF; $byte++) {
+
+    $entropy = $entropy_prefix . chr($byte);
+
+    /** @var Storage $storage */
+    $storage = new Storage("../test-file", $entropy);
+
+    /** @var non-empty-string $encoded */
+    $encoded = $storage->get_encoded();
+
+    /** @var non-empty-string[] $chunks */
+    $chunks = str_split($encoded, 8);
+
+    $data_test[] = [
+        "byte"         => sprintf("0x%02X", $byte),
+        "entropy_hex"  => strtoupper(bin2hex(chr($byte))),
+        "sha256"       => hash('sha256', $encoded),
+        "unique_blocks"=> count(array_unique($chunks)),
+        "first_blocks" => array_slice($chunks, 0, 12),
+    ];
+}
+
+
+header("Content-type: application/json; charset=utf-8", true, 200);
+echo json_encode($data_test, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);

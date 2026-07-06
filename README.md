@@ -1,157 +1,62 @@
-# DLStorage
+# Contexto del Modelo de Transformación de Bytes (MTB)
 
-**DLStorage** es una biblioteca desarrollada por **David E Luna M**, creador del proyecto **Códigos del Futuro**, ahora **Código Entrópico** como parte del ecosistema del **DLUnire Framework**. Su objetivo principal es ofrecer una solución eficiente para el almacenamiento y gestión de datos binarios, tanto dentro como fuera del framework.
+Antes de analizar este proyecto, es importante comprender su objetivo de diseño para evitar evaluarlo bajo un modelo de amenazas distinto al que pretende resolver.
 
----
+## Propósito
 
-## Guía de uso
+El Modelo de Transformación de Bytes (MTB) **no fue diseñado como un algoritmo criptográfico estándar**, ni pretende sustituir algoritmos como AES, ChaCha20 o similares.
 
-### Índice de contenido
+Su objetivo es transformar información sensible —principalmente archivos de configuración de aplicaciones— desde un formato de texto plano hacia un formato binario dependiente de una entropía, reduciendo la exposición accidental de credenciales y dificultando su recuperación directa.
 
-1. [DataStorage](./doc/DataStorage.md "Define una base para almacenar datos transformados")
-2. [SaveData](./doc/SaveData.md "La clase `SaveData` extiende `DataStorage` y proporciona una solución lista para usar")
-3. [FastArray](./doc/FastArray.md "")
+El problema que intenta resolver es diferente al de un cifrado general.
 
-## 📌 Propósito
+## Problema que resuelve
 
-**DLStorage** permite almacenar, manipular y recuperar datos binarios de forma segura y eficiente. Está especialmente diseñada para escenarios donde se requieren operaciones sobre archivos binarios, como configuraciones, cachés u otros recursos que necesitan persistencia de bajo nivel.
-
-Aunque está optimizada para el framework **DLUnire**, **DLStorage** puede utilizarse de manera independiente en cualquier proyecto PHP moderno.
-
----
-
-## Funcionalidades
-
-* 🔒 **Almacenamiento binario estructurado**: gestión eficiente de datos binarios.
-* 🔀 **Compatibilidad directa con DLUnire Framework**.
-* 📈 **Diseño escalable y modular**, ideal para proyectos de distintos tamaños.
-* 📂 **Lectura y escritura optimizada en archivos `.dlstorage`**.
-
----
-
-## Instalación
-
-Instalación mediante **Composer**:
-
-```bash
-composer require dlunire/dlstorage
-```
-
-> Composer se encargará de descargar automáticamente todas las dependencias necesarias.
-
----
-
-## Requisitos
-
-* PHP 8.2 o superior
-* Composer
-* (Opcional) DLUnire Framework para integración directa
-
----
-
-## Documentación
-
-La documentación técnica de las clases principales está disponible en el directorio `doc/`:
-
-* [DataStorage](doc/DataStorage.md) – Documentación base del sistema de almacenamiento binario.
-* [SaveData](doc/SaveData.md) – Clase concreta para guardar y recuperar datos con control de cabecera.
-
-> Nuevos archivos y módulos serán añadidos conforme avance el desarrollo.
-
----
-
-## 🛠️ Uso
-
-> Este proyecto se encuentra en etapa inicial. Las interfaces y métodos pueden cambiar en futuras versiones.
-
-Actualmente, se recomienda revisar los archivos de documentación para entender la estructura y firma de las clases.
-
----
-
-## 🤝 Contribuciones
-
-Se agradece cualquier contribución. Puedes:
-
-* Abrir un *pull request*.
-* Reportar un *issue* para errores o sugerencias.
-* Proponer mejoras o nuevas funcionalidades.
-
----
-
-## 👤 Autor
-
-**David E Luna M** – Fundador de **Códigos del Futuro** y autor del **DLUnire Framework**.
-
-📧 Contacto: [dlunireframework@gmail.com](mailto:dlunireframework@gmail.com)
-
----
-
-## 📄 Licencia
-
-**DLStorage** está licenciado bajo la [MIT License](LICENSE).
-
----
-
-## 📁 Estructura del Proyecto
+En la mayoría de aplicaciones PHP, Node.js y otros entornos, las credenciales suelen almacenarse en archivos `.env` con contenido legible:
 
 ```text
-src/
-├─ Storage/       # Clases de almacenamiento principal
-├─ Interfaces/    # Interfaces para implementación extensible
-doc/
-├─ DataStorage.md
-├─ SaveData.md
+DB_HOST=localhost
+DB_DATABASE=...
+DB_USERNAME=...
+DB_PASSWORD=...
 ```
 
----
+Si dicho archivo es expuesto por una mala configuración del servidor, una copia de respaldo, una vulnerabilidad o un error humano, las credenciales quedan inmediatamente disponibles.
 
-## FastArray
+MTB transforma esa información en una representación binaria dependiente de una entropía, eliminando completamente las cadenas de texto originales.
 
-`FastArray` es una clase abstracta de **DLStorage** que proporciona una interfaz avanzada para manipulación de arrays, integrando iteradores, acceso seguro y métodos inspirados en estructuras de alto nivel.
+Además, el diseño contempla que estos archivos no permanezcan dentro del directorio del proyecto, sino que sean almacenados en el directorio `$HOME` del usuario del sistema operativo, fuera del árbol de archivos públicamente accesible y preparados para un entorno multitenant.
 
----
+## Modelo de amenazas
 
-### 🗂️ Métodos actuales de FastArray
+El modelo de amenazas considerado es principalmente:
 
-| Método                                                                 | Parámetros                                    | Modifica array | Retorno            | Descripción                                                                    |
-| ---------------------------------------------------------------------- | --------------------------------------------- | -------------- | ------------------ | ------------------------------------------------------------------------------ |
-| `__construct(array $data = [])`                                        | Array inicial opcional                        | Sí             | `void`             | Inicializa el array y su longitud.                                             |
-| `push(mixed $value)`                                                   | Valor a insertar                              | Sí             | `void`             | Agrega un elemento al final.                                                   |
-| `pop()`                                                                | —                                             | Sí             | `mixed`            | Elimina y devuelve el último elemento.                                         |
-| `shift()`                                                              | —                                             | Sí             | `mixed`            | Elimina y devuelve el primer elemento.                                         |
-| `clear()`                                                              | —                                             | Sí             | `void`             | Vacía el array y reinicia la longitud.                                         |
-| `get()`                                                                | —                                             | No             | `array<int,mixed>` | Devuelve una copia del array interno.                                          |
-| `length()`                                                             | —                                             | No             | `int`              | Devuelve la cantidad de elementos.                                             |
-| `add(array $data)`                                                     | Array de elementos                            | Sí             | `void`             | Agrega múltiples elementos al final.                                           |
-| `item(int $index)`                                                     | Índice a obtener                              | No             | `mixed`            | Devuelve un elemento por índice, lanza excepción si es inválido.               |
-| `first()`                                                              | —                                             | No             | `mixed`            | Devuelve el primer elemento, lanza excepción si está vacío.                    |
-| `last()`                                                               | —                                             | No             | `mixed`            | Devuelve el último elemento, lanza excepción si está vacío.                    |
-| `splide(int $offset, ?int $length = null, mixed $replacement = [])`    | Offset, longitud opcional, reemplazo opcional | Sí             | `FastArray`        | Elimina/reemplaza elementos y devuelve los eliminados en un nuevo `FastArray`. |
-| `slice(int $offset, ?int $length = null, bool $preserve_keys = false)` | Offset, longitud opcional, preserva índices   | No             | `FastArray`        | Devuelve una porción del array como un nuevo `FastArray`.                      |
-| `to_array()`                                                           | —                                             | No             | `array<int,mixed>` | Devuelve el array interno crudo.                                               |
-| `get_iterator()`                                                       | —                                             | No             | `\Traversable`     | Devuelve un iterador (`ArrayIterator`) del array interno.                      |
-| `getIterator()`                                                        | —                                             | No             | `\Traversable`     | Implementación de `IteratorAggregate`, devuelve `get_iterator()`.              |
+* Exposición accidental de archivos de configuración.
+* Lectura directa de archivos por errores de despliegue.
+* Descarga de archivos sensibles desde el servidor.
+* Inspección manual mediante editores de texto o herramientas hexadecimales.
+* Dificultar la recuperación inmediata de credenciales.
 
----
+No pretende proteger contra un adversario con acceso completo al sistema operativo, privilegios elevados o capacidades propias de un análisis criptográfico avanzado.
 
-### 🔮 Métodos planeados para futuras versiones
+## Lo que no pretende
 
-* `filter(callable $callback): FastArray` – Filtra elementos según condición.
-* `map(callable $callback): FastArray` – Aplica función a cada elemento.
-* `reduce(callable $callback, mixed $initial = null): mixed` – Reduce a un único valor.
-* `unique(): FastArray` – Elimina elementos duplicados.
-* `shuffle(): FastArray` – Reordena elementos aleatoriamente.
-* `concat(FastArray|array $other): FastArray` – Concatena otro array o FastArray.
-* `join(string $glue = ','): string` – Devuelve string concatenado de los elementos.
-* `contains(mixed $value): bool` – Verifica si existe un valor.
-* `keys(): FastArray` – Devuelve los índices.
-* `values(): FastArray` – Devuelve los valores.
-* `indexOf(mixed $value): int|null` – Devuelve el índice de un valor, `null` si no existe.
-* `includes(mixed $value): bool` – Retorna `true` si el valor está contenido.
+MTB no busca demostrar las propiedades criptográficas clásicas de:
 
----
+* difusión completa (Avalanche Effect),
+* confusión criptográfica,
+* indistinguibilidad bajo ataques de texto conocido,
+* seguridad demostrable frente a modelos formales de criptografía.
 
-## 📌 Notas Finales
+Si el análisis se enfoca exclusivamente bajo esos criterios, inevitablemente concluirá que el sistema no debe considerarse un cifrado criptográfico moderno, lo cual es una afirmación correcta, pero responde a una pregunta distinta de aquella para la que fue diseñado.
 
-* Próximamente se incluirán módulos adicionales como validadores, conversores y controladores de versión de datos.
-* Para soporte personalizado o consultas, contactar al autor vía correo electrónico.
+## Solicitud de evaluación
+
+La evaluación debe centrarse en determinar si el modelo cumple adecuadamente su propósito:
+
+* transformar información sensible a un formato binario;
+* reducir la exposición de credenciales frente al almacenamiento tradicional en archivos `.env`;
+* analizar posibles debilidades dentro de ese contexto específico;
+* proponer mejoras que aumenten la robustez del modelo sin cambiar su objetivo de diseño.
+
+Si durante el análisis se detectan propiedades criptográficas interesantes o limitaciones importantes, estas son bienvenidas, pero deben considerarse como observaciones complementarias y no como el criterio principal de evaluación.
