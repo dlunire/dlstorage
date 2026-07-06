@@ -39,127 +39,23 @@
 
 declare(strict_types=1);
 
-// include dirname(__DIR__) . "/vendor/autoload.php";
-include dirname(__DIR__) . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SEPARATOR . "autoload.php";
+use DLStorage\Storage\Storage as ST;
 
-use DLStorage\Storage\SaveData;
+include dirname(__DIR__)
+    . DIRECTORY_SEPARATOR
+    . "vendor"
+    . DIRECTORY_SEPARATOR
+    . "autoload.php";
 
-/**
- * Clase utilizada para probar la codificación y decodificación
- */
-final class Storage extends SaveData {
+header("Content-type: text/plain; charset=utf-8", true, 200);
 
-    /**
-     * Contenido transformado
-     *
-     * @var string
-     */
-    private readonly string $encoded;
+/** @var ST $st*/
+$st = new ST(
+    filename: "test-file",
+    entropy: "Entropia de prueba"
+);
 
-    /**
-     * Contenido original transformao
-     *
-     * @var string|false
-     */
-    private readonly string|false $original;
-
-    /**
-     * Llave de entropía cargada en el constructor
-     *
-     * @var string|null
-     */
-    private readonly string|null $entropy;
-
-    /**
-     * Permite ejecutar pruebas de alteración de bytes
-     *
-     * @param string $filename Archivo a ser leído
-     * @param string|null $entropy Llave de entropía
-     */
-    public function __construct(string $filename, ?string $entropy = null) {
-        $this->entropy = $entropy;
-        $this->encode_test($filename);
-    }
-
-    /**
-     * Transforma los bytes del contenido original durante el instanciamiento
-     *
-     * @param string $filename Contenido de archivo a ser transformado
-     * @return void
-     */
-    private function encode_test(string $filename): void {
-        if (!\file_exists($filename)) {
-            throw new Exception("El archivo «{$filename}» no existe. Revisa que esté bien escrito o que exista");
-        }
-
-        if (\is_dir($filename)) {
-            throw new Exception("El archivo «{$filename}» que intentas leer es un directorio");
-        }
-
-        /** @var string|false */
-        $this->original = \file_get_contents($filename);
-
-        if ($this->original === false) {
-            throw new Exception("Error en Input/Ouput al intentar leer el archivo «{$filename}»");
-        }
-        
-        $this->encoded = $this->encode($this->original, $this->entropy);
-    }
-
-    /**
-     * Devuelve el contneido codificado o transformado
-     *
-     * @return string
-     */
-    public function get_encoded(): string {
-        return $this->encoded;
-    }
-
-    /**
-     * Devuelve el contenido original
-     *
-     * @return string
-     */
-    public function get_original(): string {
-        return $this->original;
-    }
-
-    /**
-     * Devuelve la llave de entropía
-     *
-     * @return string|null
-     */
-    public function get_entropy_test(): ?string {
-        return $this->entropy;
-    }
-}
-
-$entropy_prefix = "Ciencias de la computació";
-
-$data_test = [];
-
-for ($byte = 0x00; $byte <= 0xFF; $byte++) {
-
-    $entropy = $entropy_prefix . chr($byte);
-
-    /** @var Storage $storage */
-    $storage = new Storage("../test-file", $entropy);
-
-    /** @var non-empty-string $encoded */
-    $encoded = $storage->get_encoded();
-
-    /** @var non-empty-string[] $chunks */
-    $chunks = str_split($encoded, 8);
-
-    $data_test[] = [
-        "byte"         => sprintf("0x%02X", $byte),
-        "entropy_hex"  => strtoupper(bin2hex(chr($byte))),
-        "sha256"       => hash('sha256', $encoded),
-        "unique_blocks"=> count(array_unique($chunks)),
-        "first_blocks" => array_slice($chunks, 0, 12),
-    ];
-}
+$st->generate("Ciencias de la computación", true);
 
 
-header("Content-type: application/json; charset=utf-8", true, 200);
-echo json_encode($data_test, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+echo $st->readfile(true);

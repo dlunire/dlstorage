@@ -259,6 +259,7 @@ abstract class SaveData extends DataStorage {
         /** @var string $only_name_file */
         $only_name_file = basename($filename);
 
+        // print_r($file); exit;
         if (!file_exists($file)) {
             throw new StorageException("El archivo «{$only_name_file}» no existe", 404);
         }
