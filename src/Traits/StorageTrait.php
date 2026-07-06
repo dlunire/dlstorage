@@ -29,6 +29,20 @@ namespace DLStorage\Traits;
 
 use DLStorage\Errors\StorageException;
 
+/**
+ * Operaciones de rutas, lectura binaria y metadatos del formato `.dlstorage`.
+ *
+ * Proporciona la firma (`DLStorage`), la versión (`v0.1.0`), resolución de rutas
+ * relativas al directorio raíz del proyecto y lectura parcial de archivos binarios.
+ *
+ * Consumido por {@see \DLStorage\Storage\DataStorage} y por {@see BinaryLengthTrait}.
+ *
+ * @package   DLStorage\Traits
+ * @version   v0.2.0
+ * @license   AGPL-3.0-or-later
+ * @author    David E. Luna M. <info@dlunire.dev>
+ * @copyright Copyright (c) 2026 David E. Luna M.
+ */
 trait StorageTrait {
 
     /**
@@ -51,12 +65,7 @@ trait StorageTrait {
      * a nivel de bytes, útil para tareas como la validación o la compatibilidad 
      * entre diferentes versiones de archivos transformados.
      * 
-     * **Ejemplo de uso:**
-     * ```php
-     * echo $this->version;  // Muestra la versión del archivo
-     * ```
-     * 
-     * @var string $version
+     * @var string
      * @since v0.1.0 Introducción del campo de versión en el archivo de almacenamiento.
      */
     protected string $version = "v0.1.0";
@@ -81,12 +90,7 @@ trait StorageTrait {
      * corresponde a un archivo del sistema, facilitando la detección de archivos
      * corruptos o de un formato incorrecto.
      * 
-     * **Ejemplo de uso:**
-     * ```php
-     * echo $this->signature;  // Muestra la firma de la cabecera del archivo
-     * ```
-     * 
-     * @var string $signature
+     * @var string
      * @since v0.1.0 Introducción de la firma de cabecera para validación de formato de archivo.
      */
     protected string $signature = "DLStorage";
@@ -171,8 +175,9 @@ trait StorageTrait {
     /**
      * Valida si se trata de un archivo estructura binaria válida
      *
-     * @param string $file Archivo a ser analizado
-     * @return boolean
+     * @param string $file Ruta relativa del archivo (sin extensión `.dlstorage`).
+     *
+     * @return bool `true` si la firma de los primeros 9 bytes coincide con `DLStorage`.
      */
     public function validate_saved_data(string $file): bool {
         /** @var string $filepath */

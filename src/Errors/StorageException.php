@@ -29,17 +29,16 @@ use RuntimeException;
 use Throwable;
 
 /**
- * Excepción lanzada cuando un valor proporcionado no cumple con las condiciones
- * requeridas por una operación específica dentro del sistema DLStorage.
+ * Excepción para errores de almacenamiento, lectura de archivos y validación de formato.
  *
- * Esta clase forma parte del núcleo de manejo de errores del framework DLUnire.
+ * Se lanza cuando fallan operaciones de persistencia: archivo inexistente, firma
+ * inválida, permisos insuficientes, rangos de lectura incorrectos o rutas inválidas.
  *
- * @package DLStorage
- * @project DLUnire Runtime
- * @organization DLUnire
- * @author David E Luna M <info@dlunire.dev>
- * @copyright Copyright (c) 2025 David E Luna M
- * @license AGPL-3.0 license
+ * @package     DLStorage\Errors
+ * @version     v0.2.0
+ * @author      David E. Luna M. <info@dlunire.dev>
+ * @copyright   Copyright (c) 2026 David E. Luna M.
+ * @license     AGPL-3.0-or-later
  */
 final class StorageException extends RuntimeException {
     /**

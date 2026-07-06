@@ -55,19 +55,26 @@ use DLStorage\Traits\ForTrait;
  * - Base para adaptadores de almacenamiento binario personalizados.
  *
  * @package    DLStorage\Storage
- * @version    2.0.0
+ * @version    v0.2.0
  * @license    AGPL-3.0-or-later
  * @author     David E. Luna M. <info@dlunire.dev>
  * @copyright  Copyright (c) 2026 David E. Luna M.
  *
  * @see        https://www.dlunire.dev DLUnire Runtime
  * @see        https://github.com/dlunire Ecosistema DLUnire
+ *
+ * @abstract
  */
 abstract class Data {
 
     use ForTrait;
     use BinaryLengthTrait;
 
+    /**
+     * Reservado para extensiones futuras del recorrido de codificación.
+     *
+     * @var int
+     */
     private int $last_offset = 0;
 
     /**
@@ -224,17 +231,17 @@ abstract class Data {
     }
 
     /**
-     * Rellena una secuencia hexadecimal con ceros hasta alcanzar una longitud de 10 bytes (20 caracteres hexadecimales).
+     * Rellena una secuencia hexadecimal con ceros hasta alcanzar 10 caracteres.
      *
-     * Agrega ceros al principio o al final de la secuencia según el valor del parámetro `$right`. 
-     * Si `$right` es `true`, se rellenará con ceros al final de la secuencia; si es `false`, se rellenará al principio. 
-     * El valor por defecto es `false`, lo que implica que los ceros se agregarán al principio.
+     * Los bloques de codificación se segmentan en grupos de 10 caracteres hexadecimales
+     * (véase {@see get_decode()} con `str_split($encoded, 10)`).
      *
-     * @param string $input Secuencia hexadecimal (sin prefijos) que se desea rellenar. 
-     *                      Debe contener un número par de caracteres (representando bytes).
-     * @param bool $right Si es `true`, rellena con ceros a la derecha. Por defecto es `false`, lo que rellena a la izquierda.
-     * 
-     * @return string Secuencia hexadecimal rellenada hasta alcanzar 10 bytes (20 caracteres hexadecimales).
+     * Agrega ceros al principio o al final según `$right`. Por defecto rellena a la izquierda.
+     *
+     * @param string $input Secuencia hexadecimal a rellenar.
+     * @param bool   $right Si es `true`, rellena a la derecha; si es `false`, a la izquierda.
+     *
+     * @return string Secuencia hexadecimal de exactamente 10 caracteres.
      *
      * @example
      * $padded = $this->get_padding_zero("123");          // Devuelve "0000000123"
@@ -369,21 +376,12 @@ abstract class Data {
      * - La función \( f(e_i, i) \) representa el valor numérico ajustado del carácter, teniendo en cuenta su
      *   valor binario y su posición en la cadena.
      * 
-     * @param string $char Carácter de tipo string cuyo valor numérico se desea obtener.
-     * @param int $index Índice del carácter dentro de la cadena de entropía.
-     * 
-     * @return int Valor decimal que representa el código numérico ajustado del carácter basado en su
-     *         representación binaria en formato hexadecimal y su índice en la cadena.
-     *  
-     * @throws InvalidArgumentException Si el parámetro proporcionado no es una cadena de caracteres válida.
+     * @param string $char  Carácter cuyo valor numérico se desea obtener.
+     * @param int    $index Índice del carácter dentro de la cadena de entropía.
      *
-     * @example For example
-     * ```php
-     * $char = 'A';
-     * $index = 0;
-     * $code = $data->get_char_code($char, $index);
-     * echo $code;  // Salida: 66 (65 + (0 + 1))
-     * ```
+     * @return int Valor decimal: `hexdec(bin2hex($char)) + $index`.
+     *
+     * @internal Método auxiliar reservado; actualmente no es invocado por la biblioteca.
      */
     private function get_char_code(string $char, int $index): int {
         return hexdec(bin2hex($char)) + $index;

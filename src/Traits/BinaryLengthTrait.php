@@ -30,18 +30,19 @@ namespace DLStorage\Traits;
 use DLStorage\Errors\StorageException;
 
 /**
- * Trait DataSizeTrait
+ * Transformación numérica de bytes, entropía y bloques hexadecimales de 40 bits.
  *
- * Calcula la longitud real en bytes de una cadena binaria, 
- * garantizando que no exceda el límite máximo permitido de 4 GB (2^32 bytes).
+ * Complementa {@see StorageTrait} con operaciones de codificación (`to_hex40`),
+ * decodificación (`from_hex40`), cálculo de coeficientes y métricas de entropía
+ * heurísticas sobre cadenas y archivos binarios.
  *
- * Este trait es esencial para validar entradas binarias dentro del sistema DLStorage,
- * asegurando integridad en operaciones de transformación y almacenamiento.
+ * @package   DLStorage\Traits
+ * @version   v0.2.0
+ * @license   AGPL-3.0-or-later
+ * @author    David E. Luna M. <info@dlunire.dev>
+ * @copyright Copyright (c) 2026 David E. Luna M.
  *
- * @package DLStorage\Traits
- * @author David E Luna M
- * @license AGPL-3.0 license
- * @copyright 2025 David E Luna M
+ * @see \DLStorage\Storage\Data Clase base que incorpora este trait.
  */
 trait BinaryLengthTrait {
 
@@ -71,24 +72,19 @@ trait BinaryLengthTrait {
 
 
     /**
-     * Obtiene la longitud real en bytes de un string binario y valida su límite máximo.
+     * Calcula la suma aritmética de todos los bytes de una cadena binaria.
      *
-     * Convierte la cadena binaria a su representación hexadecimal para obtener 
-     * una medida precisa, independientemente de su codificación interna.
-     * Si la longitud calculada supera los 4 GB, lanza una excepción.
+     * Descompone `$input` con `unpack("C*", ...)` y devuelve `array_sum()` de los
+     * valores resultantes. No devuelve la longitud en bytes; para eso use `strlen()`.
      *
      * @param string $input Cadena binaria de entrada.
-     * @return int Longitud en bytes del contenido binario.
      *
-     * @throws StorageException Si la longitud supera el límite permitido de 4 GB (2^32 bytes).
+     * @return int Suma de los valores byte a byte (0–255 por carácter).
      *
      * @example
      * ```php
-     * $length = $this->get_binary_length($entropy);
+     * $suma = $this->get_binary_length($contenido);
      * ```
-     *
-     * @note El método es útil para verificar datos sensibles antes de aplicarlos
-     * a procesos criptográficos o de almacenamiento.
      */
     public function get_binary_length(string $input): int {
         /** @var array<int,int> $bytes */

@@ -59,7 +59,7 @@ use DLStorage\Traits\StorageTrait;
  * - Reutilización del sistema de codificación binaria de DLStorage.
  *
  * @package    DLStorage\Storage
- * @version    2.0.0
+ * @version    v0.2.0
  * @license    AGPL-3.0-or-later
  * @author     David E. Luna M. <info@dlunire.dev>
  * @copyright  Copyright (c) 2026 David E. Luna M.
@@ -68,6 +68,7 @@ use DLStorage\Traits\StorageTrait;
  * @see        https://github.com/dlunire Ecosistema DLUnire
  *
  * @abstract
+ * @extends Data
  */
 abstract class DataStorage extends Data {
     use StorageTrait;

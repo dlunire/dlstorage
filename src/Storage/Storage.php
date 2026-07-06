@@ -11,34 +11,40 @@ declare(strict_types=1);
 namespace DLStorage\Storage;
 
 /**
- * Clase principal para la lectura y escritura de archivos mediante el
- * formato binario de DLStorage.
+ * Interfaz pública para lectura y escritura de archivos en formato binario DLStorage.
  *
- * Esta clase actúa como la interfaz pública del sistema de almacenamiento,
- * encargándose de:
+ * Punto de entrada recomendado de la biblioteca. Extiende {@see SaveData} y encapsula
+ * la ruta del archivo y la entropía en el constructor, delegando la persistencia en
+ * `generate()` y la recuperación en `readfile()`.
  *
- * - Normalizar las rutas entre diferentes sistemas operativos.
- * - Leer archivos generados por DLStorage.
- * - Generar nuevos archivos utilizando el formato binario del proyecto.
- * - Gestionar la entropía utilizada durante el proceso de codificación y
- *   decodificación.
- * - Exponer información de la versión y firma del formato almacenado.
+ * Responsabilidades:
  *
- * La normalización de rutas se realiza mediante un recorrido secuencial
- * sobre cada byte de la cadena, sustituyendo el separador UNIX (`/`) por el
- * separador nativo del sistema (`DIRECTORY_SEPARATOR`). Este procedimiento
- * evita operaciones adicionales de reemplazo sobre la cadena completa.
+ * - Normalizar separadores de ruta (`/` → `DIRECTORY_SEPARATOR`) durante la construcción.
+ * - Generar archivos `.dlstorage` mediante {@see generate()}.
+ * - Leer y decodificar archivos mediante {@see readfile()}.
+ * - Exponer la firma y versión binaria del formato mediante
+ *   {@see get_current_signature()} y {@see get_current_version()}.
  *
- * @package DLStorage\Storage
- * @version v0.2.0
- * @license AGPL-3.0-or-later
- * @author David E Luna M
- * @copyright Copyright (c) 2026 David E Luna M
+ * Jerarquía de herencia: `Storage` → {@see SaveData} → {@see DataStorage} → {@see Data}.
  *
- * @property-read string      $filename Ruta del archivo normalizada.
- * @property-read string|null $entropy  Entropía utilizada durante la operación.
- * @property int              $offset   Posición actual del autómata durante la normalización.
- * @property int              $size     Longitud, en bytes, de la ruta suministrada.
+ * @package    DLStorage\Storage
+ * @version    v0.2.0
+ * @license    AGPL-3.0-or-later
+ * @author     David E. Luna M. <info@dlunire.dev>
+ * @copyright  Copyright (c) 2026 David E. Luna M.
+ *
+ * @see SaveData    Implementación base de persistencia binaria.
+ * @see DataStorage Abstracción de almacenamiento persistente.
+ * @see Data        Codificación y decodificación con entropía.
+ *
+ * @example Uso básico
+ * ```php
+ * use DLStorage\Storage\Storage;
+ *
+ * $storage = new Storage("usuarios", "MiClaveDeEntropia");
+ * $storage->generate(json_encode(["id" => 1, "nombre" => "David"]));
+ * echo $storage->readfile();
+ * ```
  */
 final class Storage extends SaveData {
     /**
@@ -70,13 +76,14 @@ final class Storage extends SaveData {
     private int $size = 0;
 
     /**
-     * Inicializa una nueva instancia del sistema de almacenamiento.
+     * Inicializa una instancia con la ruta del archivo y la entropía opcional.
      *
-     * Carga los parámetros recibidos y normaliza automáticamente la ruta para
-     * adaptarla al sistema operativo donde se ejecuta la aplicación.
+     * La ruta se normaliza inmediatamente sustituyendo `/` por el separador nativo
+     * del sistema operativo. No es necesario incluir la extensión `.dlstorage`.
      *
-     * @param string      $filename Ruta del archivo.
-     * @param string|null $entropy  Entropía utilizada durante la operación.
+     * @param string      $filename Ruta relativa del archivo (sin extensión `.dlstorage`).
+     * @param string|null $entropy  Llave de entropía para codificación y decodificación.
+     *                              Si es `null`, se aplica el comportamiento predeterminado.
      */
     public function __construct(string $filename, ?string $entropy = null) {
         $this->load($filename, $entropy);
@@ -125,12 +132,19 @@ final class Storage extends SaveData {
     }
 
     /**
-     * Lee y decodifica un archivo generado mediante DLStorage.
+     * Lee y decodifica el archivo configurado en el constructor.
      *
-     * @param bool $storage Indica si el archivo se encuentra dentro del
-     *                      directorio `storage/`.
+     * Delega en {@see SaveData::read_storage_data()} utilizando la ruta y entropía
+     * almacenadas en la instancia.
      *
-     * @return string Contenido recuperado tras el proceso de decodificación.
+     * @param bool $storage Si es `true` (predeterminado), busca en `storage/` relativo
+     *                      al directorio raíz del proyecto. Si es `false`, resuelve la
+     *                      ruta desde la raíz del proyecto.
+     *
+     * @return string Contenido original decodificado.
+     *
+     * @throws \DLStorage\Errors\StorageException Si el archivo no existe, la firma no
+     *                                            coincide o la decodificación falla.
      */
     public function readfile(bool $storage = true): string {
         return $this->read_storage_data(
@@ -141,16 +155,18 @@ final class Storage extends SaveData {
     }
 
     /**
-     * Genera un nuevo archivo utilizando el formato binario de DLStorage.
+     * Genera un archivo `.dlstorage` con el contenido indicado.
      *
-     * El contenido es procesado y almacenado empleando la entropía indicada
-     * durante la creación de la instancia.
+     * Delega en {@see SaveData::save_data()} utilizando la ruta y entropía
+     * configuradas en el constructor.
      *
-     * @param string $content Contenido que será almacenado.
-     * @param bool   $storage Indica si el archivo debe generarse dentro del
-     *                        directorio `storage/`.
+     * @param string $content Datos en texto plano o binario que serán codificados y persistidos.
+     * @param bool   $storage Si es `true` (predeterminado), guarda en `storage/`. Si es `false`,
+     *                        guarda en la ruta relativa indicada en el constructor.
      *
      * @return void
+     *
+     * @throws \DLStorage\Errors\StorageException Si no se puede crear el archivo o faltan permisos.
      */
     public function generate(string $content, bool $storage = true): void {
         $this->save_data(
@@ -162,18 +178,23 @@ final class Storage extends SaveData {
     }
 
     /**
-     * Obtiene la firma binaria del formato actualmente soportado.
+     * Obtiene la firma de cabecera del formato en representación binaria.
      *
-     * @return string Firma del formato en representación binaria.
+     * Equivalente a `hex2bin(get_signature())`. El valor predeterminado es la cadena
+     * `"DLStorage"` codificada en bytes.
+     *
+     * @return string Firma binaria del formato (9 bytes).
      */
     public function get_current_signature(): string {
         return hex2bin($this->get_signature());
     }
 
     /**
-     * Obtiene la versión binaria del formato actualmente soportado.
+     * Obtiene la versión del formato en representación binaria.
      *
-     * @return string Versión del formato en representación binaria.
+     * Equivalente a `hex2bin(get_version())`. El valor predeterminado es `"v0.1.0"`.
+     *
+     * @return string Versión binaria del formato.
      */
     public function get_current_version(): string {
         return hex2bin($this->get_version());

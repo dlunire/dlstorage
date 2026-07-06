@@ -58,30 +58,29 @@ use DLStorage\Errors\StorageException;
  * - Normalización de cargas binarias y metadatos internos.
  *
  * @package    DLStorage\Storage
- * @version    2.0.0
+ * @version    v0.2.0
  * @license    AGPL-3.0-or-later
  * @author     David E. Luna M. <info@dlunire.dev>
  * @copyright  Copyright (c) 2026 David E. Luna M.
  *
  * @see        DataStorage Abstracción para sistemas de almacenamiento persistente.
- * @see        StorageException Excepciones específicas del sistema de almacenamiento.
- * @see        https://www.dlunire.dev DLUnire Runtime
- * @see        https://github.com/dlunire Ecosistema DLUnire
+ * @see        Storage      Implementación concreta recomendada para uso público.
+ * @see        StorageException Excepciones del sistema de almacenamiento.
  *
  * @example Guardar información
  * ```php
- * $storage = new SaveData();
- * $storage->save_data("backup/config", $contenido);
+ * $storage = new Storage("backup/config", "mi-entropia");
+ * $storage->generate($contenido);
  * ```
  *
  * @example Recuperar información
  * ```php
- * $contenido = $storage->read_storage_data("backup/config");
+ * $storage = new Storage("backup/config", "mi-entropia");
+ * $contenido = $storage->readfile();
  * ```
  *
- * @note Esta clase constituye la implementación base del formato de archivo
- *       nativo de DLStorage y está diseñada para ser extendida por
- *       implementaciones concretas de almacenamiento.
+ * @abstract
+ * @note Clase abstracta: extiéndala mediante {@see Storage} o una subclase propia.
  */
 abstract class SaveData extends DataStorage {
 

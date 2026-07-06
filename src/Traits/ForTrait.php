@@ -63,9 +63,10 @@ namespace DLStorage\Traits;
  * ```
  *
  * @package     DLStorage\Traits
- * @license     AGPL-3.0 license
- * @author      David Eduardo Luna Montilla <info@dlunire.dev>
- * @copyright   Copyright (c) 2025 David Eduardo Luna Montilla
+ * @version     v0.2.0
+ * @license     AGPL-3.0-or-later
+ * @author      David E. Luna M. <info@dlunire.dev>
+ * @copyright   Copyright (c) 2026 David E. Luna M.
  */
 trait ForTrait {
     /**

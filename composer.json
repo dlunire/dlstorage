@@ -2,7 +2,7 @@
     "name": "dlunire/dlstorage",
     "description": "Librería de almacenamiento de datos binarios, optimizada para su integración con el framework DLUnire. Permite almacenar, gestionar y recuperar datos en formatos binarios de manera eficiente.",
     "type": "library",
-    "license": "MIT",
+    "license": "AGPL-3.0-or-later",
     "autoload": {
         "psr-4": {
             "DLStorage\\": "src/"
@@ -17,5 +17,7 @@
         }
     ],
     "minimum-stability": "stable",
-    "require": {}
+    "require-dev": {
+        "phpdocumentor/phpdocumentor": "^3.4"
+    }
 }

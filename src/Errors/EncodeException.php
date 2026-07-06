@@ -29,25 +29,25 @@ use RuntimeException;
 use Throwable;
 
 /**
- * Excepción lanzada cuando un valor proporcionado no cumple con las condiciones
- * requeridas por una operación específica dentro del sistema DLStorage.
+ * Excepción para errores de codificación y decodificación con entropía.
  *
- * Esta clase forma parte del núcleo de manejo de errores del framework DLUnire.
+ * Se lanza cuando la decodificación produce un resultado inválido, por ejemplo
+ * cuando la longitud del mensaje recuperado no es par (entropía incorrecta o
+ * datos corruptos).
  *
- * @package DLStorage
- * @project DLUnire Framework
- * @organization DLUnire
- * @author David E Luna M <info@dlunire.dev>
- * @copyright Copyright (c) 2025 David E Luna M
- * @license AGPL-3.0 license
+ * @package     DLStorage\Errors
+ * @version     v0.2.0
+ * @author      David E. Luna M. <info@dlunire.dev>
+ * @copyright   Copyright (c) 2026 David E. Luna M.
+ * @license     AGPL-3.0-or-later
+ *
+ * @see \DLStorage\Storage\Data::get_decode()
  */
 final class EncodeException extends RuntimeException {
     /**
-     * Constructor personalizado para StorageException.
-     *
      * @param string         $message  Mensaje descriptivo del error.
-     * @param int            $code     Código de error (por defecto 500).
-     * @param Throwable|null $previous Excepción anterior, si la hay.
+     * @param int            $code     Código de error HTTP semántico (por defecto 500).
+     * @param Throwable|null $previous Excepción anterior encadenada, si existe.
      */
     public function __construct(string $message, int $code = 500, ?Throwable $previous = null) {
         parent::__construct($message, $code, $previous);

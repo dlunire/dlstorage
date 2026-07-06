@@ -30,22 +30,28 @@ namespace DLStorage\Utilities;
 use IteratorAggregate;
 
 /**
- * @package DLStorage\Utilities
- * @version v0.0.1
- * @license AGPL-3.0 license
- * @author David E Luna M
- * 
- * @note Esta clase utiliza `snake_case` para los nombres de métodos y propiedades como estándar de DLStorage. 
- *       Sin embargo, en el contexto de `IteratorAggregate`, se hizo una excepción con `getIterator()`.
+ * Colección de arrays con API orientada a métodos encadenables y seguimiento de longitud.
  *
- * @throws \OutOfBoundsException Al intentar acceder a índices inválidos o cuando el array está vacío.
+ * Implementa `IteratorAggregate` para permitir iteración con `foreach`. Los métodos
+ * públicos siguen la convención `snake_case` de DLStorage, salvo `getIterator()`
+ * requerido por la interfaz de PHP.
+ *
+ * @package    DLStorage\Utilities
+ * @version    v0.2.0
+ * @license    AGPL-3.0-or-later
+ * @author     David E. Luna M. <info@dlunire.dev>
+ * @copyright  Copyright (c) 2026 David E. Luna M.
+ *
+ * @template T
+ *
+ * @note Los métodos `item`, `first`, `last`, `pop` y `shift` lanzan
+ *       {@see \OutOfBoundsException} ante índices inválidos o arrays vacíos.
  */
 abstract class FastArray implements IteratorAggregate {
     /**
-     * Array crudo que contiene los datos.
+     * Almacenamiento interno de elementos.
      *
-     * @version v0.0.2
-     * @var array $data
+     * @var array<int, mixed>
      */
     private array $data;
 
@@ -107,8 +113,8 @@ abstract class FastArray implements IteratorAggregate {
      * 
      * @return array<int,mixed> Array crudo de elementos almacenados.
      * 
-     * @note La manipulación externa del array devuelto no afecta a la 
-     *       colección original, ya que se retorna una copia por valor.
+     * @note Devuelve la referencia interna; las modificaciones externas al array
+     *       retornado afectan el estado de la instancia.
      */
     public function get(): array {
         return $this->data;
