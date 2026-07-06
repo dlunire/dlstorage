@@ -1,5 +1,27 @@
 # Contexto del Modelo de Transformación de Bytes (MTB)
 
+## Instalación
+
+Para instalar `DLStorage` en tus aplicaciones, debe escribir el siguiente comando:
+
+```bash
+composer require dlunire/dlstorage
+```
+
+Si está utilizando PHP Vanilla, te recomendaría utilizar un subdirectorio en tu proyecto raíz, posiblemente `public/` o `html_public/` y agregues este fragento:
+
+```php
+<?php
+declare(strict_types=1);
+
+// include dirname(__DIR__) . "/vendor/autoload.php";
+include dirname(__DIR__) . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SEPARATOR . "autoload.php";
+```
+
+En tu `index.php`.
+
+---
+
 Antes de analizar este proyecto, es importante comprender su objetivo de diseño para evitar evaluarlo bajo un modelo de amenazas distinto al que pretende resolver.
 
 ## Propósito
@@ -44,9 +66,9 @@ No pretende proteger contra un adversario con acceso completo al sistema operati
 MTB no busca demostrar las propiedades criptográficas clásicas de:
 
 * difusión completa (Avalanche Effect),
-* confusión criptográfica,
-* indistinguibilidad bajo ataques de texto conocido,
-* seguridad demostrable frente a modelos formales de criptografía.
+* Confusión criptográfica,
+* Indistinguibilidad bajo ataques de texto conocido,
+* Seguridad demostrable frente a modelos formales de criptografía.
 
 Si el análisis se enfoca exclusivamente bajo esos criterios, inevitablemente concluirá que el sistema no debe considerarse un cifrado criptográfico moderno, lo cual es una afirmación correcta, pero responde a una pregunta distinta de aquella para la que fue diseñado.
 
@@ -54,9 +76,9 @@ Si el análisis se enfoca exclusivamente bajo esos criterios, inevitablemente co
 
 La evaluación debe centrarse en determinar si el modelo cumple adecuadamente su propósito:
 
-* transformar información sensible a un formato binario;
-* reducir la exposición de credenciales frente al almacenamiento tradicional en archivos `.env`;
-* analizar posibles debilidades dentro de ese contexto específico;
-* proponer mejoras que aumenten la robustez del modelo sin cambiar su objetivo de diseño.
+* Transformar información sensible a un formato binario;
+* Reducir la exposición de credenciales frente al almacenamiento tradicional en archivos `.env`;
+* Analizar posibles debilidades dentro de ese contexto específico;
+* Proponer mejoras que aumenten la robustez del modelo sin cambiar su objetivo de diseño.
 
 Si durante el análisis se detectan propiedades criptográficas interesantes o limitaciones importantes, estas son bienvenidas, pero deben considerarse como observaciones complementarias y no como el criterio principal de evaluación.
