@@ -13,8 +13,6 @@ Si está utilizando PHP Vanilla, te recomendaría utilizar un subdirectorio en t
 ```php
 <?php
 declare(strict_types=1);
-
-// include dirname(__DIR__) . "/vendor/autoload.php";
 include dirname(__DIR__) . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SEPARATOR . "autoload.php";
 ```
 
