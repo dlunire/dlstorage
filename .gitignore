@@ -17,7 +17,7 @@ storage
 *.dlstorage
 
 # Documentación generada
-.phpdoc
+.phpdoc/cache
 phpDocumentor.phar
 
 # Otros

@@ -1,10 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="utf-8">
+    <script>
+        (function () {
+            try {
+                var stored = localStorage.getItem('dlstorage-docs-theme');
+                var theme = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+                document.documentElement.setAttribute('data-theme', theme);
+            } catch (e) {
+                document.documentElement.setAttribute('data-theme', 'light');
+            }
+        })();
+    </script>
             <title>DLStorage API</title>
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="color-scheme" content="light dark">
     <base href="../">
     <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png"/>
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png"/>
@@ -12,12 +25,12 @@
     <link rel="apple-touch-icon" href="images/apple-touch-icon.png"/>
     <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="css/base.css">
-            <link rel="preconnect" href="https://fonts.gstatic.com">
-        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@100;200;300;400;600;700&display=swap" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="css/template.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0/css/all.min.css" integrity="sha256-ybRkN9dBjhcS2qrW1z+hfCxq+1aBdwyQM5wlQoQVt/0=" crossorigin="anonymous" />
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/themes/prism-okaidia.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/themes/prism.min.css" id="prism-theme-light">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" id="prism-theme-dark" disabled>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/line-numbers/prism-line-numbers.css">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/line-highlight/prism-line-highlight.css">
                 <script src="https://cdn.jsdelivr.net/npm/fuse.js@3.4.6"></script>
@@ -28,11 +41,18 @@
     </head>
 <body id="top">
     <header class="phpdocumentor-header phpdocumentor-section">
-    <h1 class="phpdocumentor-title"><a href="" class="phpdocumentor-title__link">DLStorage API</a></h1>
-    <input class="phpdocumentor-header__menu-button" type="checkbox" id="menu-button" name="menu-button" />
-    <label class="phpdocumentor-header__menu-icon" for="menu-button">
-        <i class="fas fa-bars"></i>
+    <h1 class="phpdocumentor-title">
+    <a href="" class="phpdocumentor-title__link">
+        <span class="phpdocumentor-title__brand">DLStorage</span>
+        <span class="dlstorage-version-badge">v0.2.0</span>
+    </a>
+</h1>    <input class="phpdocumentor-header__menu-button" type="checkbox" id="menu-button" name="menu-button" />
+    <label class="phpdocumentor-header__menu-icon" for="menu-button" aria-label="Abrir menú">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
     </label>
+    <div class="dlstorage-header-actions">
     <section data-search-form class="phpdocumentor-search">
     <label>
         <span class="visually-hidden">Search for</span>
@@ -44,12 +64,31 @@
     </label>
 </section>
 
-    <nav class="phpdocumentor-topnav">
+    <button
+        type="button"
+        class="dlstorage-theme-toggle"
+        data-theme-toggle
+        aria-pressed="false"
+        aria-label="Cambiar a modo oscuro"
+        title="Cambiar tema"
+    >
+        <span class="dlstorage-theme-toggle__icon dlstorage-theme-toggle__icon--light" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.75"/>
+                <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/>
+            </svg>
+        </span>
+        <span class="dlstorage-theme-toggle__icon dlstorage-theme-toggle__icon--dark" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M21 14.5A7.5 7.5 0 0 1 9.5 3 6.5 6.5 0 1 0 21 14.5Z" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"/>
+            </svg>
+        </span>
+    </button>
+</div>    <nav class="phpdocumentor-topnav">
     <ul class="phpdocumentor-topnav__menu">
         </ul>
 </nav>
 </header>
-
     <main class="phpdocumentor">
         <div class="phpdocumentor-section">
             <input class="phpdocumentor-sidebar__menu-button" type="checkbox" id="sidebar-button" name="sidebar-button" />
@@ -164,35 +203,15 @@
         <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Storage/DataStorage.php"><a href="files/src-storage-datastorage.html"><abbr title="src/Storage/DataStorage.php">DataStorage.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">73</span>
+    <span class="phpdocumentor-element-found-in__line">47</span>
 
     </aside>
 
-            <p class="phpdocumentor-summary">Abstracción base para sistemas de almacenamiento persistente.</p>
+            <p class="phpdocumentor-summary">Capa intermedia que combina codificación ({@see Data}) con rutas de archivo ({@see StorageTrait}).</p>
 
 
-    <section class="phpdocumentor-description"><p>Esta clase define la interfaz común para implementar mecanismos de
-almacenamiento de datos utilizando medios persistentes distintos a una
-base de datos relacional, como archivos binarios, estructuras
-serializadas u otros formatos personalizados.</p>
-<p>Los datos almacenados pueden identificarse mediante un token o
-identificador único, permitiendo su integración con sistemas externos,
-incluidos motores de bases de datos, sin que éstos sean responsables del
-almacenamiento físico del contenido.</p>
-<p>Como extensión de <a href="classes/DLStorage-Storage-Data.html"><abbr title="\DLStorage\Storage\Data">Data</abbr></a>, esta clase reutiliza las capacidades de
-codificación, transformación mediante entropía y manipulación binaria
-proporcionadas por DLStorage, sirviendo como base para adaptadores de
-almacenamiento especializados.</p>
-<p>Forma parte de <strong>DLUnire Runtime</strong>, proporcionando la infraestructura
-necesaria para construir sistemas de persistencia desacoplados, portables
-y de alto rendimiento dentro del ecosistema DLUnire.</p>
-<p>Características principales:</p>
-<ul>
-<li>Persistencia de datos fuera de motores de bases de datos.</li>
-<li>Integración mediante identificadores o tokens de referencia.</li>
-<li>Base para adaptadores de almacenamiento personalizados.</li>
-<li>Reutilización del sistema de codificación binaria de DLStorage.</li>
-</ul>
+    <section class="phpdocumentor-description"><p>Hereda <code class="prettyprint">encode()</code>, <code class="prettyprint">get_decode()</code> y métodos de entropía de <a href="classes/DLStorage-Storage-Data.html"><abbr title="\DLStorage\Storage\Data">Data</abbr></a>, y añade
+resolución de rutas, firma, versión y lectura binaria parcial de <a href="classes/DLStorage-Traits-StorageTrait.html"><abbr title="\DLStorage\Traits\StorageTrait">StorageTrait</abbr></a>.</p>
 </section>
 
 
@@ -231,21 +250,6 @@ y de alto rendimiento dentro del ecosistema DLUnire.</p>
             </dt>
                             <dd class="phpdocumentor-tag-list__definition">
                                                                                                             <section class="phpdocumentor-description"><p>Copyright (c) 2026 David E. Luna M.</p>
-</section>
-
-                                    </dd>
-                                <dt class="phpdocumentor-tag-list__entry">
-                <span class="phpdocumentor-tag__name">see</span>
-            </dt>
-                            <dd class="phpdocumentor-tag-list__definition">
-                                                                                    <span class="phpdocumentor-tag-link"><a href="https://dlunire.dev">https://dlunire.dev</a></span>
-                                                                    <section class="phpdocumentor-description"><p>DLUnire Runtime</p>
-</section>
-
-                                    </dd>
-                            <dd class="phpdocumentor-tag-list__definition">
-                                                                                    <span class="phpdocumentor-tag-link"><a href="https://github.com/dlunire">https://github.com/dlunire</a></span>
-                                                                    <section class="phpdocumentor-description"><p>Ecosistema DLUnire</p>
 </section>
 
                                     </dd>
@@ -292,33 +296,28 @@ y de alto rendimiento dentro del ecosistema DLUnire.</p>
     <span>
                         &nbsp;: int            </span>
 </dt>
-
-            <dt class="phpdocumentor-table-of-contents__entry -property -protected">
-    <a class="" href="classes/DLStorage-Traits-BinaryLengthTrait.html#property_entropy_value">$entropy_value</a>
-    <span>
-                        &nbsp;: int            </span>
-</dt>
+<dd>Coeficiente derivado de la entropía de entrada, usado en {@see get_circular_value()}.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -protected">
     <a class="" href="classes/DLStorage-Traits-BinaryLengthTrait.html#property_seed">$seed</a>
     <span>
                         &nbsp;: int            </span>
 </dt>
-<dd>Semilla base utilizada para cálculos internos relacionados con transformaciones numéricas.</dd>
+<dd>Constante sumada en {@see to_hex40()} y restada en {@see from_hex40()}.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -protected">
     <a class="" href="classes/DLStorage-Traits-StorageTrait.html#property_signature">$signature</a>
     <span>
                         &nbsp;: string            </span>
 </dt>
-<dd>Firma de la cabecera del archivo.</dd>
+<dd>Firma ASCII que identifica un archivo DLStorage válido.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -protected">
     <a class="" href="classes/DLStorage-Traits-StorageTrait.html#property_version">$version</a>
     <span>
                         &nbsp;: string            </span>
 </dt>
-<dd>Versión del archivo de almacenamiento de bytes transformados.</dd>
+<dd>Versión del formato almacenado en la cabecera del archivo.</dd>
 
     </dl>
 
@@ -333,163 +332,161 @@ y de alto rendimiento dentro del ecosistema DLUnire.</p>
     <span>
                                 &nbsp;: string    </span>
 </dt>
-<dd>Codifica la cadena de texto a otro formato utilizando una entropía opcional.</dd>
+<dd>Codifica una cadena de bytes en bloques hexadecimales concatenados.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/DLStorage-Storage-Data.html#method_expand_zero">expand_zero()</a>
     <span>
                                 &nbsp;: void    </span>
 </dt>
-<dd>Revertir la compactación de ceros en una cadena de texto.</dd>
+<dd>Expande el marcador `01` restaurando bloques de ceros compactados.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/DLStorage-Traits-ForTrait.html#method_foreach">foreach()</a>
     <span>
                                 &nbsp;: void    </span>
 </dt>
-<dd>Itera sobre una cadena de caracteres o un arreglo, ejecutando un callback por cada elemento.</dd>
+<dd>Itera sobre una cadena o arreglo invocando `$callback` por cada posición.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/DLStorage-Traits-BinaryLengthTrait.html#method_get_binary_length">get_binary_length()</a>
     <span>
                                 &nbsp;: int    </span>
 </dt>
-<dd>Calcula la suma aritmética de todos los bytes de una cadena binaria.</dd>
+<dd>Suma aritmética de todos los bytes de una cadena.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/DLStorage-Storage-Data.html#method_get_content">get_content()</a>
     <span>
                                 &nbsp;: string    </span>
 </dt>
-<dd>Reconstruye y devuelve el contenido original a partir de una cadena codificada.</dd>
+<dd>Decodifica hexadecimal a binario.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/DLStorage-Storage-Data.html#method_get_decode">get_decode()</a>
     <span>
                                 &nbsp;: string    </span>
 </dt>
-<dd>Decodifica un mensaje previamente codificado utilizando un esquema de entropía.</dd>
+<dd>Decodifica una cadena previamente codificada con {@see encode()}.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/DLStorage-Traits-StorageTrait.html#method_get_document_root">get_document_root()</a>
     <span>
                                 &nbsp;: string    </span>
 </dt>
-<dd>Obtiene el directorio raíz del sistema.</dd>
+<dd>Obtiene el directorio raíz del proyecto.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/DLStorage-Traits-BinaryLengthTrait.html#method_get_entropy_file">get_entropy_file()</a>
     <span>
                                 &nbsp;: int    </span>
 </dt>
-<dd>Calcula una métrica de &quot;entropía&quot; simplificada basada en el contenido de un archivo.</dd>
+<dd>Métrica heurística del contenido de un archivo.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/DLStorage-Traits-BinaryLengthTrait.html#method_get_entropy_value">get_entropy_value()</a>
     <span>
                                 &nbsp;: int    </span>
 </dt>
-<dd>Devuelve la entropía base o `seed` en función de los bytes como argumento.</dd>
+<dd>Calcula un valor entero determinista a partir de bytes de entrada.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/DLStorage-Traits-StorageTrait.html#method_get_file_path">get_file_path()</a>
     <span>
                                 &nbsp;: string    </span>
 </dt>
-<dd>Devuelve la ruta absoluta completa donde se almacenará un archivo, dentro del
-sistema de almacenamiento gestionado por la clase. Puede opcionalmente crear
-el directorio contenedor si no existe.</dd>
+<dd>Resuelve la ruta absoluta de un archivo relativo al proyecto.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/DLStorage-Traits-StorageTrait.html#method_read_filename">read_filename()</a>
     <span>
                                 &nbsp;: string    </span>
 </dt>
-<dd>Lee un rango de bytes de un archivo binario.</dd>
+<dd>Lee un rango inclusivo de bytes de un archivo (índices 1-based).</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/DLStorage-Traits-StorageTrait.html#method_validate_saved_data">validate_saved_data()</a>
     <span>
                                 &nbsp;: bool    </span>
 </dt>
-<dd>Valida si se trata de un archivo estructura binaria válida</dd>
+<dd>Comprueba si los primeros 9 bytes del archivo coinciden con la firma DLStorage.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -protected">
     <a class="" href="classes/DLStorage-Storage-Data.html#method_compact_zero">compact_zero()</a>
     <span>
                                 &nbsp;: void    </span>
 </dt>
-<dd>Compacta una secuencia continua de ceros convirtiéndola en una representación hexadecimal.</dd>
+<dd>Compacta ceros iniciales reemplazándolos por el marcador `01`.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -protected">
     <a class="" href="classes/DLStorage-Traits-ForTrait.html#method_foreach_string">foreach_string()</a>
     <span>
                                 &nbsp;: void    </span>
 </dt>
-<dd>Itera sobre cada byte de una cadena de texto en su representación binaria.</dd>
+<dd>Itera sobre cada byte de una cadena binaria.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -protected">
     <a class="" href="classes/DLStorage-Traits-BinaryLengthTrait.html#method_from_hex40">from_hex40()</a>
     <span>
                                 &nbsp;: string    </span>
 </dt>
-<dd>Obtiene el valor hexadecimal de un bloque de bytes con entropía revertida.</dd>
+<dd>Revierte un bloque de 10 caracteres hex a un carácter de un byte.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -protected">
     <a class="" href="classes/DLStorage-Traits-BinaryLengthTrait.html#method_get_entropy">get_entropy()</a>
     <span>
                                 &nbsp;: int    </span>
 </dt>
-<dd>Calcula un valor de entropía basado en un índice y una suma acumulada.</dd>
+<dd>Calcula el desplazamiento de entropía para un índice dado.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -protected">
     <a class="" href="classes/DLStorage-Traits-StorageTrait.html#method_get_signature">get_signature()</a>
     <span>
                                 &nbsp;: string    </span>
 </dt>
-<dd>Devuelve la firma del archivo en formato hexadecimal.</dd>
+<dd>Devuelve la firma como cadena hexadecimal.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -protected">
     <a class="" href="classes/DLStorage-Traits-StorageTrait.html#method_get_version">get_version()</a>
     <span>
                                 &nbsp;: string    </span>
 </dt>
-<dd>Devuelve la versión del archivo en formato hexadecimal.</dd>
+<dd>Devuelve la versión como cadena hexadecimal.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -protected">
     <a class="" href="classes/DLStorage-Traits-BinaryLengthTrait.html#method_set_entropy_value">set_entropy_value()</a>
     <span>
                                 &nbsp;: void    </span>
 </dt>
-<dd>Calcula y acumula un valor de entropía basado en los caracteres de una cadena dada.</dd>
+<dd>Asigna la suma de entropía a partir de una llave.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -protected">
     <a class="" href="classes/DLStorage-Traits-BinaryLengthTrait.html#method_to_hex40">to_hex40()</a>
     <span>
                                 &nbsp;: string    </span>
 </dt>
-<dd>Convierte un byte a su representación hexadecimal de 40 bits, con posibilidad de aplicar entropía.</dd>
+<dd>Convierte un byte desplazado a bloque hex de 10 caracteres.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -protected">
     <a class="" href="classes/DLStorage-Traits-StorageTrait.html#method_validate_filename">validate_filename()</a>
     <span>
                                 &nbsp;: void    </span>
 </dt>
-<dd>Valida si el archivo existe y no es un directorio, aparte de ser legible.</dd>
+<dd>Verifica que la ruta apunte a un archivo existente y legible.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -private">
     <a class="" href="classes/DLStorage-Traits-BinaryLengthTrait.html#method_calculate_coefficient">calculate_coefficient()</a>
     <span>
                                 &nbsp;: void    </span>
 </dt>
-<dd>Calcula y asigna un coeficiente seguro a partir de una semilla numérica.</dd>
+<dd>Deriva y almacena `$this-&gt;coefficient` a partir de una semilla.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -private">
     <a class="" href="classes/DLStorage-Traits-BinaryLengthTrait.html#method_get_circular_value">get_circular_value()</a>
     <span>
                                 &nbsp;: int    </span>
 </dt>
-<dd>Calcula un valor circular a partir de un valor numérico dado.</dd>
+<dd>Transformación circular acotada para dispersión numérica.</dd>
 
     </dl>
 
@@ -521,53 +518,17 @@ el directorio contenedor si no existe.</dd>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Traits/BinaryLengthTrait.php"><a href="files/src-traits-binarylengthtrait.html"><abbr title="src/Traits/BinaryLengthTrait.php">BinaryLengthTrait.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">52</span>
+    <span class="phpdocumentor-element-found-in__line">50</span>
 
     </aside>
 
-    
+        <p class="phpdocumentor-summary">Coeficiente derivado de la entropía de entrada, usado en {@see get_circular_value()}.</p>
+
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
         <span class="phpdocumentor-signature__visibility">public</span>
             <span class="phpdocumentor-signature__type">int</span>
     <span class="phpdocumentor-signature__name">$coefficient</span>
-     = <span class="phpdocumentor-signature__default-value">0</span></code>
-
-    
-    
-    
-
-        
-        
-
-</article>
-                    <article
-        class="
-            phpdocumentor-element
-            -property
-            -protected
-                                                                    "
->
-    <h4 class="phpdocumentor-element__name" id="property_entropy_value">
-        $entropy_value
-        <a href="classes/DLStorage-Traits-BinaryLengthTrait.html#property_entropy_value" class="headerlink"><i class="fas fa-link"></i></a>
-
-        <span class="phpdocumentor-element__modifiers">
-                                            </span>
-    </h4>
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="src/Traits/BinaryLengthTrait.php"><a href="files/src-traits-binarylengthtrait.html"><abbr title="src/Traits/BinaryLengthTrait.php">BinaryLengthTrait.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">55</span>
-
-    </aside>
-
-    
-    
-    <code class="phpdocumentor-code phpdocumentor-signature ">
-        <span class="phpdocumentor-signature__visibility">protected</span>
-            <span class="phpdocumentor-signature__type">int</span>
-    <span class="phpdocumentor-signature__name">$entropy_value</span>
      = <span class="phpdocumentor-signature__default-value">0</span></code>
 
     
@@ -595,11 +556,11 @@ el directorio contenedor si no existe.</dd>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Traits/BinaryLengthTrait.php"><a href="files/src-traits-binarylengthtrait.html"><abbr title="src/Traits/BinaryLengthTrait.php">BinaryLengthTrait.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">71</span>
+    <span class="phpdocumentor-element-found-in__line">60</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Semilla base utilizada para cálculos internos relacionados con transformaciones numéricas.</p>
+        <p class="phpdocumentor-summary">Constante sumada en {@see to_hex40()} y restada en {@see from_hex40()}.</p>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
@@ -608,14 +569,7 @@ el directorio contenedor si no existe.</dd>
     <span class="phpdocumentor-signature__name">$seed</span>
      = <span class="phpdocumentor-signature__default-value">530000</span></code>
 
-        <section class="phpdocumentor-description"><p>Esta propiedad representa un valor entero inicial (semilla) que puede emplearse como punto
-de partida para algoritmos de transformación, generación pseudoaleatoria, o alteraciones
-matemáticas controladas dentro del contexto del sistema.</p>
-<p>El valor predeterminado es <code class="prettyprint">530000</code>, y su uso específico dependerá de la implementación
-interna del algoritmo. Puede influir en procesos como desplazamientos, cálculos con entropía,
-o generación de claves derivadas.</p>
-</section>
-
+    
     
     
 
@@ -640,11 +594,11 @@ o generación de claves derivadas.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Traits/StorageTrait.php"><a href="files/src-traits-storagetrait.html"><abbr title="src/Traits/StorageTrait.php">StorageTrait.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">96</span>
+    <span class="phpdocumentor-element-found-in__line">55</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Firma de la cabecera del archivo.</p>
+        <p class="phpdocumentor-summary">Firma ASCII que identifica un archivo DLStorage válido.</p>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
@@ -653,37 +607,11 @@ o generación de claves derivadas.</p>
     <span class="phpdocumentor-signature__name">$signature</span>
      = <span class="phpdocumentor-signature__default-value">&quot;DLStorage&quot;</span></code>
 
-        <section class="phpdocumentor-description"><p>Esta propiedad almacena la firma que identifica de manera única el formato
-del archivo de almacenamiento de datos transformados. La firma es una secuencia
-de caracteres que se coloca al inicio del archivo, sirviendo como una &quot;marca&quot;
-para indicar que el archivo es reconocido por el sistema y sigue el formato
-adecuado.</p>
-<p><strong>Representación en formato hexadecimal:</strong>
-La firma &quot;DLStorage&quot; se representa en hexadecimal como:</p>
-<pre class="prettyprint"><code class="language-bash">44 4c 53 74 6f 72 61 67 65
-</code></pre>
-<p>Este valor permite verificar la integridad del archivo y validar que el contenido
-corresponde a un archivo del sistema, facilitando la detección de archivos
-corruptos o de un formato incorrecto.</p>
+    
+        <section class="phpdocumentor-description"><p>Valor por defecto: <code class="prettyprint">&quot;DLStorage&quot;</code> (9 bytes).</p>
 </section>
 
     
-    
-    <h5 class="phpdocumentor-tag-list__heading" id="property_signature_tags">
-        Tags
-        <a href="classes/DLStorage-Traits-StorageTrait.html#property_signature_tags" class="headerlink"><i class="fas fa-link"></i></a>
-
-    </h5>
-    <dl class="phpdocumentor-tag-list">
-                    <dt class="phpdocumentor-tag-list__entry">
-                <span class="phpdocumentor-tag__name">since</span>
-            </dt>
-                            <dd class="phpdocumentor-tag-list__definition">
-                                                                                                            <section class="phpdocumentor-description"><p>v0.1.0 Introducción de la firma de cabecera para validación de formato de archivo.</p>
-</section>
-
-                                    </dd>
-                        </dl>
 
         
         
@@ -706,11 +634,11 @@ corruptos o de un formato incorrecto.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Traits/StorageTrait.php"><a href="files/src-traits-storagetrait.html"><abbr title="src/Traits/StorageTrait.php">StorageTrait.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">71</span>
+    <span class="phpdocumentor-element-found-in__line">48</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Versión del archivo de almacenamiento de bytes transformados.</p>
+        <p class="phpdocumentor-summary">Versión del formato almacenado en la cabecera del archivo.</p>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
@@ -719,37 +647,11 @@ corruptos o de un formato incorrecto.</p>
     <span class="phpdocumentor-signature__name">$version</span>
      = <span class="phpdocumentor-signature__default-value">&quot;v0.1.0&quot;</span></code>
 
-        <section class="phpdocumentor-description"><p>Esta propiedad almacena la versión actual del formato de archivo utilizado para
-la persistencia de los datos transformados mediante el sistema de transformación
-de bytes. El valor está representado en formato de cadena y puede ser utilizado
-para identificar cambios en la estructura o el esquema de los datos, asegurando
-la compatibilidad entre versiones del sistema.</p>
-<p><strong>Versión en formato hexadecimal:</strong>
-La versión &quot;v0.1.0&quot; está representada en hexadecimal como:</p>
-<pre class="prettyprint"><code class="language-bash">76 30 2e 31 2e 30
-</code></pre>
-<p>Esta representación hexadecimal permite realizar comparaciones y verificaciones
-a nivel de bytes, útil para tareas como la validación o la compatibilidad
-entre diferentes versiones de archivos transformados.</p>
+    
+        <section class="phpdocumentor-description"><p>Valor por defecto: <code class="prettyprint">&quot;v0.1.0&quot;</code>.</p>
 </section>
 
     
-    
-    <h5 class="phpdocumentor-tag-list__heading" id="property_version_tags">
-        Tags
-        <a href="classes/DLStorage-Traits-StorageTrait.html#property_version_tags" class="headerlink"><i class="fas fa-link"></i></a>
-
-    </h5>
-    <dl class="phpdocumentor-tag-list">
-                    <dt class="phpdocumentor-tag-list__entry">
-                <span class="phpdocumentor-tag__name">since</span>
-            </dt>
-                            <dd class="phpdocumentor-tag-list__definition">
-                                                                                                            <section class="phpdocumentor-description"><p>v0.1.0 Introducción del campo de versión en el archivo de almacenamiento.</p>
-</section>
-
-                                    </dd>
-                        </dl>
 
         
         
@@ -777,11 +679,11 @@ entre diferentes versiones de archivos transformados.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Storage/Data.php"><a href="files/src-storage-data.html"><abbr title="src/Storage/Data.php">Data.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">92</span>
+    <span class="phpdocumentor-element-found-in__line">73</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Codifica la cadena de texto a otro formato utilizando una entropía opcional.</p>
+        <p class="phpdocumentor-summary">Codifica una cadena de bytes en bloques hexadecimales concatenados.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -790,9 +692,9 @@ entre diferentes versiones de archivos transformados.</p>
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>El método transforma cada carácter de la cadena de entrada en una representación hexadecimal
-modificada por una suma acumulada basada en la entropía proporcionada y una función matemática
-con base en el índice del carácter y su valor.</p>
+        <section class="phpdocumentor-description"><p>Recorre <code class="prettyprint">$input</code> byte a byte con <a href="classes/DLStorage-Traits-ForTrait.html#method_foreach_string"><abbr title="\DLStorage\Traits\ForTrait::foreach_string()">ForTrait::foreach_string()</abbr></a>, aplica
+desplazamiento por entropía (<code class="prettyprint">to_hex40</code>), sustituye <code class="prettyprint">01</code> por <code class="prettyprint">ffff</code> y compacta
+ceros iniciales con <abbr title="\DLStorage\Storage\compact_zero()">compact_zero()</abbr>.</p>
 </section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
@@ -802,7 +704,7 @@ con base en el índice del carácter y su valor.</p>
                 : <span class="phpdocumentor-argument-list__argument__type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Cadena de texto que se desea codificar.</p>
+                    <section class="phpdocumentor-description"><p>Datos crudos (texto o binario).</p>
 </section>
 
             </dd>
@@ -811,7 +713,7 @@ con base en el índice del carácter y su valor.</p>
                 : <span class="phpdocumentor-argument-list__argument__type">string|null</span>
                  = <span class="phpdocumentor-argument-list__argument__default-value">null</span>            </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Cadena opcional utilizada como entropía para alterar la codificación.</p>
+                    <section class="phpdocumentor-description"><p>Llave opcional. Si es <code class="prettyprint">null</code>, la suma base es 0.</p>
 </section>
 
             </dd>
@@ -825,7 +727,7 @@ con base en el índice del carácter y su valor.</p>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">string</span>
                     &mdash;
-                <section class="phpdocumentor-description"><p>Retorna la cadena codificada como una representación hexadecimal modificada.</p>
+                <section class="phpdocumentor-description"><p>Cadena hexadecimal concatenada (múltiplos de 10 caracteres por bloque).</p>
 </section>
 
             </section>
@@ -845,11 +747,11 @@ con base en el índice del carácter y su valor.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Storage/Data.php"><a href="files/src-storage-data.html"><abbr title="src/Storage/Data.php">Data.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">217</span>
+    <span class="phpdocumentor-element-found-in__line">155</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Revertir la compactación de ceros en una cadena de texto.</p>
+        <p class="phpdocumentor-summary">Expande el marcador `01` restaurando bloques de ceros compactados.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -858,12 +760,9 @@ con base en el índice del carácter y su valor.</p>
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Toma una cadena de texto que ha sido previamente compactada, es decir, donde las secuencias
-de ceros consecutivos han sido sustituidas por el marcador especial &quot;01&quot;. El proceso de compactación se
-realiza normalmente para reducir el tamaño de los datos, pero al decodificar o procesar la información
-nuevamente, es necesario restaurar los ceros a su forma original.</p>
-<p>El método también maneja posibles transformaciones adicionales, como la restauración de valores &quot;ffff&quot;
-a &quot;01&quot; dentro de los bloques de datos.</p>
+        <section class="phpdocumentor-description"><p>Divide <code class="prettyprint">$input</code> por <code class="prettyprint">01</code>, descarta segmentos vacíos, reemplaza <code class="prettyprint">ffff</code> por <code class="prettyprint">01</code>
+en cada bloque y rellena cada uno a 10 caracteres con <abbr title="\DLStorage\Storage\get_padding_zero()">get_padding_zero()</abbr>.
+El resultado reemplaza <code class="prettyprint">$input</code> por referencia.</p>
 </section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
@@ -873,56 +772,17 @@ a &quot;01&quot; dentro de los bloques de datos.</p>
                 : <span class="phpdocumentor-argument-list__argument__type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Entrada que contiene la cadena compactada, la cual será modificada por el método
-para restaurar los ceros originales.
-Este parámetro se pasa por referencia y se actualizará con la cadena resultante.</p>
+                    <section class="phpdocumentor-description"><p>Cadena compactada (por referencia).</p>
 </section>
 
             </dd>
             </dl>
 
     
-    <h5 class="phpdocumentor-tag-list__heading" id="method_expand_zero_tags">
-        Tags
-        <a href="classes/DLStorage-Storage-Data.html#method_expand_zero_tags" class="headerlink"><i class="fas fa-link"></i></a>
-
-    </h5>
-    <dl class="phpdocumentor-tag-list">
-                    <dt class="phpdocumentor-tag-list__entry">
-                <span class="phpdocumentor-tag__name">note</span>
-            </dt>
-                            <dd class="phpdocumentor-tag-list__definition">
-                                                                                                            <section class="phpdocumentor-description"><p>Este proceso es necesario cuando los datos han sido compactados previamente y es esencial para
-restaurar su formato original antes de cualquier procesamiento adicional. Si la entrada contiene
-bloques de datos válidos, estos serán reconstruidos adecuadamente con ceros restaurados.</p>
-</section>
-
-                                    </dd>
-                                <dt class="phpdocumentor-tag-list__entry">
-                <span class="phpdocumentor-tag__name">example</span>
-            </dt>
-                            <dd class="phpdocumentor-tag-list__definition">
-                                                                                                            <section class="phpdocumentor-description"><p>Ejemplo</p>
-<pre class="prettyprint"><code class="prettyprint">$data = &quot;01ABC01DE&quot;; // Cadena compactada
-$data_processor-&gt;expand_zero($data);
-echo $data; // La cadena ahora tendrá los ceros restaurados.
-</code></pre>
-</section>
-
-                                    </dd>
-                        </dl>
 
         
     
-            <section>
-        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
-        <span class="phpdocumentor-signature__response_type">void</span>
-                    &mdash;
-                <section class="phpdocumentor-description"><p>No retorna ningún valor. La cadena de entrada es modificada directamente.</p>
-</section>
-
-            </section>
-
+    
 </article>
                     <article
         class="phpdocumentor-element
@@ -938,11 +798,11 @@ echo $data; // La cadena ahora tendrá los ceros restaurados.
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Traits/ForTrait.php"><a href="files/src-traits-fortrait.html"><abbr title="src/Traits/ForTrait.php">ForTrait.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">102</span>
+    <span class="phpdocumentor-element-found-in__line">50</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Itera sobre una cadena de caracteres o un arreglo, ejecutando un callback por cada elemento.</p>
+        <p class="phpdocumentor-summary">Itera sobre una cadena o arreglo invocando `$callback` por cada posición.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -951,28 +811,8 @@ echo $data; // La cadena ahora tendrá los ceros restaurados.
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Este método proporciona una forma unificada de recorrer secuencialmente estructuras lineales
-(cadenas o arreglos). Para cada carácter (en cadenas) o elemento (en arreglos), se ejecuta
-una función de devolución de llamada proporcionada por el usuario. La función recibe el valor
-actual, su índice y la estructura completa como argumentos.</p>
-<h3>Comportamiento:</h3>
-<ul>
-<li>Si <code class="prettyprint">$data</code> es una cadena, se itera carácter por carácter usando índices numéricos.
-<blockquote>
-<p>⚠️ Esto no es seguro para cadenas multibyte (UTF-8) con caracteres especiales. Utiliza <code class="prettyprint">mb_*</code> si es necesario.</p>
-</blockquote>
-</li>
-<li>Si <code class="prettyprint">$data</code> es un arreglo, se itera elemento por elemento por posición numérica.</li>
-</ul>
-<h3>Ejemplo de uso:</h3>
-<pre class="prettyprint"><code class="language-php">$this-&gt;foreach(['a', 'b', 'c'], function ($value, $index, $all) {
-    echo &quot;Elemento #{$index}: {$value}\n&quot;;
-});
-
-$this-&gt;foreach(&quot;XYZ&quot;, function ($char, $i) {
-    echo &quot;Carácter {$i}: {$char}\n&quot;;
-});
-</code></pre>
+        <section class="phpdocumentor-description"><p>El callback recibe: <code class="prettyprint">($data[$index], $index, $data)</code>.
+Para cadenas usa <code class="prettyprint">strlen()</code> (no seguro para UTF-8 multibyte).</p>
 </section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
@@ -982,7 +822,7 @@ $this-&gt;foreach(&quot;XYZ&quot;, function ($char, $i) {
                 : <span class="phpdocumentor-argument-list__argument__type">string|array&lt;string|int, mixed&gt;</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Datos a iterar. Puede ser una cadena (<code class="prettyprint">string</code>) o un arreglo de cualquier tipo.</p>
+                    <section class="phpdocumentor-description"><p>Cadena o arreglo indexado numéricamente.</p>
 </section>
 
             </dd>
@@ -991,8 +831,7 @@ $this-&gt;foreach(&quot;XYZ&quot;, function ($char, $i) {
                 : <span class="phpdocumentor-argument-list__argument__type">callable</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Función anónima a ejecutar por cada carácter o elemento.
-Recibe tres parámetros: <code class="prettyprint">mixed $value</code>, <code class="prettyprint">int $index</code>, <code class="prettyprint">string|array $original</code>.</p>
+                    <section class="phpdocumentor-description"><p><code class="prettyprint">function(mixed $value, int $index, string|array $original): void</code></p>
 </section>
 
             </dd>
@@ -1002,15 +841,7 @@ Recibe tres parámetros: <code class="prettyprint">mixed $value</code>, <code cl
 
         
     
-            <section>
-        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
-        <span class="phpdocumentor-signature__response_type">void</span>
-                    &mdash;
-                <section class="phpdocumentor-description"><p>No devuelve ningún valor; opera por efectos colaterales del callback.</p>
-</section>
-
-            </section>
-
+    
 </article>
                     <article
         class="phpdocumentor-element
@@ -1026,11 +857,11 @@ Recibe tres parámetros: <code class="prettyprint">mixed $value</code>, <code cl
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Traits/BinaryLengthTrait.php"><a href="files/src-traits-binarylengthtrait.html"><abbr title="src/Traits/BinaryLengthTrait.php">BinaryLengthTrait.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">89</span>
+    <span class="phpdocumentor-element-found-in__line">69</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Calcula la suma aritmética de todos los bytes de una cadena binaria.</p>
+        <p class="phpdocumentor-summary">Suma aritmética de todos los bytes de una cadena.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -1039,10 +870,7 @@ Recibe tres parámetros: <code class="prettyprint">mixed $value</code>, <code cl
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Descompone <code class="prettyprint">$input</code> con <code class="prettyprint">unpack(&quot;C*&quot;, ...)</code> y devuelve <code class="prettyprint">array_sum()</code> de los
-valores resultantes. No devuelve la longitud en bytes; para eso use <code class="prettyprint">strlen()</code>.</p>
-</section>
-
+    
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
@@ -1050,29 +878,13 @@ valores resultantes. No devuelve la longitud en bytes; para eso use <code class=
                 : <span class="phpdocumentor-argument-list__argument__type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Cadena binaria de entrada.</p>
+                    <section class="phpdocumentor-description"><p>Cadena binaria.</p>
 </section>
 
             </dd>
             </dl>
 
     
-    <h5 class="phpdocumentor-tag-list__heading" id="method_get_binary_length_tags">
-        Tags
-        <a href="classes/DLStorage-Traits-BinaryLengthTrait.html#method_get_binary_length_tags" class="headerlink"><i class="fas fa-link"></i></a>
-
-    </h5>
-    <dl class="phpdocumentor-tag-list">
-                    <dt class="phpdocumentor-tag-list__entry">
-                <span class="phpdocumentor-tag__name">example</span>
-            </dt>
-                            <dd class="phpdocumentor-tag-list__definition">
-                                                                                                            <section class="phpdocumentor-description"><pre class="prettyprint"><code class="language-php">$suma = $this-&gt;get_binary_length($contenido);
-</code></pre>
-</section>
-
-                                    </dd>
-                        </dl>
 
         
     
@@ -1080,7 +892,7 @@ valores resultantes. No devuelve la longitud en bytes; para eso use <code class=
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">int</span>
                     &mdash;
-                <section class="phpdocumentor-description"><p>Suma de los valores byte a byte (0–255 por carácter).</p>
+                <section class="phpdocumentor-description"><p><code class="prettyprint">array_sum(unpack(&quot;C*&quot;, $input))</code>. No es <code class="prettyprint">strlen()</code>.</p>
 </section>
 
             </section>
@@ -1100,11 +912,11 @@ valores resultantes. No devuelve la longitud en bytes; para eso use <code class=
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Storage/Data.php"><a href="files/src-storage-data.html"><abbr title="src/Storage/Data.php">Data.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">163</span>
+    <span class="phpdocumentor-element-found-in__line">126</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Reconstruye y devuelve el contenido original a partir de una cadena codificada.</p>
+        <p class="phpdocumentor-summary">Decodifica hexadecimal a binario.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -1113,7 +925,7 @@ valores resultantes. No devuelve la longitud en bytes; para eso use <code class=
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>La salida puede contener datos binarios o texto, dependiendo del contenido original.</p>
+        <section class="phpdocumentor-description"><p>Equivalente a <code class="prettyprint">hex2bin(get_decode($encode, $entropy))</code>.</p>
 </section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
@@ -1123,7 +935,7 @@ valores resultantes. No devuelve la longitud en bytes; para eso use <code class=
                 : <span class="phpdocumentor-argument-list__argument__type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Cadena codificada en formato hexadecimal.</p>
+                    <section class="phpdocumentor-description"><p>Payload hexadecimal del archivo.</p>
 </section>
 
             </dd>
@@ -1132,13 +944,29 @@ valores resultantes. No devuelve la longitud en bytes; para eso use <code class=
                 : <span class="phpdocumentor-argument-list__argument__type">string|null</span>
                  = <span class="phpdocumentor-argument-list__argument__default-value">null</span>            </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Entropía utilizada durante la codificación, si corresponde.</p>
+                    <section class="phpdocumentor-description"><p>Llave de entropía usada al codificar.</p>
 </section>
 
             </dd>
             </dl>
 
     
+    <h5 class="phpdocumentor-tag-list__heading" id="method_get_content_tags">
+        Tags
+        <a href="classes/DLStorage-Storage-Data.html#method_get_content_tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">throws</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                                                <span class="phpdocumentor-tag-link"><a href="classes/DLStorage-Errors-EncodeException.html"><abbr title="\DLStorage\Errors\EncodeException">EncodeException</abbr></a></span>
+                                                                                        <section class="phpdocumentor-description"><p>Si la decodificación falla (propagada desde <abbr title="\DLStorage\Storage\get_decode()">get_decode()</abbr>).</p>
+</section>
+
+                                    </dd>
+                        </dl>
 
         
     
@@ -1146,7 +974,7 @@ valores resultantes. No devuelve la longitud en bytes; para eso use <code class=
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">string</span>
                     &mdash;
-                <section class="phpdocumentor-description"><p>Contenido reconstruido en formato binario.</p>
+                <section class="phpdocumentor-description"><p>Contenido binario original.</p>
 </section>
 
             </section>
@@ -1166,11 +994,11 @@ valores resultantes. No devuelve la longitud en bytes; para eso use <code class=
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Storage/Data.php"><a href="files/src-storage-data.html"><abbr title="src/Storage/Data.php">Data.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">134</span>
+    <span class="phpdocumentor-element-found-in__line">97</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Decodifica un mensaje previamente codificado utilizando un esquema de entropía.</p>
+        <p class="phpdocumentor-summary">Decodifica una cadena previamente codificada con {@see encode()}.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -1179,10 +1007,12 @@ valores resultantes. No devuelve la longitud en bytes; para eso use <code class=
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Toma una cadena de datos codificados y, si se proporciona la entropía utilizada durante
-la codificación, intenta revertir la transformación para recuperar el mensaje original. Si la entropía
-es incorrecta o si los datos han sido corrompidos, el método lanzará una excepción y si no logra
-revertir la codificación, devolverá datos corruptos.</p>
+        <section class="phpdocumentor-description"><ol>
+<li>Restaura ceros compactados con <abbr title="\DLStorage\Storage\expand_zero()">expand_zero()</abbr>.</li>
+<li>Divide en bloques de 10 caracteres hex.</li>
+<li>Revierte la entropía con <abbr title="\DLStorage\Storage\get_reverse_entropy()">get_reverse_entropy()</abbr>.</li>
+<li>Valida que la longitud UTF-8 del resultado sea par; si no, lanza excepción.</li>
+</ol>
 </section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
@@ -1192,7 +1022,7 @@ revertir la codificación, devolverá datos corruptos.</p>
                 : <span class="phpdocumentor-argument-list__argument__type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>El contenido codificado que se va a decodificar.</p>
+                    <section class="phpdocumentor-description"><p>Cadena hexadecimal producida por <code class="prettyprint">encode()</code>.</p>
 </section>
 
             </dd>
@@ -1201,8 +1031,7 @@ revertir la codificación, devolverá datos corruptos.</p>
                 : <span class="phpdocumentor-argument-list__argument__type">string|null</span>
                  = <span class="phpdocumentor-argument-list__argument__default-value">null</span>            </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>La entropía que se utilizó durante la codificación, si está disponible.
-Si no se proporciona, el proceso de decodificación puede fallar si se requiere.</p>
+                    <section class="phpdocumentor-description"><p>Misma llave usada al codificar.</p>
 </section>
 
             </dd>
@@ -1220,30 +1049,7 @@ Si no se proporciona, el proceso de decodificación puede fallar si se requiere.
             </dt>
                             <dd class="phpdocumentor-tag-list__definition">
                                                                 <span class="phpdocumentor-tag-link"><a href="classes/DLStorage-Errors-EncodeException.html"><abbr title="\DLStorage\Errors\EncodeException">EncodeException</abbr></a></span>
-                                                                                        <section class="phpdocumentor-description"><p>Si la longitud del mensaje resultante no es un número par, lo que indica
-que los datos podrían estar corruptos o que la entropía utilizada para la
-codificación no es válida.</p>
-</section>
-
-                                    </dd>
-                                <dt class="phpdocumentor-tag-list__entry">
-                <span class="phpdocumentor-tag__name">note</span>
-            </dt>
-                            <dd class="phpdocumentor-tag-list__definition">
-                                                                                                            <section class="phpdocumentor-description"><p>Este método asume que los datos codificados fueron segmentados en bloques de 10 bytes crudos
-y que cualquier adición de ceros al final del mensaje original fue tratada previamente.</p>
-</section>
-
-                                    </dd>
-                                <dt class="phpdocumentor-tag-list__entry">
-                <span class="phpdocumentor-tag__name">example</span>
-            </dt>
-                            <dd class="phpdocumentor-tag-list__definition">
-                                                                                                            <section class="phpdocumentor-description"><p>try {
-$decoded_message = $data-&gt;get_decode($encodedData, $entropyKey);
-} catch (EncodeException $e) {
-echo &quot;Error de decodificación: &quot; . $e-&gt;getMessage();
-}</p>
+                                                                                        <section class="phpdocumentor-description"><p>Si la longitud resultante es impar (entropía incorrecta o datos corruptos, código 403).</p>
 </section>
 
                                     </dd>
@@ -1255,7 +1061,7 @@ echo &quot;Error de decodificación: &quot; . $e-&gt;getMessage();
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">string</span>
                     &mdash;
-                <section class="phpdocumentor-description"><p>La cadena decodificada, es decir, el mensaje original antes de la codificación.</p>
+                <section class="phpdocumentor-description"><p>Cadena de bytes originales (caracteres de un solo byte).</p>
 </section>
 
             </section>
@@ -1275,11 +1081,11 @@ echo &quot;Error de decodificación: &quot; . $e-&gt;getMessage();
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Traits/StorageTrait.php"><a href="files/src-traits-storagetrait.html"><abbr title="src/Traits/StorageTrait.php">StorageTrait.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">336</span>
+    <span class="phpdocumentor-element-found-in__line">250</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Obtiene el directorio raíz del sistema.</p>
+        <p class="phpdocumentor-summary">Obtiene el directorio raíz del proyecto.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -1288,46 +1094,12 @@ echo &quot;Error de decodificación: &quot; . $e-&gt;getMessage();
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Devuelve la ruta absoluta del directorio raíz de la aplicación.</p>
-<p>Para lograrlo, se obtiene el directorio de trabajo actual (<code class="prettyprint">getcwd()</code>), se retrocede
-un nivel hacia el directorio padre (<code class="prettyprint">dirname()</code>), y luego se resuelve la ruta absoluta
-mediante <code class="prettyprint">realpath()</code>. Finalmente, se elimina cualquier espacio innecesario con <code class="prettyprint">trim()</code>.</p>
-<p>Esto es útil para establecer rutas base dentro de la aplicación, evitando
-problemas de rutas relativas al trabajar con diferentes entornos de desarrollo o despliegue.</p>
+        <section class="phpdocumentor-description"><p>Calcula: <code class="prettyprint">realpath(dirname(getcwd()))</code>. Asume que el CWD está un nivel
+por debajo de la raíz (p. ej. <code class="prettyprint">public/</code>).</p>
 </section>
 
     
     
-    <h5 class="phpdocumentor-tag-list__heading" id="method_get_document_root_tags">
-        Tags
-        <a href="classes/DLStorage-Traits-StorageTrait.html#method_get_document_root_tags" class="headerlink"><i class="fas fa-link"></i></a>
-
-    </h5>
-    <dl class="phpdocumentor-tag-list">
-                    <dt class="phpdocumentor-tag-list__entry">
-                <span class="phpdocumentor-tag__name">example</span>
-            </dt>
-                            <dd class="phpdocumentor-tag-list__definition">
-                                                                                                            <section class="phpdocumentor-description"><p>Example</p>
-<pre class="prettyprint"><code class="prettyprint">// Ejemplo de uso
-$root_path = $this-&gt;get_document_root();
-echo $root_path;
-// Resultado esperado: /var/www/html/my-app
-</code></pre>
-</section>
-
-                                    </dd>
-                                <dt class="phpdocumentor-tag-list__entry">
-                <span class="phpdocumentor-tag__name">note</span>
-            </dt>
-                            <dd class="phpdocumentor-tag-list__definition">
-                                                                                                            <section class="phpdocumentor-description"><p>Asegúrate de tener los permisos adecuados para acceder al directorio raíz de la aplicación.
-Este método asume que la estructura de carpetas sigue un patrón estándar donde
-el directorio raíz se encuentra un nivel por encima del directorio de ejecución actual.</p>
-</section>
-
-                                    </dd>
-                        </dl>
 
         
     
@@ -1335,7 +1107,7 @@ el directorio raíz se encuentra un nivel por encima del directorio de ejecució
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">string</span>
                     &mdash;
-                <section class="phpdocumentor-description"><p>Ruta absoluta del directorio raíz de la aplicación.</p>
+                <section class="phpdocumentor-description"><p>Ruta absoluta sin espacios laterales. Puede ser cadena vacía si <code class="prettyprint">realpath</code> falla.</p>
 </section>
 
             </section>
@@ -1355,11 +1127,11 @@ el directorio raíz se encuentra un nivel por encima del directorio de ejecució
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Traits/BinaryLengthTrait.php"><a href="files/src-traits-binarylengthtrait.html"><abbr title="src/Traits/BinaryLengthTrait.php">BinaryLengthTrait.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">286</span>
+    <span class="phpdocumentor-element-found-in__line">187</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Calcula una métrica de &quot;entropía&quot; simplificada basada en el contenido de un archivo.</p>
+        <p class="phpdocumentor-summary">Métrica heurística del contenido de un archivo.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -1368,13 +1140,8 @@ el directorio raíz se encuentra un nivel por encima del directorio de ejecució
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Esta función intenta abrir un archivo y leer hasta un máximo de 16,777,215 bytes (0xFFFFFF).
-Si el archivo no se encuentra en la ruta original, se intenta localizar usando <code class="prettyprint">get_file_path</code>.
-Una vez leído el contenido, se utiliza <code class="prettyprint">unpack(&quot;C*&quot;, ...)</code> para obtener los valores
-byte a byte. Luego, la entropía es calculada como la suma de estos bytes más
-la longitud del contenido leído.</p>
-<p>Nota: Esta no es una medida de entropía criptográfica, sino una métrica heurística
-del contenido binario del archivo.</p>
+        <section class="phpdocumentor-description"><p>Lee hasta <code class="prettyprint">0xFFFFFF</code> bytes (16 777 215). Si <code class="prettyprint">$filename</code> no existe, intenta
+resolverlo con <abbr title="\DLStorage\Traits\get_file_path()">get_file_path()</abbr>. Retorna 0 si el archivo no se encuentra.</p>
 </section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
@@ -1384,13 +1151,29 @@ del contenido binario del archivo.</p>
                 : <span class="phpdocumentor-argument-list__argument__type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Ruta del archivo a analizar.</p>
+                    <section class="phpdocumentor-description"><p>Ruta al archivo.</p>
 </section>
 
             </dd>
             </dl>
 
     
+    <h5 class="phpdocumentor-tag-list__heading" id="method_get_entropy_file_tags">
+        Tags
+        <a href="classes/DLStorage-Traits-BinaryLengthTrait.html#method_get_entropy_file_tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">throws</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                                                <span class="phpdocumentor-tag-link"><a href="classes/DLStorage-Errors-StorageException.html"><abbr title="\DLStorage\Errors\StorageException">StorageException</abbr></a></span>
+                                                                                        <section class="phpdocumentor-description"><p>Si la lectura parcial falla.</p>
+</section>
+
+                                    </dd>
+                        </dl>
 
         
     
@@ -1398,7 +1181,7 @@ del contenido binario del archivo.</p>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">int</span>
                     &mdash;
-                <section class="phpdocumentor-description"><p>Suma de los bytes del archivo y su longitud.</p>
+                <section class="phpdocumentor-description"><p>Resultado de <abbr title="\DLStorage\Traits\get_entropy_value()">get_entropy_value()</abbr> sobre el contenido leído, o <code class="prettyprint">0</code>.</p>
 </section>
 
             </section>
@@ -1418,11 +1201,11 @@ del contenido binario del archivo.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Traits/BinaryLengthTrait.php"><a href="files/src-traits-binarylengthtrait.html"><abbr title="src/Traits/BinaryLengthTrait.php">BinaryLengthTrait.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">321</span>
+    <span class="phpdocumentor-element-found-in__line">219</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Devuelve la entropía base o `seed` en función de los bytes como argumento.</p>
+        <p class="phpdocumentor-summary">Calcula un valor entero determinista a partir de bytes de entrada.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -1431,10 +1214,9 @@ del contenido binario del archivo.</p>
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Esta implementación no calcula entropía estadística (como la fórmula de Shannon),
-sino un valor entero simple, derivado de la suma total de los bytes más la longitud
-del input. Es útil como valor base determinista para sistemas de validación,
-generación de semillas pseudoaleatorias u otras heurísticas.</p>
+        <section class="phpdocumentor-description"><p>Suma todos los bytes con <code class="prettyprint">array_sum(unpack(&quot;C*&quot;, ...))</code>, deriva <code class="prettyprint">$this-&gt;coefficient</code>
+mediante <abbr title="\DLStorage\Traits\calculate_coefficient()">calculate_coefficient()</abbr> y retorna <code class="prettyprint">suma + strlen($input)</code>.</p>
+<p>No es entropía de Shannon; es una heurística interna del MTB.</p>
 </section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
@@ -1444,7 +1226,7 @@ generación de semillas pseudoaleatorias u otras heurísticas.</p>
                 : <span class="phpdocumentor-argument-list__argument__type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Secuencia binaria que representa los datos a analizar.</p>
+                    <section class="phpdocumentor-description"><p>Cadena binaria.</p>
 </section>
 
             </dd>
@@ -1458,7 +1240,7 @@ generación de semillas pseudoaleatorias u otras heurísticas.</p>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">int</span>
                     &mdash;
-                <section class="phpdocumentor-description"><p>Valor entero representando una entropía base aproximada.</p>
+                <section class="phpdocumentor-description"><p>Valor entero usado como suma base de entropía.</p>
 </section>
 
             </section>
@@ -1478,13 +1260,11 @@ generación de semillas pseudoaleatorias u otras heurísticas.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Traits/StorageTrait.php"><a href="files/src-traits-storagetrait.html"><abbr title="src/Traits/StorageTrait.php">StorageTrait.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">135</span>
+    <span class="phpdocumentor-element-found-in__line">73</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Devuelve la ruta absoluta completa donde se almacenará un archivo, dentro del
-sistema de almacenamiento gestionado por la clase. Puede opcionalmente crear
-el directorio contenedor si no existe.</p>
+        <p class="phpdocumentor-summary">Resuelve la ruta absoluta de un archivo relativo al proyecto.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -1493,9 +1273,9 @@ el directorio contenedor si no existe.</p>
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Si se establece <code class="prettyprint">$create_dir</code> en <code class="prettyprint">true</code>, la función asegura que el directorio
-padre del archivo exista, creándolo si es necesario. En caso de que exista un
-archivo con el mismo nombre que el directorio, se lanza una excepción.</p>
+        <section class="phpdocumentor-description"><p>Base: <abbr title="\DLStorage\Traits\get_document_root()">get_document_root()</abbr>. Si <code class="prettyprint">$storage</code> es <code class="prettyprint">true</code>, antepone <code class="prettyprint">storage/</code>.
+Normaliza separadores <code class="prettyprint">\</code> y <code class="prettyprint">/</code> al separador del SO.</p>
+<p>Con <code class="prettyprint">$create_dir = true</code>, crea el directorio padre con <code class="prettyprint">mkdir(..., 0755, true)</code>.</p>
 </section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
@@ -1505,7 +1285,7 @@ archivo con el mismo nombre que el directorio, se lanza una excepción.</p>
                 : <span class="phpdocumentor-argument-list__argument__type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Nombre relativo del archivo (puede contener subdirectorios).</p>
+                    <section class="phpdocumentor-description"><p>Ruta relativa (puede incluir subdirectorios).</p>
 </section>
 
             </dd>
@@ -1514,8 +1294,7 @@ archivo con el mismo nombre que el directorio, se lanza una excepción.</p>
                 : <span class="phpdocumentor-argument-list__argument__type">bool</span>
                  = <span class="phpdocumentor-argument-list__argument__default-value">false</span>            </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Indica si se debe crear el directorio contenedor si no existe.
-Por defecto es <code class="prettyprint">false</code>.</p>
+                    <section class="phpdocumentor-description"><p>Crea el directorio contenedor si no existe.</p>
 </section>
 
             </dd>
@@ -1524,9 +1303,7 @@ Por defecto es <code class="prettyprint">false</code>.</p>
                 : <span class="phpdocumentor-argument-list__argument__type">bool</span>
                  = <span class="phpdocumentor-argument-list__argument__default-value">true</span>            </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Si es <code class="prettyprint">true</code>, el archivo se almacenará dentro del directorio
-<code class="prettyprint">storage/</code> gestionado por el sistema. Si es <code class="prettyprint">false</code>, la ruta se
-resolverá directamente en la raíz del documento. Por defecto es <code class="prettyprint">true</code>.</p>
+                    <section class="phpdocumentor-description"><p><code class="prettyprint">true</code>: bajo <code class="prettyprint">storage/</code>. <code class="prettyprint">false</code>: bajo la raíz del proyecto.</p>
 </section>
 
             </dd>
@@ -1544,40 +1321,7 @@ resolverá directamente en la raíz del documento. Por defecto es <code class="p
             </dt>
                             <dd class="phpdocumentor-tag-list__definition">
                                                                 <span class="phpdocumentor-tag-link"><a href="classes/DLStorage-Errors-StorageException.html"><abbr title="\DLStorage\Errors\StorageException">StorageException</abbr></a></span>
-                                                                                        <section class="phpdocumentor-description"><p>Si <code class="prettyprint">$create_dir</code> es <code class="prettyprint">true</code> y existe un archivo con el mismo nombre que el directorio contenedor.</p>
-</section>
-
-                                    </dd>
-                                <dt class="phpdocumentor-tag-list__entry">
-                <span class="phpdocumentor-tag__name">example</span>
-            </dt>
-                            <dd class="phpdocumentor-tag-list__definition">
-                                                                                                            <section class="phpdocumentor-description"><p>Ejemplo de uso</p>
-<pre class="prettyprint"><code class="language-php">// Usando almacenamiento interno
-$ruta = $storage-&gt;get_file_path(&quot;documentos/ejemplo.txt&quot;, true);
-// Resultado: /ruta/absoluta/al/proyecto/storage/documentos/ejemplo.txt
-
-// Usando ruta directa (fuera de /storage)
-$ruta = $storage-&gt;get_file_path(&quot;documentos/ejemplo.txt&quot;, true, false);
-// Resultado: /ruta/absoluta/al/proyecto/documentos/ejemplo.txt
-</code></pre>
-</section>
-
-                                    </dd>
-                                <dt class="phpdocumentor-tag-list__entry">
-                <span class="phpdocumentor-tag__name">note</span>
-            </dt>
-                            <dd class="phpdocumentor-tag-list__definition">
-                                                                                                            <section class="phpdocumentor-description"><p>Los separadores de directorio son normalizados automáticamente al formato del sistema operativo.</p>
-</section>
-
-                                    </dd>
-                                <dt class="phpdocumentor-tag-list__entry">
-                <span class="phpdocumentor-tag__name">warning</span>
-            </dt>
-                            <dd class="phpdocumentor-tag-list__definition">
-                                                                                                            <section class="phpdocumentor-description"><p>Si el nombre proporcionado en <code class="prettyprint">$filename</code> genera una colisión con un archivo
-en lugar de un directorio, y <code class="prettyprint">$create_dir</code> es <code class="prettyprint">true</code>, la operación fallará.</p>
+                                                                                        <section class="phpdocumentor-description"><p>Si <code class="prettyprint">$create_dir</code> es <code class="prettyprint">true</code> y un archivo ocupa el nombre del directorio (500).</p>
 </section>
 
                                     </dd>
@@ -1589,7 +1333,7 @@ en lugar de un directorio, y <code class="prettyprint">$create_dir</code> es <co
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">string</span>
                     &mdash;
-                <section class="phpdocumentor-description"><p>Ruta absoluta del archivo dentro del almacenamiento gestionado.</p>
+                <section class="phpdocumentor-description"><p>Ruta absoluta del archivo.</p>
 </section>
 
             </section>
@@ -1609,11 +1353,11 @@ en lugar de un directorio, y <code class="prettyprint">$create_dir</code> es <co
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Traits/StorageTrait.php"><a href="files/src-traits-storagetrait.html"><abbr title="src/Traits/StorageTrait.php">StorageTrait.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">209</span>
+    <span class="phpdocumentor-element-found-in__line">146</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Lee un rango de bytes de un archivo binario.</p>
+        <p class="phpdocumentor-summary">Lee un rango inclusivo de bytes de un archivo (índices 1-based).</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -1622,9 +1366,8 @@ en lugar de un directorio, y <code class="prettyprint">$create_dir</code> es <co
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Este método permite leer una porción de un archivo binario, especificando los índices de inicio y fin del rango a leer.
-Si el rango es inválido o excede el tamaño del archivo, se lanzan excepciones apropiadas.
-El archivo se abre en modo binario, asegurando que la lectura no se vea afectada por la codificación de caracteres.</p>
+        <section class="phpdocumentor-description"><p>Abre el archivo en modo binario (<code class="prettyprint">rb</code>), posiciona con <code class="prettyprint">fseek</code> y lee <code class="prettyprint">$to - $from + 1</code> bytes.
+No valida previamente la existencia del archivo.</p>
 </section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
@@ -1634,7 +1377,7 @@ El archivo se abre en modo binario, asegurando que la lectura no se vea afectada
                 : <span class="phpdocumentor-argument-list__argument__type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Ruta del archivo a leer.</p>
+                    <section class="phpdocumentor-description"><p>Ruta absoluta o relativa al archivo.</p>
 </section>
 
             </dd>
@@ -1643,7 +1386,7 @@ El archivo se abre en modo binario, asegurando que la lectura no se vea afectada
                 : <span class="phpdocumentor-argument-list__argument__type">int</span>
                  = <span class="phpdocumentor-argument-list__argument__default-value">1</span>            </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Offset de inicio de la lectura (1 basado).</p>
+                    <section class="phpdocumentor-description"><p>Byte inicial (≥ 1).</p>
 </section>
 
             </dd>
@@ -1652,7 +1395,7 @@ El archivo se abre en modo binario, asegurando que la lectura no se vea afectada
                 : <span class="phpdocumentor-argument-list__argument__type">int</span>
                  = <span class="phpdocumentor-argument-list__argument__default-value">1</span>            </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Offset final de la lectura (1 basado).</p>
+                    <section class="phpdocumentor-description"><p>Byte final (≥ <code class="prettyprint">$from</code>).</p>
 </section>
 
             </dd>
@@ -1670,25 +1413,8 @@ El archivo se abre en modo binario, asegurando que la lectura no se vea afectada
             </dt>
                             <dd class="phpdocumentor-tag-list__definition">
                                                                 <span class="phpdocumentor-tag-link"><a href="classes/DLStorage-Errors-StorageException.html"><abbr title="\DLStorage\Errors\StorageException">StorageException</abbr></a></span>
-                                                                                        <section class="phpdocumentor-description"><p>Si el rango es inválido, el archivo no se puede acceder, o no se puede leer correctamente.</p>
-</section>
-
-                                    </dd>
-                            <dd class="phpdocumentor-tag-list__definition">
-                                                                <span class="phpdocumentor-tag-link"><a href="classes/DLStorage-Errors-StorageException.html"><abbr title="\DLStorage\Errors\StorageException">StorageException</abbr></a></span>
-                                                                                        <section class="phpdocumentor-description"><p>Si el rango de lectura excede el tamaño del archivo.</p>
-</section>
-
-                                    </dd>
-                            <dd class="phpdocumentor-tag-list__definition">
-                                                                <span class="phpdocumentor-tag-link"><a href="classes/DLStorage-Errors-StorageException.html"><abbr title="\DLStorage\Errors\StorageException">StorageException</abbr></a></span>
-                                                                                        <section class="phpdocumentor-description"><p>Si hay un error de entrada/salida al acceder a los metadatos del archivo.</p>
-</section>
-
-                                    </dd>
-                            <dd class="phpdocumentor-tag-list__definition">
-                                                                <span class="phpdocumentor-tag-link"><a href="classes/DLStorage-Errors-StorageException.html"><abbr title="\DLStorage\Errors\StorageException">StorageException</abbr></a></span>
-                                                                                        <section class="phpdocumentor-description"><p>Si no se puede posicionar el puntero al byte indicado en el archivo.</p>
+                                                                                        <section class="phpdocumentor-description"><p>Rango inválido (500), archivo inaccesible (500), rango fuera de tamaño (416),
+error de seek (500) o lectura vacía/fallida (500).</p>
 </section>
 
                                     </dd>
@@ -1700,7 +1426,7 @@ El archivo se abre en modo binario, asegurando que la lectura no se vea afectada
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">string</span>
                     &mdash;
-                <section class="phpdocumentor-description"><p>Los bytes leídos del archivo.</p>
+                <section class="phpdocumentor-description"><p>Bytes leídos.</p>
 </section>
 
             </section>
@@ -1720,11 +1446,11 @@ El archivo se abre en modo binario, asegurando que la lectura no se vea afectada
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Traits/StorageTrait.php"><a href="files/src-traits-storagetrait.html"><abbr title="src/Traits/StorageTrait.php">StorageTrait.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">182</span>
+    <span class="phpdocumentor-element-found-in__line">121</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Valida si se trata de un archivo estructura binaria válida</p>
+        <p class="phpdocumentor-summary">Comprueba si los primeros 9 bytes del archivo coinciden con la firma DLStorage.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -1741,13 +1467,29 @@ El archivo se abre en modo binario, asegurando que la lectura no se vea afectada
                 : <span class="phpdocumentor-argument-list__argument__type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Ruta relativa del archivo (sin extensión <code class="prettyprint">.dlstorage</code>).</p>
+                    <section class="phpdocumentor-description"><p>Ruta relativa resuelta con <abbr title="\DLStorage\Traits\get_file_path()">get_file_path()</abbr> (sin extensión <code class="prettyprint">.dlstorage</code>).</p>
 </section>
 
             </dd>
             </dl>
 
     
+    <h5 class="phpdocumentor-tag-list__heading" id="method_validate_saved_data_tags">
+        Tags
+        <a href="classes/DLStorage-Traits-StorageTrait.html#method_validate_saved_data_tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">throws</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                                                <span class="phpdocumentor-tag-link"><a href="classes/DLStorage-Errors-StorageException.html"><abbr title="\DLStorage\Errors\StorageException">StorageException</abbr></a></span>
+                                                                                        <section class="phpdocumentor-description"><p>Si el archivo no existe o la lectura falla (propagada desde <abbr title="\DLStorage\Traits\read_filename()">read_filename()</abbr>).</p>
+</section>
+
+                                    </dd>
+                        </dl>
 
         
     
@@ -1755,7 +1497,7 @@ El archivo se abre en modo binario, asegurando que la lectura no se vea afectada
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">bool</span>
                     &mdash;
-                <section class="phpdocumentor-description"><p><code class="prettyprint">true</code> si la firma de los primeros 9 bytes coincide con <code class="prettyprint">DLStorage</code>.</p>
+                <section class="phpdocumentor-description"><p><code class="prettyprint">true</code> si la firma hex de los bytes 1–9 coincide con <abbr title="\DLStorage\Traits\get_signature()">get_signature()</abbr>.</p>
 </section>
 
             </section>
@@ -1775,11 +1517,11 @@ El archivo se abre en modo binario, asegurando que la lectura no se vea afectada
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Storage/Data.php"><a href="files/src-storage-data.html"><abbr title="src/Storage/Data.php">Data.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">179</span>
+    <span class="phpdocumentor-element-found-in__line">138</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Compacta una secuencia continua de ceros convirtiéndola en una representación hexadecimal.</p>
+        <p class="phpdocumentor-summary">Compacta ceros iniciales reemplazándolos por el marcador `01`.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">protected</span>
@@ -1788,9 +1530,8 @@ El archivo se abre en modo binario, asegurando que la lectura no se vea afectada
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Detecta la primera secuencia de ceros consecutivos en la cadena de entrada y la
-reemplaza por una cadena de dos caracteres hexadecimales (<code class="prettyprint">0x00</code>).</p>
-<p>Por ejemplo, una entrada como <code class="prettyprint">&quot;00000ABC&quot;</code> devolverá <code class="prettyprint">&quot;01ABC&quot;</code></p>
+        <section class="phpdocumentor-description"><p>Aplica <code class="prettyprint">preg_replace(&quot;/^0+/&quot;, '01', $input)</code> sobre la cadena pasada por referencia.
+Si <code class="prettyprint">preg_replace</code> falla, la cadena no se modifica.</p>
 </section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
@@ -1800,7 +1541,7 @@ reemplaza por una cadena de dos caracteres hexadecimales (<code class="prettypri
                 : <span class="phpdocumentor-argument-list__argument__type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Cadena de texto a ser analizada y compactada.</p>
+                    <section class="phpdocumentor-description"><p>Cadena hexadecimal a compactar (por referencia).</p>
 </section>
 
             </dd>
@@ -1826,11 +1567,11 @@ reemplaza por una cadena de dos caracteres hexadecimales (<code class="prettypri
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Traits/ForTrait.php"><a href="files/src-traits-fortrait.html"><abbr title="src/Traits/ForTrait.php">ForTrait.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">133</span>
+    <span class="phpdocumentor-element-found-in__line">67</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Itera sobre cada byte de una cadena de texto en su representación binaria.</p>
+        <p class="phpdocumentor-summary">Itera sobre cada byte de una cadena binaria.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">protected</span>
@@ -1839,15 +1580,8 @@ reemplaza por una cadena de dos caracteres hexadecimales (<code class="prettypri
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Esta función convierte la cadena de entrada en una secuencia de bytes (valores enteros entre 0 y 255)
-utilizando codificación binaria sin firmar. Por cada byte iterado, se invoca la función de devolución
-de llamada proporcionada por el usuario, a la cual se le pasan el byte actual, su índice dentro de la
-secuencia y el arreglo completo de bytes.</p>
-<h3>Ejemplo de uso:</h3>
-<pre class="prettyprint"><code class="language-php">$this-&gt;foreach_string(&quot;ABC&quot;, function ($byte, $index, $bytes) {
-    echo &quot;Byte en posición {$index}: {$byte}\n&quot;;
-});
-</code></pre>
+        <section class="phpdocumentor-description"><p>Descompone <code class="prettyprint">$input</code> con <code class="prettyprint">unpack(&quot;C*&quot;, $input)</code> y ejecuta el callback
+por cada byte: <code class="prettyprint">($byte, $index, $bytes)</code>.</p>
 </section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
@@ -1857,7 +1591,7 @@ secuencia y el arreglo completo de bytes.</p>
                 : <span class="phpdocumentor-argument-list__argument__type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Cadena de entrada a ser analizada como secuencia de bytes.</p>
+                    <section class="phpdocumentor-description"><p>Cadena binaria.</p>
 </section>
 
             </dd>
@@ -1866,8 +1600,7 @@ secuencia y el arreglo completo de bytes.</p>
                 : <span class="phpdocumentor-argument-list__argument__type">callable</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Función anónima (closure) que se ejecuta por cada byte.
-Recibe tres parámetros: <code class="prettyprint">int $byte</code>, <code class="prettyprint">int $index</code>, <code class="prettyprint">int[] $bytes</code>.</p>
+                    <section class="phpdocumentor-description"><p><code class="prettyprint">function(int $byte, int $index, int[] $bytes): void</code></p>
 </section>
 
             </dd>
@@ -1877,15 +1610,7 @@ Recibe tres parámetros: <code class="prettyprint">int $byte</code>, <code class
 
         
     
-            <section>
-        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
-        <span class="phpdocumentor-signature__response_type">void</span>
-                    &mdash;
-                <section class="phpdocumentor-description"><p>No retorna ningún valor. Ejecuta el callback por efecto colateral.</p>
-</section>
-
-            </section>
-
+    
 </article>
                     <article
         class="phpdocumentor-element
@@ -1901,11 +1626,11 @@ Recibe tres parámetros: <code class="prettyprint">int $byte</code>, <code class
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Traits/BinaryLengthTrait.php"><a href="files/src-traits-binarylengthtrait.html"><abbr title="src/Traits/BinaryLengthTrait.php">BinaryLengthTrait.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">160</span>
+    <span class="phpdocumentor-element-found-in__line">108</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Obtiene el valor hexadecimal de un bloque de bytes con entropía revertida.</p>
+        <p class="phpdocumentor-summary">Revierte un bloque de 10 caracteres hex a un carácter de un byte.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">protected</span>
@@ -1914,12 +1639,7 @@ Recibe tres parámetros: <code class="prettyprint">int $byte</code>, <code class
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Este método toma un bloque de bytes representado como una cadena hexadecimal y calcula su valor
-después de revertir la entropía aplicada previamente. El valor de cada carácter se obtiene utilizando
-un cálculo que involucra un valor de entropía, el cual se determina a partir del índice del bloque y un
-valor base (<code class="prettyprint">$sum</code>). Este valor se ajusta a un formato hexadecimal de dos dígitos para su posterior uso.</p>
-<p>El cálculo del valor final se basa en la resta de la entropía y un valor predeterminado, asegurando que
-la cadena resultante sea correctamente ajustada en longitud para representar un valor hexadecimal válido.</p>
+        <section class="phpdocumentor-description"><p>Fórmula: <code class="prettyprint">dechex(hexdec($block) - ($this-&gt;seed + get_entropy($key, $sum)))</code>, rellenado a 2 chars.</p>
 </section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
@@ -1929,8 +1649,7 @@ la cadena resultante sea correctamente ajustada en longitud para representar un 
                 : <span class="phpdocumentor-argument-list__argument__type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Bloque de bytes representado en formato hexadecimal, que será procesado para
-obtener el valor ajustado.</p>
+                    <section class="phpdocumentor-description"><p>Bloque hex de 10 caracteres.</p>
 </section>
 
             </dd>
@@ -1939,8 +1658,7 @@ obtener el valor ajustado.</p>
                 : <span class="phpdocumentor-argument-list__argument__type">int</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Índice que permite calcular el valor de la entropía, utilizado para el ajuste
-del valor hexadecimal.</p>
+                    <section class="phpdocumentor-description"><p>Índice del bloque en la secuencia.</p>
 </section>
 
             </dd>
@@ -1949,35 +1667,13 @@ del valor hexadecimal.</p>
                 : <span class="phpdocumentor-argument-list__argument__type">int</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Valor base de la entropía que se usará en el cálculo de ajuste del valor final.</p>
+                    <section class="phpdocumentor-description"><p>Suma base de entropía.</p>
 </section>
 
             </dd>
             </dl>
 
     
-    <h5 class="phpdocumentor-tag-list__heading" id="method_from_hex40_tags">
-        Tags
-        <a href="classes/DLStorage-Traits-BinaryLengthTrait.html#method_from_hex40_tags" class="headerlink"><i class="fas fa-link"></i></a>
-
-    </h5>
-    <dl class="phpdocumentor-tag-list">
-                    <dt class="phpdocumentor-tag-list__entry">
-                <span class="phpdocumentor-tag__name">example</span>
-            </dt>
-                            <dd class="phpdocumentor-tag-list__definition">
-                                                                                                            <section class="phpdocumentor-description"><p>Ejemplo</p>
-<pre class="prettyprint"><code class="prettyprint">// Obtener el valor hexadecimal de un bloque con entropía revertida.
-$block = &quot;abc123&quot;;
-$key = 1;
-$sum = 10;
-$hex_value = $data-&gt;get_hex_value($block, $key, $sum);
-echo $hex_value;  // Resultado de la cadena hexadecimal ajustada.
-</code></pre>
-</section>
-
-                                    </dd>
-                        </dl>
 
         
     
@@ -1985,8 +1681,7 @@ echo $hex_value;  // Resultado de la cadena hexadecimal ajustada.
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">string</span>
                     &mdash;
-                <section class="phpdocumentor-description"><p>El valor hexadecimal calculado, con la entropía revertida, representado como una cadena
-de dos dígitos.</p>
+                <section class="phpdocumentor-description"><p>Carácter como cadena hex de 2 caracteres (un byte).</p>
 </section>
 
             </section>
@@ -2006,11 +1701,11 @@ de dos dígitos.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Traits/BinaryLengthTrait.php"><a href="files/src-traits-binarylengthtrait.html"><abbr title="src/Traits/BinaryLengthTrait.php">BinaryLengthTrait.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">200</span>
+    <span class="phpdocumentor-element-found-in__line">133</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Calcula un valor de entropía basado en un índice y una suma acumulada.</p>
+        <p class="phpdocumentor-summary">Calcula el desplazamiento de entropía para un índice dado.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">protected</span>
@@ -2019,14 +1714,7 @@ de dos dígitos.</p>
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Este método genera un valor de entropía combinando la suma provista con dos llamadas al método
-<code class="prettyprint">get_circular_value($index)</code>. La operación está diseñada para producir una variación controlada
-del valor original (<code class="prettyprint">$sum</code>) a partir de datos circulares o predefinidos almacenados internamente.</p>
-<p>⚠️ Este método <strong>no garantiza entropía criptográfica</strong>. Su propósito está orientado a sistemas
-de transformación interna o dispersión de valores, no a funciones criptográficamente seguras.</p>
-<h3>Fórmula general:</h3>
-<pre class="prettyprint"><code class="prettyprint">entropy = sum + get_circular_value(index) + get_circular_value(index)
-</code></pre>
+        <section class="phpdocumentor-description"><p>Fórmula: <code class="prettyprint">2 * get_circular_value($index) + $sum</code>.</p>
 </section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
@@ -2036,7 +1724,7 @@ de transformación interna o dispersión de valores, no a funciones criptográfi
                 : <span class="phpdocumentor-argument-list__argument__type">int</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Índice base usado para obtener valores circulares predefinidos.</p>
+                    <section class="phpdocumentor-description"><p>Posición del byte o bloque.</p>
 </section>
 
             </dd>
@@ -2045,27 +1733,13 @@ de transformación interna o dispersión de valores, no a funciones criptográfi
                 : <span class="phpdocumentor-argument-list__argument__type">int</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Suma acumulativa o valor base sobre el cual se aplicará el incremento de entropía.</p>
+                    <section class="phpdocumentor-description"><p>Valor base (proveniente de la llave de entropía o 0).</p>
 </section>
 
             </dd>
             </dl>
 
     
-    <h5 class="phpdocumentor-tag-list__heading" id="method_get_entropy_tags">
-        Tags
-        <a href="classes/DLStorage-Traits-BinaryLengthTrait.html#method_get_entropy_tags" class="headerlink"><i class="fas fa-link"></i></a>
-
-    </h5>
-    <dl class="phpdocumentor-tag-list">
-                    <dt class="phpdocumentor-tag-list__entry">
-                <span class="phpdocumentor-tag__name">see</span>
-            </dt>
-                            <dd class="phpdocumentor-tag-list__definition">
-                                                                                    <span class="phpdocumentor-tag-link"><abbr title="\DLStorage\Traits\self::get_circular_value()">self::get_circular_value()</abbr></span>
-                                                                
-                                    </dd>
-                        </dl>
 
         
     
@@ -2073,7 +1747,7 @@ de transformación interna o dispersión de valores, no a funciones criptográfi
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">int</span>
                     &mdash;
-                <section class="phpdocumentor-description"><p>Valor de entropía ajustado según el índice y suma proporcionados.</p>
+                <section class="phpdocumentor-description"><p>Desplazamiento aplicado en <code class="prettyprint">to_hex40</code> / <code class="prettyprint">from_hex40</code>.</p>
 </section>
 
             </section>
@@ -2093,11 +1767,11 @@ de transformación interna o dispersión de valores, no a funciones criptográfi
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Traits/StorageTrait.php"><a href="files/src-traits-storagetrait.html"><abbr title="src/Traits/StorageTrait.php">StorageTrait.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">357</span>
+    <span class="phpdocumentor-element-found-in__line">263</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Devuelve la firma del archivo en formato hexadecimal.</p>
+        <p class="phpdocumentor-summary">Devuelve la firma como cadena hexadecimal.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">protected</span>
@@ -2106,10 +1780,7 @@ de transformación interna o dispersión de valores, no a funciones criptográfi
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Convierte los bytes binarios de la propiedad <code class="prettyprint">$signature</code>
-a una representación legible como cadena hexadecimal.</p>
-</section>
-
+    
     
     
 
@@ -2119,7 +1790,7 @@ a una representación legible como cadena hexadecimal.</p>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">string</span>
                     &mdash;
-                <section class="phpdocumentor-description"><p>Firma binaria representada en hexadecimal.</p>
+                <section class="phpdocumentor-description"><p><code class="prettyprint">bin2hex($this-&gt;signature)</code> — p. ej. <code class="prettyprint">444c53746f72616765</code> para <code class="prettyprint">&quot;DLStorage&quot;</code>.</p>
 </section>
 
             </section>
@@ -2139,11 +1810,11 @@ a una representación legible como cadena hexadecimal.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Traits/StorageTrait.php"><a href="files/src-traits-storagetrait.html"><abbr title="src/Traits/StorageTrait.php">StorageTrait.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">369</span>
+    <span class="phpdocumentor-element-found-in__line">272</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Devuelve la versión del archivo en formato hexadecimal.</p>
+        <p class="phpdocumentor-summary">Devuelve la versión como cadena hexadecimal.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">protected</span>
@@ -2152,10 +1823,7 @@ a una representación legible como cadena hexadecimal.</p>
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Convierte los bytes binarios de la propiedad <code class="prettyprint">$version</code>
-a una representación legible como cadena hexadecimal.</p>
-</section>
-
+    
     
     
 
@@ -2165,7 +1833,7 @@ a una representación legible como cadena hexadecimal.</p>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">string</span>
                     &mdash;
-                <section class="phpdocumentor-description"><p>Versión binaria representada en hexadecimal.</p>
+                <section class="phpdocumentor-description"><p><code class="prettyprint">bin2hex($this-&gt;version)</code> — p. ej. bytes ASCII de <code class="prettyprint">&quot;v0.1.0&quot;</code> en hex.</p>
 </section>
 
             </section>
@@ -2185,11 +1853,11 @@ a una representación legible como cadena hexadecimal.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Traits/BinaryLengthTrait.php"><a href="files/src-traits-binarylengthtrait.html"><abbr title="src/Traits/BinaryLengthTrait.php">BinaryLengthTrait.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">231</span>
+    <span class="phpdocumentor-element-found-in__line">146</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Calcula y acumula un valor de entropía basado en los caracteres de una cadena dada.</p>
+        <p class="phpdocumentor-summary">Asigna la suma de entropía a partir de una llave.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">protected</span>
@@ -2198,13 +1866,8 @@ a una representación legible como cadena hexadecimal.</p>
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Recorre cada carácter de la cadena de entropía proporcionada, convirtiéndolo
-a su representación hexadecimal (mediante <code class="prettyprint">bin2hex()</code>), luego a decimal (con <code class="prettyprint">hexdec()</code>),
-y lo suma a un valor acumulado <code class="prettyprint">$sum</code>, junto con un incremento progresivo según la posición.</p>
-<p>La suma resultante refleja una entropía combinada entre el valor binario de cada carácter
-y su posición relativa. Esto permite generar un valor final que varía incluso si los caracteres
-son iguales pero cambian de orden, contribuyendo así a una mayor dispersión numérica.</p>
-<p>Si no se proporciona una cadena válida, el valor de <code class="prettyprint">$sum</code> no se modifica.</p>
+        <section class="phpdocumentor-description"><p>Si <code class="prettyprint">$entropy</code> no es <code class="prettyprint">string</code>, no modifica <code class="prettyprint">$sum</code>. En caso contrario,
+reemplaza <code class="prettyprint">$sum</code> con el resultado de <abbr title="\DLStorage\Traits\get_entropy_value()">get_entropy_value()</abbr>.</p>
 </section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
@@ -2214,7 +1877,7 @@ son iguales pero cambian de orden, contribuyendo así a una mayor dispersión nu
                 : <span class="phpdocumentor-argument-list__argument__type">int</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Valor acumulado que se actualizará con la contribución de cada carácter.</p>
+                    <section class="phpdocumentor-description"><p>Referencia al acumulador de entropía.</p>
 </section>
 
             </dd>
@@ -2223,33 +1886,13 @@ son iguales pero cambian de orden, contribuyendo así a una mayor dispersión nu
                 : <span class="phpdocumentor-argument-list__argument__type">string|null</span>
                  = <span class="phpdocumentor-argument-list__argument__default-value">null</span>            </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Cadena base usada para calcular la entropía acumulada.</p>
+                    <section class="phpdocumentor-description"><p>Llave de entropía.</p>
 </section>
 
             </dd>
             </dl>
 
     
-    <h5 class="phpdocumentor-tag-list__heading" id="method_set_entropy_value_tags">
-        Tags
-        <a href="classes/DLStorage-Traits-BinaryLengthTrait.html#method_set_entropy_value_tags" class="headerlink"><i class="fas fa-link"></i></a>
-
-    </h5>
-    <dl class="phpdocumentor-tag-list">
-                    <dt class="phpdocumentor-tag-list__entry">
-                <span class="phpdocumentor-tag__name">example</span>
-            </dt>
-                            <dd class="phpdocumentor-tag-list__definition">
-                                                                                                            <section class="phpdocumentor-description"><p>Ejemplo de uso</p>
-<pre class="prettyprint"><code class="language-php">$sum = 0;
-$entropy = &quot;Una llave de entropía por acá&quot;;
-$data-&gt;set_entropy_value($sum, $entropy);
-echo $sum; // Muestra el valor acumulado de entropía.
-</code></pre>
-</section>
-
-                                    </dd>
-                        </dl>
 
         
     
@@ -2269,11 +1912,11 @@ echo $sum; // Muestra el valor acumulado de entropía.
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Traits/BinaryLengthTrait.php"><a href="files/src-traits-binarylengthtrait.html"><abbr title="src/Traits/BinaryLengthTrait.php">BinaryLengthTrait.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">117</span>
+    <span class="phpdocumentor-element-found-in__line">86</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Convierte un byte a su representación hexadecimal de 40 bits, con posibilidad de aplicar entropía.</p>
+        <p class="phpdocumentor-summary">Convierte un byte desplazado a bloque hex de 10 caracteres.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">protected</span>
@@ -2282,15 +1925,7 @@ echo $sum; // Muestra el valor acumulado de entropía.
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Toma un valor entero correspondiente a un byte (entre 0 y 255) y lo transforma en una
-cadena hexadecimal de 40 bits (10 dígitos hexadecimales). Puede aplicar un desplazamiento adicional
-mediante un valor entero de entropía.</p>
-<p>⚠️ <strong>No valida</strong> que el byte esté en el rango 0–255. Se asume que el valor ha sido validado previamente.</p>
-<h3>Ejemplo de uso:</h3>
-<pre class="prettyprint"><code class="language-php">$hex = $this-&gt;to_hex40(0x41);            // Devuelve &quot;0000000000000041&quot;
-$hex = $this-&gt;to_hex40(0x41, 1);         // Devuelve &quot;0000000000000042&quot;
-$hex = $this-&gt;to_hex40(ord('A'), 2);     // Devuelve &quot;0000000000000043&quot;
-</code></pre>
+        <section class="phpdocumentor-description"><p>Fórmula: <code class="prettyprint">dechex($byte + $entropy + $this-&gt;seed)</code>, rellenado a 10 chars con ceros a la izquierda.</p>
 </section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
@@ -2300,7 +1935,7 @@ $hex = $this-&gt;to_hex40(ord('A'), 2);     // Devuelve &quot;0000000000000043&q
                 : <span class="phpdocumentor-argument-list__argument__type">int</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Valor entero a convertir (debe representar un byte).</p>
+                    <section class="phpdocumentor-description"><p>Valor del byte (0–255). No se valida el rango.</p>
 </section>
 
             </dd>
@@ -2309,7 +1944,7 @@ $hex = $this-&gt;to_hex40(ord('A'), 2);     // Devuelve &quot;0000000000000043&q
                 : <span class="phpdocumentor-argument-list__argument__type">int</span>
                  = <span class="phpdocumentor-argument-list__argument__default-value">0</span>            </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>[opcional] Valor adicional a sumar al byte antes de convertir. Por defecto es 0.</p>
+                    <section class="phpdocumentor-description"><p>Desplazamiento adicional. Por defecto 0.</p>
 </section>
 
             </dd>
@@ -2323,7 +1958,7 @@ $hex = $this-&gt;to_hex40(ord('A'), 2);     // Devuelve &quot;0000000000000043&q
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">string</span>
                     &mdash;
-                <section class="phpdocumentor-description"><p>Representación hexadecimal de 40 bits del valor resultante (siempre 10 caracteres hexadecimales).</p>
+                <section class="phpdocumentor-description"><p>Bloque hexadecimal de exactamente 10 caracteres.</p>
 </section>
 
             </section>
@@ -2343,11 +1978,11 @@ $hex = $this-&gt;to_hex40(ord('A'), 2);     // Devuelve &quot;0000000000000043&q
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Traits/StorageTrait.php"><a href="files/src-traits-storagetrait.html"><abbr title="src/Traits/StorageTrait.php">StorageTrait.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">284</span>
+    <span class="phpdocumentor-element-found-in__line">218</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Valida si el archivo existe y no es un directorio, aparte de ser legible.</p>
+        <p class="phpdocumentor-summary">Verifica que la ruta apunte a un archivo existente y legible.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">protected</span>
@@ -2364,7 +1999,7 @@ $hex = $this-&gt;to_hex40(ord('A'), 2);     // Devuelve &quot;0000000000000043&q
                 : <span class="phpdocumentor-argument-list__argument__type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Archivo a ser analizado</p>
+                    <section class="phpdocumentor-description"><p>Ruta absoluta del archivo.</p>
 </section>
 
             </dd>
@@ -2382,7 +2017,9 @@ $hex = $this-&gt;to_hex40(ord('A'), 2);     // Devuelve &quot;0000000000000043&q
             </dt>
                             <dd class="phpdocumentor-tag-list__definition">
                                                                 <span class="phpdocumentor-tag-link"><a href="classes/DLStorage-Errors-StorageException.html"><abbr title="\DLStorage\Errors\StorageException">StorageException</abbr></a></span>
-                                                                                    
+                                                                                        <section class="phpdocumentor-description"><p>Archivo inexistente (404), es un directorio (500) o sin permiso de lectura (500).</p>
+</section>
+
                                     </dd>
                         </dl>
 
@@ -2404,11 +2041,11 @@ $hex = $this-&gt;to_hex40(ord('A'), 2);     // Devuelve &quot;0000000000000043&q
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Traits/BinaryLengthTrait.php"><a href="files/src-traits-binarylengthtrait.html"><abbr title="src/Traits/BinaryLengthTrait.php">BinaryLengthTrait.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">347</span>
+    <span class="phpdocumentor-element-found-in__line">237</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Calcula y asigna un coeficiente seguro a partir de una semilla numérica.</p>
+        <p class="phpdocumentor-summary">Deriva y almacena `$this-&gt;coefficient` a partir de una semilla.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">private</span>
@@ -2417,12 +2054,7 @@ $hex = $this-&gt;to_hex40(ord('A'), 2);     // Devuelve &quot;0000000000000043&q
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Este método genera un coeficiente acotado mediante una operación modular y lo asigna
-internamente a la propiedad <code class="prettyprint">$this-&gt;coefficient</code>. El valor obtenido se asegura de estar dentro
-del rango seguro definido por [1, 1_000_000], evitando así valores nulos o excesivos que puedan
-comprometer operaciones posteriores.</p>
-<p>La fórmula utilizada es: <code class="prettyprint">abs((semilla * 37 + 113) % max_coefficient)</code>, con un ajuste final
-para garantizar un valor mínimo de 1.</p>
+        <section class="phpdocumentor-description"><p>Fórmula: <code class="prettyprint">max(1, abs(intval((37 * $seed + 113) % 0xffffffffffff)))</code>.</p>
 </section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
@@ -2432,7 +2064,7 @@ para garantizar un valor mínimo de 1.</p>
                 : <span class="phpdocumentor-argument-list__argument__type">int|float</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Valor semilla utilizado para derivar el coeficiente de forma determinista.</p>
+                    <section class="phpdocumentor-description"><p>Valor semilla (típicamente la suma de bytes).</p>
 </section>
 
             </dd>
@@ -2458,11 +2090,11 @@ para garantizar un valor mínimo de 1.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Traits/BinaryLengthTrait.php"><a href="files/src-traits-binarylengthtrait.html"><abbr title="src/Traits/BinaryLengthTrait.php">BinaryLengthTrait.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">259</span>
+    <span class="phpdocumentor-element-found-in__line">165</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Calcula un valor circular a partir de un valor numérico dado.</p>
+        <p class="phpdocumentor-summary">Transformación circular acotada para dispersión numérica.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">private</span>
@@ -2471,12 +2103,8 @@ para garantizar un valor mínimo de 1.</p>
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Este método aplica una transformación matemática al valor de entrada mediante la fórmula:
-<code class="prettyprint">($this-&gt;coefficient * valor + 17) % 100 + 17</code>. Esto garantiza que el valor resultante esté en un rango
-específico y controlado, útil para generar patrones cíclicos o distribuciones uniformes en un espacio
-acotado. La constante <code class="prettyprint">17</code> actúa como desplazamiento para evitar valores demasiado bajos.</p>
-<p>Se lanza una excepción si el valor excede el límite de seguridad definido por <code class="prettyprint">0xffffffffffffff</code>,
-protegiendo así contra entradas numéricas excesivamente grandes que puedan afectar el sistema.</p>
+        <section class="phpdocumentor-description"><p>Fórmula: <code class="prettyprint">abs(($this-&gt;coefficient * $value + 17) % 100 + 17)</code>.
+Rango resultante: [17, 116].</p>
 </section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
@@ -2486,7 +2114,7 @@ protegiendo así contra entradas numéricas excesivamente grandes que puedan afe
                 : <span class="phpdocumentor-argument-list__argument__type">int|float</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Valor numérico que será transformado mediante la operación circular.</p>
+                    <section class="phpdocumentor-description"><p>Índice o valor de entrada.</p>
 </section>
 
             </dd>
@@ -2504,19 +2132,7 @@ protegiendo así contra entradas numéricas excesivamente grandes que puedan afe
             </dt>
                             <dd class="phpdocumentor-tag-list__definition">
                                                                 <span class="phpdocumentor-tag-link"><a href="classes/DLStorage-Errors-StorageException.html"><abbr title="\DLStorage\Errors\StorageException">StorageException</abbr></a></span>
-                                                                                        <section class="phpdocumentor-description"><p>Si el valor supera el límite seguro.</p>
-</section>
-
-                                    </dd>
-                                <dt class="phpdocumentor-tag-list__entry">
-                <span class="phpdocumentor-tag__name">example</span>
-            </dt>
-                            <dd class="phpdocumentor-tag-list__definition">
-                                                                                                            <section class="phpdocumentor-description"><p>For example</p>
-<pre class="prettyprint"><code class="language-php">// Ejemplo de uso del valor circular
-$resultado = $objeto-&gt;get_circular_value(5);
-echo $resultado; // Un número entero entre 17 y 116
-</code></pre>
+                                                                                        <section class="phpdocumentor-description"><p>Si <code class="prettyprint">$value</code> supera <code class="prettyprint">0xffffffffffffff</code> (500).</p>
 </section>
 
                                     </dd>
@@ -2528,7 +2144,7 @@ echo $resultado; // Un número entero entre 17 y 116
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">int</span>
                     &mdash;
-                <section class="phpdocumentor-description"><p>Valor transformado dentro del rango [17, 116].</p>
+                <section class="phpdocumentor-description"><p>Entero en el rango [17, 116].</p>
 </section>
 
             </section>
@@ -2557,7 +2173,6 @@ echo $resultado; // Un número entero entre 17 y 116
                 <li>
                     <ul class="phpdocumentor-list -clean">
                                                     <li class=""><a href="classes/DLStorage-Traits-BinaryLengthTrait.html#property_coefficient">$coefficient</a></li>
-                                                    <li class=""><a href="classes/DLStorage-Traits-BinaryLengthTrait.html#property_entropy_value">$entropy_value</a></li>
                                                     <li class=""><a href="classes/DLStorage-Traits-BinaryLengthTrait.html#property_seed">$seed</a></li>
                                                     <li class=""><a href="classes/DLStorage-Traits-StorageTrait.html#property_signature">$signature</a></li>
                                                     <li class=""><a href="classes/DLStorage-Traits-StorageTrait.html#property_version">$version</a></li>

@@ -1,0 +1,49 @@
+.phpdocumentor-title {
+    box-sizing: border-box;
+    color: var(--title-text-color);
+    font-size: var(--text-lg);
+    letter-spacing: -0.02em;
+    font-weight: 600;
+    width: auto;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.phpdocumentor-title.-without-divider {
+    border: none;
+}
+
+.phpdocumentor-title__link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    color: var(--title-text-color);
+    text-decoration: none;
+    font-weight: 600;
+    white-space: nowrap;
+    transform: none;
+    transition: opacity 0.2s ease;
+}
+
+.phpdocumentor-title__link:hover {
+    transform: none;
+    opacity: 0.85;
+    font-weight: 600;
+}
+
+.phpdocumentor-title__brand {
+    background: linear-gradient(135deg, var(--vp-c-brand-1) 0%, var(--vp-c-brand-3) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+@media (min-width: {{ breakpoints['menu'] }}) {
+    .phpdocumentor-title {
+        width: auto;
+        border-right: none;
+        padding-right: var(--spacing-md);
+    }
+}

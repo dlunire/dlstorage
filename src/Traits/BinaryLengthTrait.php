@@ -30,11 +30,7 @@ namespace DLStorage\Traits;
 use DLStorage\Errors\StorageException;
 
 /**
- * Transformación numérica de bytes, entropía y bloques hexadecimales de 40 bits.
- *
- * Complementa {@see StorageTrait} con operaciones de codificación (`to_hex40`),
- * decodificación (`from_hex40`), cálculo de coeficientes y métricas de entropía
- * heurísticas sobre cadenas y archivos binarios.
+ * Transformación numérica de bytes y cálculo heurístico de entropía.
  *
  * @package   DLStorage\Traits
  * @version   v0.2.0
@@ -42,49 +38,33 @@ use DLStorage\Errors\StorageException;
  * @author    David E. Luna M. <info@dlunire.dev>
  * @copyright Copyright (c) 2026 David E. Luna M.
  *
- * @see \DLStorage\Storage\Data Clase base que incorpora este trait.
+ * @see \DLStorage\Storage\Data
  */
 trait BinaryLengthTrait {
 
     use StorageTrait;
 
-    /** @var int $coefficient */
+    /**
+     * Coeficiente derivado de la entropía de entrada, usado en {@see get_circular_value()}.
+     */
     public int $coefficient = 0;
 
-    /** @var int $entropy_value  */
+    /**
+     * @internal Reservado. No utilizado en v0.2.0.
+     */
     protected int $entropy_value = 0;
 
-
     /**
-     * Semilla base utilizada para cálculos internos relacionados con transformaciones numéricas.
-     *
-     * Esta propiedad representa un valor entero inicial (semilla) que puede emplearse como punto
-     * de partida para algoritmos de transformación, generación pseudoaleatoria, o alteraciones
-     * matemáticas controladas dentro del contexto del sistema.
-     *
-     * El valor predeterminado es `530000`, y su uso específico dependerá de la implementación
-     * interna del algoritmo. Puede influir en procesos como desplazamientos, cálculos con entropía,
-     * o generación de claves derivadas.
-     *
-     * @var int
+     * Constante sumada en {@see to_hex40()} y restada en {@see from_hex40()}.
      */
     protected int $seed = 530000;
 
-
     /**
-     * Calcula la suma aritmética de todos los bytes de una cadena binaria.
+     * Suma aritmética de todos los bytes de una cadena.
      *
-     * Descompone `$input` con `unpack("C*", ...)` y devuelve `array_sum()` de los
-     * valores resultantes. No devuelve la longitud en bytes; para eso use `strlen()`.
+     * @param string $input Cadena binaria.
      *
-     * @param string $input Cadena binaria de entrada.
-     *
-     * @return int Suma de los valores byte a byte (0–255 por carácter).
-     *
-     * @example
-     * ```php
-     * $suma = $this->get_binary_length($contenido);
-     * ```
+     * @return int `array_sum(unpack("C*", $input))`. No es `strlen()`.
      */
     public function get_binary_length(string $input): int {
         /** @var array<int,int> $bytes */
@@ -94,31 +74,18 @@ trait BinaryLengthTrait {
     }
 
     /**
-     * Convierte un byte a su representación hexadecimal de 40 bits, con posibilidad de aplicar entropía.
+     * Convierte un byte desplazado a bloque hex de 10 caracteres.
      *
-     * Toma un valor entero correspondiente a un byte (entre 0 y 255) y lo transforma en una
-     * cadena hexadecimal de 40 bits (10 dígitos hexadecimales). Puede aplicar un desplazamiento adicional
-     * mediante un valor entero de entropía.
+     * Fórmula: `dechex($byte + $entropy + $this->seed)`, rellenado a 10 chars con ceros a la izquierda.
      *
-     * ⚠️ **No valida** que el byte esté en el rango 0–255. Se asume que el valor ha sido validado previamente.
+     * @param int $byte    Valor del byte (0–255). No se valida el rango.
+     * @param int $entropy Desplazamiento adicional. Por defecto 0.
      *
-     * ### Ejemplo de uso:
-     * ```php
-     * $hex = $this->to_hex40(0x41);            // Devuelve "0000000000000041"
-     * $hex = $this->to_hex40(0x41, 1);         // Devuelve "0000000000000042"
-     * $hex = $this->to_hex40(ord('A'), 2);     // Devuelve "0000000000000043"
-     * ```
-     *
-     * @param int $byte     Valor entero a convertir (debe representar un byte).
-     * @param int $entropy  [opcional] Valor adicional a sumar al byte antes de convertir. Por defecto es 0.
-     *
-     * @return string Representación hexadecimal de 40 bits del valor resultante (siempre 10 caracteres hexadecimales).
+     * @return string Bloque hexadecimal de exactamente 10 caracteres.
      */
     protected function to_hex40(int $byte, int $entropy = 0): string {
-        /** @var int $value */
         $value = $byte + $entropy + $this->seed;
 
-        // Asegurar 40 bits = 10 dígitos hexadecimales
         return str_pad(
             string: dechex($value),
             length: 10,
@@ -128,43 +95,21 @@ trait BinaryLengthTrait {
     }
 
     /**
-     * Obtiene el valor hexadecimal de un bloque de bytes con entropía revertida.
+     * Revierte un bloque de 10 caracteres hex a un carácter de un byte.
      *
-     * Este método toma un bloque de bytes representado como una cadena hexadecimal y calcula su valor
-     * después de revertir la entropía aplicada previamente. El valor de cada carácter se obtiene utilizando 
-     * un cálculo que involucra un valor de entropía, el cual se determina a partir del índice del bloque y un 
-     * valor base (`$sum`). Este valor se ajusta a un formato hexadecimal de dos dígitos para su posterior uso.
+     * Fórmula: `dechex(hexdec($block) - ($this->seed + get_entropy($key, $sum)))`, rellenado a 2 chars.
      *
-     * El cálculo del valor final se basa en la resta de la entropía y un valor predeterminado, asegurando que 
-     * la cadena resultante sea correctamente ajustada en longitud para representar un valor hexadecimal válido.
+     * @param string $block Bloque hex de 10 caracteres.
+     * @param int    $key   Índice del bloque en la secuencia.
+     * @param int    $sum   Suma base de entropía.
      *
-     * @param string $block Bloque de bytes representado en formato hexadecimal, que será procesado para 
-     *                      obtener el valor ajustado.
-     * @param integer $key Índice que permite calcular el valor de la entropía, utilizado para el ajuste 
-     *                     del valor hexadecimal.
-     * @param integer $sum Valor base de la entropía que se usará en el cálculo de ajuste del valor final.
-     *
-     * @return string El valor hexadecimal calculado, con la entropía revertida, representado como una cadena 
-     *                de dos dígitos.
-     *
-     * @example Ejemplo
-     * ```
-     * // Obtener el valor hexadecimal de un bloque con entropía revertida.
-     * $block = "abc123";
-     * $key = 1;
-     * $sum = 10;
-     * $hex_value = $data->get_hex_value($block, $key, $sum);
-     * echo $hex_value;  // Resultado de la cadena hexadecimal ajustada.
-     * ```
+     * @return string Carácter como cadena hex de 2 caracteres (un byte).
      */
     protected function from_hex40(string $block, int $key, int $sum): string {
-        /** @var int $entropy_value */
         $entropy = $this->get_entropy($key, $sum);
 
-        /** @var int $block_value */
         $block_value = hexdec($block);
 
-        /** @var string $value */
         $value = dechex($block_value - ($this->seed + $entropy));
 
         return str_pad(
@@ -176,88 +121,48 @@ trait BinaryLengthTrait {
     }
 
     /**
-     * Calcula un valor de entropía basado en un índice y una suma acumulada.
+     * Calcula el desplazamiento de entropía para un índice dado.
      *
-     * Este método genera un valor de entropía combinando la suma provista con dos llamadas al método
-     * `get_circular_value($index)`. La operación está diseñada para producir una variación controlada
-     * del valor original (`$sum`) a partir de datos circulares o predefinidos almacenados internamente.
+     * Fórmula: `2 * get_circular_value($index) + $sum`.
      *
-     * ⚠️ Este método **no garantiza entropía criptográfica**. Su propósito está orientado a sistemas
-     * de transformación interna o dispersión de valores, no a funciones criptográficamente seguras.
+     * @param int $index Posición del byte o bloque.
+     * @param int $sum   Valor base (proveniente de la llave de entropía o 0).
      *
-     * ### Fórmula general:
-     * ```
-     * entropy = sum + get_circular_value(index) + get_circular_value(index)
-     * ```
-     *
-     * @param int $index Índice base usado para obtener valores circulares predefinidos.
-     * @param int $sum   Suma acumulativa o valor base sobre el cual se aplicará el incremento de entropía.
-     *
-     * @return int Valor de entropía ajustado según el índice y suma proporcionados.
-     *
-     * @see self::get_circular_value()
+     * @return int Desplazamiento aplicado en `to_hex40` / `from_hex40`.
      */
     protected function get_entropy(int $index, int $sum): int {
         return 2 * ($this->get_circular_value($index)) + $sum;
     }
 
-
     /**
-     * Calcula y acumula un valor de entropía basado en los caracteres de una cadena dada.
+     * Asigna la suma de entropía a partir de una llave.
      *
-     * Recorre cada carácter de la cadena de entropía proporcionada, convirtiéndolo
-     * a su representación hexadecimal (mediante `bin2hex()`), luego a decimal (con `hexdec()`),
-     * y lo suma a un valor acumulado `$sum`, junto con un incremento progresivo según la posición.
+     * Si `$entropy` no es `string`, no modifica `$sum`. En caso contrario,
+     * reemplaza `$sum` con el resultado de {@see get_entropy_value()}.
      *
-     * La suma resultante refleja una entropía combinada entre el valor binario de cada carácter
-     * y su posición relativa. Esto permite generar un valor final que varía incluso si los caracteres
-     * son iguales pero cambian de orden, contribuyendo así a una mayor dispersión numérica.
-     *
-     * Si no se proporciona una cadena válida, el valor de `$sum` no se modifica.
-     *
-     * @param int &$sum Valor acumulado que se actualizará con la contribución de cada carácter.
-     * @param string|null $entropy Cadena base usada para calcular la entropía acumulada.
-     *
-     * @return void
-     *
-     * @example Ejemplo de uso
-     * ```php
-     * $sum = 0;
-     * $entropy = "Una llave de entropía por acá";
-     * $data->set_entropy_value($sum, $entropy);
-     * echo $sum; // Muestra el valor acumulado de entropía.
-     * ```
+     * @param int         $sum     Referencia al acumulador de entropía.
+     * @param string|null $entropy Llave de entropía.
      */
     protected function set_entropy_value(int &$sum, ?string $entropy = null): void {
-        if (!is_string($entropy)) return;
+        if (!is_string($entropy)) {
+            return;
+        }
         $sum = $this->get_entropy_value($entropy);
     }
 
     /**
-     * Calcula un valor circular a partir de un valor numérico dado.
+     * Transformación circular acotada para dispersión numérica.
      *
-     * Este método aplica una transformación matemática al valor de entrada mediante la fórmula:
-     * `($this->coefficient * valor + 17) % 100 + 17`. Esto garantiza que el valor resultante esté en un rango
-     * específico y controlado, útil para generar patrones cíclicos o distribuciones uniformes en un espacio
-     * acotado. La constante `17` actúa como desplazamiento para evitar valores demasiado bajos.
+     * Fórmula: `abs(($this->coefficient * $value + 17) % 100 + 17)`.
+     * Rango resultante: [17, 116].
      *
-     * Se lanza una excepción si el valor excede el límite de seguridad definido por `0xffffffffffffff`,
-     * protegiendo así contra entradas numéricas excesivamente grandes que puedan afectar el sistema.
+     * @param int|float $value Índice o valor de entrada.
      *
-     * @param int|float $value Valor numérico que será transformado mediante la operación circular.
-     * @return int Valor transformado dentro del rango [17, 116].
+     * @return int Entero en el rango [17, 116].
      *
-     * @throws StorageException Si el valor supera el límite seguro.
-     *
-     * @example For example
-     * ```php
-     * // Ejemplo de uso del valor circular
-     * $resultado = $objeto->get_circular_value(5);
-     * echo $resultado; // Un número entero entre 17 y 116
-     * ```
+     * @throws StorageException Si `$value` supera `0xffffffffffffff` (500).
      */
     private function get_circular_value(int|float $value): int {
-        /** @var int|float $max_value */
         $max_value = 0xffffffffffffff;
 
         if ($value > $max_value) {
@@ -267,27 +172,21 @@ trait BinaryLengthTrait {
         return abs(($this->coefficient * $value + 17) % 100 + 17);
     }
 
-
     /**
-     * Calcula una métrica de "entropía" simplificada basada en el contenido de un archivo.
+     * Métrica heurística del contenido de un archivo.
      *
-     * Esta función intenta abrir un archivo y leer hasta un máximo de 16,777,215 bytes (0xFFFFFF).
-     * Si el archivo no se encuentra en la ruta original, se intenta localizar usando `get_file_path`.
-     * Una vez leído el contenido, se utiliza `unpack("C*", ...)` para obtener los valores
-     * byte a byte. Luego, la entropía es calculada como la suma de estos bytes más
-     * la longitud del contenido leído.
+     * Lee hasta `0xFFFFFF` bytes (16 777 215). Si `$filename` no existe, intenta
+     * resolverlo con {@see get_file_path()}. Retorna 0 si el archivo no se encuentra.
      *
-     * Nota: Esta no es una medida de entropía criptográfica, sino una métrica heurística
-     * del contenido binario del archivo.
+     * @param string $filename Ruta al archivo.
      *
-     * @param string $filename Ruta del archivo a analizar.
-     * @return int Suma de los bytes del archivo y su longitud.
+     * @return int Resultado de {@see get_entropy_value()} sobre el contenido leído, o `0`.
+     *
+     * @throws StorageException Si la lectura parcial falla.
      */
     public function get_entropy_file(string $filename): int {
-        /** @var int $value Valor máximo de lectura en bytes (0xFFFFFFFF = 4GB) */
         $value = 0xffffff;
 
-        /** @var string $file Ruta final del archivo a analizar */
         $file = $filename;
 
         if (!file_exists($filename)) {
@@ -298,31 +197,29 @@ trait BinaryLengthTrait {
             return 0;
         }
 
-        /** @var int $size Tamaño total del archivo */
         $size = filesize($file);
 
-        /** @var string $content Contenido del archivo leído hasta el máximo permitido */
         $content = $this->read_filename($file, 1, $size > $value ? $value : $size);
 
         return $this->get_entropy_value($content);
     }
 
     /**
-     * Devuelve la entropía base o `seed` en función de los bytes como argumento.
+     * Calcula un valor entero determinista a partir de bytes de entrada.
      *
-     * Esta implementación no calcula entropía estadística (como la fórmula de Shannon),
-     * sino un valor entero simple, derivado de la suma total de los bytes más la longitud
-     * del input. Es útil como valor base determinista para sistemas de validación,
-     * generación de semillas pseudoaleatorias u otras heurísticas.
+     * Suma todos los bytes con `array_sum(unpack("C*", ...))`, deriva `$this->coefficient`
+     * mediante {@see calculate_coefficient()} y retorna `suma + strlen($input)`.
      *
-     * @param string $input Secuencia binaria que representa los datos a analizar.
-     * @return int Valor entero representando una entropía base aproximada.
+     * No es entropía de Shannon; es una heurística interna del MTB.
+     *
+     * @param string $input Cadena binaria.
+     *
+     * @return int Valor entero usado como suma base de entropía.
      */
     public function get_entropy_value(string $input): int {
         /** @var array<int,int> $bytes */
         $bytes = unpack("C*", $input);
 
-        /** @var int $sum */
         $sum = array_sum($bytes);
 
         $this->calculate_coefficient($sum);
@@ -331,27 +228,16 @@ trait BinaryLengthTrait {
     }
 
     /**
-     * Calcula y asigna un coeficiente seguro a partir de una semilla numérica.
+     * Deriva y almacena `$this->coefficient` a partir de una semilla.
      *
-     * Este método genera un coeficiente acotado mediante una operación modular y lo asigna
-     * internamente a la propiedad `$this->coefficient`. El valor obtenido se asegura de estar dentro
-     * del rango seguro definido por [1, 1_000_000], evitando así valores nulos o excesivos que puedan
-     * comprometer operaciones posteriores.
+     * Fórmula: `max(1, abs(intval((37 * $seed + 113) % 0xffffffffffff)))`.
      *
-     * La fórmula utilizada es: `abs((semilla * 37 + 113) % max_coefficient)`, con un ajuste final
-     * para garantizar un valor mínimo de 1.
-     *
-     * @param int|float $seed Valor semilla utilizado para derivar el coeficiente de forma determinista.
-     * @return void
+     * @param int|float $seed Valor semilla (típicamente la suma de bytes).
      */
     private function calculate_coefficient(int|float $seed): void {
-        /** @var int $min_coefficient */
         $min_coefficient = 1;
-
-        /** @var int $max_coefficient */
         $max_coefficient = 0xffffffffffff;
 
-        /** @var int|float $coefficient */
         $coefficient = abs(intval((37 * $seed + 113) % $max_coefficient));
 
         $this->coefficient = max($coefficient, $min_coefficient);

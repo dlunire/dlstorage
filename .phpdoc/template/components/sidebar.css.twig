@@ -1,0 +1,123 @@
+.phpdocumentor-sidebar {
+    margin: 0;
+    overflow: hidden;
+    max-height: 0;
+    transition: var(--transition-theme);
+}
+
+.phpdocumentor .phpdocumentor-sidebar .phpdocumentor-list {
+    padding: var(--spacing-xxs) 0;
+    list-style: none;
+    margin: 0;
+}
+
+.phpdocumentor .phpdocumentor-sidebar li {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    padding: 0;
+}
+
+.phpdocumentor .phpdocumentor-sidebar abbr,
+.phpdocumentor .phpdocumentor-sidebar a {
+    display: block;
+    text-decoration: none;
+    border-bottom: none;
+    color: var(--vp-c-text-2);
+    font-size: 0.875rem;
+    font-weight: 400;
+    padding: 0.4rem var(--spacing-md);
+    border-radius: 8px;
+    margin: 1px var(--spacing-xs);
+    transition: color 0.15s ease, background 0.15s ease;
+}
+
+.phpdocumentor .phpdocumentor-sidebar a:hover,
+.phpdocumentor .phpdocumentor-sidebar a.-active {
+    padding-left: var(--spacing-md);
+    font-weight: 500;
+    color: var(--vp-c-brand-1);
+    background: var(--vp-c-brand-soft);
+}
+
+.phpdocumentor .phpdocumentor-sidebar__category > * {
+    border-left: none;
+}
+
+.phpdocumentor .phpdocumentor-sidebar__category {
+    margin-bottom: var(--spacing-lg);
+}
+
+.phpdocumentor .phpdocumentor-sidebar__category-header {
+    font-size: 0.6875rem;
+    margin-top: var(--spacing-md);
+    margin-bottom: var(--spacing-xxs);
+    color: var(--vp-c-text-3);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 0 var(--spacing-md);
+    border-left: 0;
+}
+
+.phpdocumentor .phpdocumentor-sidebar__root-package,
+.phpdocumentor .phpdocumentor-sidebar__root-namespace {
+    font-size: 0.875rem;
+    margin: 0;
+    padding: 0.4rem var(--spacing-md);
+    color: var(--vp-c-text-1);
+    font-weight: 600;
+}
+
+@media (min-width: {{ breakpoints['md'] }}) {
+    .phpdocumentor-sidebar {
+        border-right: 1px solid var(--vp-c-divider);
+        padding-right: var(--spacing-md);
+        width: 272px;
+        flex-shrink: 0;
+    }
+}
+
+.phpdocumentor-sidebar__menu-button {
+    position: absolute;
+    top: -100%;
+    left: -100%;
+}
+
+.phpdocumentor-sidebar__menu-icon {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    background: var(--vp-c-brand-soft);
+    color: var(--vp-c-brand-1);
+    border: 1px solid rgba(100, 108, 255, 0.2);
+    margin: 0 0 var(--spacing-lg);
+    display: block;
+    padding: var(--spacing-sm);
+    text-align: center;
+    border-radius: 10px;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+.phpdocumentor-sidebar__menu-button:checked ~ .phpdocumentor-sidebar {
+    max-height: 100%;
+    padding-top: var(--spacing-md);
+}
+
+@media (min-width: {{ breakpoints['md'] }}) {
+    .phpdocumentor-sidebar {
+        overflow: visible;
+        max-height: 100%;
+        position: sticky;
+        top: calc(var(--header-height) + var(--spacing-md));
+        align-self: flex-start;
+        max-height: calc(100vh - var(--header-height) - var(--spacing-xl));
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: var(--vp-c-divider) transparent;
+    }
+
+    .phpdocumentor-sidebar__menu-icon {
+        display: none;
+    }
+}

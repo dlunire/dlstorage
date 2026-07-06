@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+    <section class="dlstorage-hero">
+        <div class="dlstorage-hero__badge">DLUnire Runtime</div>
+        <h1 class="dlstorage-hero__title">Referencia API</h1>
+        <p class="dlstorage-hero__subtitle">
+            Documentación de la biblioteca de almacenamiento binario DLStorage.
+            Codificación con entropía, persistencia en formato <code>.dlstorage</code> e integración con el ecosistema DLUnire.
+        </p>
+    </section>
+
+    <div class="dlstorage-cards">
+        <a href="{{ path('namespaces/dlstorage-storage.html') }}" class="dlstorage-card">
+            <p class="dlstorage-card__title">Storage</p>
+            <p class="dlstorage-card__desc">Interfaz pública: generar y leer archivos binarios.</p>
+        </a>
+        <a href="{{ path('classes/DLStorage-Storage-Storage.html') }}" class="dlstorage-card">
+            <p class="dlstorage-card__title">Clase Storage</p>
+            <p class="dlstorage-card__desc">Punto de entrada recomendado para uso en producción.</p>
+        </a>
+        <a href="{{ path('namespaces/dlstorage-errors.html') }}" class="dlstorage-card">
+            <p class="dlstorage-card__title">Errores</p>
+            <p class="dlstorage-card__desc">Excepciones de almacenamiento y codificación.</p>
+        </a>
+        <a href="{{ path('namespaces/dlstorage-utilities.html') }}" class="dlstorage-card">
+            <p class="dlstorage-card__title">Utilidades</p>
+            <p class="dlstorage-card__desc">Colecciones y helpers auxiliares.</p>
+        </a>
+    </div>
+
+    <section>
+        <h2>Explorar</h2>
+
+        {% set node = project.namespace %}
+
+        {{
+        include(
+            'components/table-of-contents.html.twig',
+            {
+                'node': project.namespace,
+                'namespaces': usesNamespaces or not usesPackages ? node.children : [],
+                'packages': usesPackages ? project.package.children : []
+            }
+        )
+        }}
+        {{ include('components/constants.html.twig', {'node': project.namespace}) }}
+        {{ include('components/functions.html.twig', {'node': project.namespace}) }}
+    </section>
+{% endblock %}

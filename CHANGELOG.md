@@ -4,6 +4,30 @@ Todos los cambios importantes de este proyecto serán documentados en este archi
 
 ---
 
+## [Unreleased]
+
+### Added
+- N/A
+
+---
+
+## [0.2.1] - 2026-07-06
+
+### Added
+- Infraestructura de documentación API con phpDocumentor: `phpdoc.xml`, targets `docs` y `docs-clean` en el `Makefile`, y salida en `docs/api/`.
+- Plantilla personalizada `.phpdoc/template/` para la documentación HTML, con diseño inspirado en Vite y selector de tema claro/oscuro.
+- Dependencia de desarrollo `phpdocumentor/phpdocumentor`.
+
+### Changed
+- Actualización integral de bloques PHPDoc (`/** ... */`) en todo el código fuente (`src/`), con descripciones alineadas al comportamiento real de cada clase, método y propiedad.
+- Cabeceras de licencia AGPL unificadas en los archivos PHP del paquete.
+- Se añade `declare(strict_types=1)` en `Data.php`.
+
+### Fixed
+- Target `docs` del `Makefile` declarado como `.PHONY` para evitar conflicto con el directorio `docs/` y garantizar la regeneración de la documentación.
+
+---
+
 ## [0.2.0] - 2026-07-05
 
 ### BREAKING CHANGES
@@ -13,10 +37,6 @@ Todos los cambios importantes de este proyecto serán documentados en este archi
 
 ## [v0.1.3] - 2025-10-29
 - Actualizaciones
-
-## [Unreleased]
-### Added
-- N/A
 
 ## [v0.1.2] - 2025-08-17
 ### Added

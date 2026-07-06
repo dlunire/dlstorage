@@ -1,0 +1,32 @@
+.phpdocumentor-back-to-top {
+    position: fixed;
+    bottom: var(--spacing-lg);
+    right: var(--spacing-lg);
+    width: 2.75rem;
+    height: 2.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--vp-c-bg-elevated);
+    border: 1px solid var(--vp-c-divider);
+    border-radius: 12px;
+    color: var(--vp-c-text-2);
+    text-decoration: none;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    box-shadow: var(--vp-c-shadow-2);
+    z-index: 50;
+}
+
+.phpdocumentor-back-to-top.-visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.phpdocumentor-back-to-top:hover {
+    color: var(--vp-c-brand-1);
+    border-color: rgba(100, 108, 255, 0.4);
+    background: var(--vp-c-brand-soft);
+    transform: translateY(-2px);
+}

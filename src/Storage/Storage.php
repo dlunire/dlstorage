@@ -1,9 +1,26 @@
 <?php
 
 /**
- * Copyright (c) 2026 David E Luna M
- * Licensed under the AGPL-3.0-or-later License.
- * See LICENSE file for details.
+ * DLUnire
+ * Copyright (C) 2026 David E Luna M
+ *
+ * Operando bajo el establecimiento de comercio "DLUnire",
+ * NIT 700551569-1, matrícula mercantil Nº 10007069
+ * (matrícula mercantil personal Nº 10007068).
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public
+ * License along with this program. If not, see
+ * <https://www.gnu.org/licenses/>.
  */
 
 declare(strict_types=1);
@@ -58,20 +75,19 @@ final class Storage extends SaveData {
     private readonly string $filename;
 
     /**
-     * Entropía empleada para los procesos de codificación y decodificación.
+     * Llave de entropía pasada al constructor para `generate()` y `readfile()`.
      *
-     * Un valor nulo indica que se utilizará el comportamiento predeterminado
-     * implementado por la biblioteca.
+     * `null` implica suma base 0 en {@see Data::encode()} y {@see Data::get_decode()}.
      */
     private readonly ?string $entropy;
 
     /**
-     * Posición actual del recorrido del autómata durante la normalización.
+     * Índice del recorrido durante {@see normalize_separator()}. Solo se usa en el constructor.
      */
     private int $offset = 0;
 
     /**
-     * Longitud de la ruta expresada en bytes.
+     * Longitud en bytes de la ruta antes de normalizar separadores.
      */
     private int $size = 0;
 
@@ -82,8 +98,7 @@ final class Storage extends SaveData {
      * del sistema operativo. No es necesario incluir la extensión `.dlstorage`.
      *
      * @param string      $filename Ruta relativa del archivo (sin extensión `.dlstorage`).
-     * @param string|null $entropy  Llave de entropía para codificación y decodificación.
-     *                              Si es `null`, se aplica el comportamiento predeterminado.
+     * @param string|null $entropy  Llave de entropía. `null` usa suma base 0 al codificar/decodificar.
      */
     public function __construct(string $filename, ?string $entropy = null) {
         $this->load($filename, $entropy);
@@ -108,14 +123,10 @@ final class Storage extends SaveData {
     }
 
     /**
-     * Normaliza los separadores de directorio.
+     * Sustituye cada `/` de `$this->filename` por `DIRECTORY_SEPARATOR`.
      *
-     * Recorre la ruta byte a byte sustituyendo el carácter `/` por el
-     * separador nativo del sistema operativo definido mediante
-     * `DIRECTORY_SEPARATOR`.
-     *
-     * El algoritmo implementa un recorrido lineal O(n), donde `n` corresponde
-     * al número de bytes de la ruta.
+     * Recorrido lineal O(n) sobre los bytes de la ruta. No transforma `\`;
+     * la resolución final de rutas en disco la realiza {@see StorageTrait::get_file_path()}.
      *
      * @return void
      */
@@ -134,17 +145,16 @@ final class Storage extends SaveData {
     /**
      * Lee y decodifica el archivo configurado en el constructor.
      *
-     * Delega en {@see SaveData::read_storage_data()} utilizando la ruta y entropía
-     * almacenadas en la instancia.
+     * Delega en {@see SaveData::read_storage_data()}. La extensión `.dlstorage` se añade
+     * internamente; no debe incluirse en el nombre pasado al constructor.
      *
-     * @param bool $storage Si es `true` (predeterminado), busca en `storage/` relativo
-     *                      al directorio raíz del proyecto. Si es `false`, resuelve la
-     *                      ruta desde la raíz del proyecto.
+     * @param bool $storage `true` (predeterminado): `{raíz}/storage/{filename}.dlstorage`.
+     *                      `false`: `{raíz}/{filename}.dlstorage` (véase {@see StorageTrait::get_file_path()}).
      *
-     * @return string Contenido original decodificado.
+     * @return string Contenido original decodificado (bytes de un solo carácter).
      *
-     * @throws \DLStorage\Errors\StorageException Si el archivo no existe, la firma no
-     *                                            coincide o la decodificación falla.
+     * @throws \DLStorage\Errors\StorageException Si el archivo no existe (404), la firma no
+     *                                            coincide o la lectura/decodificación falla (500).
      */
     public function readfile(bool $storage = true): string {
         return $this->read_storage_data(
@@ -157,16 +167,13 @@ final class Storage extends SaveData {
     /**
      * Genera un archivo `.dlstorage` con el contenido indicado.
      *
-     * Delega en {@see SaveData::save_data()} utilizando la ruta y entropía
-     * configuradas en el constructor.
+     * Delega en {@see SaveData::save_data()}. Codifica `$content` con la entropía del
+     * constructor y escribe `{ruta}.dlstorage`.
      *
-     * @param string $content Datos en texto plano o binario que serán codificados y persistidos.
-     * @param bool   $storage Si es `true` (predeterminado), guarda en `storage/`. Si es `false`,
-     *                        guarda en la ruta relativa indicada en el constructor.
+     * @param string $content Datos crudos (texto o binario) a codificar y persistir.
+     * @param bool   $storage `true` (predeterminado): bajo `storage/`. `false`: bajo la raíz del proyecto.
      *
-     * @return void
-     *
-     * @throws \DLStorage\Errors\StorageException Si no se puede crear el archivo o faltan permisos.
+     * @throws \DLStorage\Errors\StorageException Si `file_put_contents` falla o el archivo no existe tras escribir (500).
      */
     public function generate(string $content, bool $storage = true): void {
         $this->save_data(
@@ -178,21 +185,21 @@ final class Storage extends SaveData {
     }
 
     /**
-     * Obtiene la firma de cabecera del formato en representación binaria.
+     * Devuelve la firma del formato como bytes ASCII.
      *
-     * Equivalente a `hex2bin(get_signature())`. El valor predeterminado es la cadena
-     * `"DLStorage"` codificada en bytes.
+     * `hex2bin($this->get_signature())` — por defecto los 9 bytes de `"DLStorage"`.
      *
-     * @return string Firma binaria del formato (9 bytes).
+     * @return string Firma binaria (9 bytes).
      */
     public function get_current_signature(): string {
         return hex2bin($this->get_signature());
     }
 
     /**
-     * Obtiene la versión del formato en representación binaria.
+     * Devuelve la versión del formato almacenada en la cabecera como bytes ASCII.
      *
-     * Equivalente a `hex2bin(get_version())`. El valor predeterminado es `"v0.1.0"`.
+     * `hex2bin($this->get_version())` — por defecto los bytes de `"v0.1.0"` definidos en
+     * {@see StorageTrait::$version}. No confundir con la versión de la biblioteca (`v0.2.0`).
      *
      * @return string Versión binaria del formato.
      */

@@ -30,42 +30,16 @@ namespace DLStorage\Storage;
 use DLStorage\Traits\StorageTrait;
 
 /**
- * Abstracción base para sistemas de almacenamiento persistente.
+ * Capa intermedia que combina codificación ({@see Data}) con rutas de archivo ({@see StorageTrait}).
  *
- * Esta clase define la interfaz común para implementar mecanismos de
- * almacenamiento de datos utilizando medios persistentes distintos a una
- * base de datos relacional, como archivos binarios, estructuras
- * serializadas u otros formatos personalizados.
- *
- * Los datos almacenados pueden identificarse mediante un token o
- * identificador único, permitiendo su integración con sistemas externos,
- * incluidos motores de bases de datos, sin que éstos sean responsables del
- * almacenamiento físico del contenido.
- *
- * Como extensión de {@see Data}, esta clase reutiliza las capacidades de
- * codificación, transformación mediante entropía y manipulación binaria
- * proporcionadas por DLStorage, sirviendo como base para adaptadores de
- * almacenamiento especializados.
- *
- * Forma parte de **DLUnire Runtime**, proporcionando la infraestructura
- * necesaria para construir sistemas de persistencia desacoplados, portables
- * y de alto rendimiento dentro del ecosistema DLUnire.
- *
- * Características principales:
- *
- * - Persistencia de datos fuera de motores de bases de datos.
- * - Integración mediante identificadores o tokens de referencia.
- * - Base para adaptadores de almacenamiento personalizados.
- * - Reutilización del sistema de codificación binaria de DLStorage.
+ * Hereda `encode()`, `get_decode()` y métodos de entropía de {@see Data}, y añade
+ * resolución de rutas, firma, versión y lectura binaria parcial de {@see StorageTrait}.
  *
  * @package    DLStorage\Storage
  * @version    v0.2.0
  * @license    AGPL-3.0-or-later
  * @author     David E. Luna M. <info@dlunire.dev>
  * @copyright  Copyright (c) 2026 David E. Luna M.
- *
- * @see        https://dlunire.dev DLUnire Runtime
- * @see        https://github.com/dlunire Ecosistema DLUnire
  *
  * @abstract
  * @extends Data

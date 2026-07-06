@@ -1,0 +1,135 @@
+{% import 'css/macros/colours.macro.twig' as colours %}
+
+:root,
+[data-theme="light"] {
+    color-scheme: light;
+
+    --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    --font-secondary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    --font-monospace: 'JetBrains Mono', 'Fira Code', 'Source Code Pro', ui-monospace, monospace;
+    --line-height--primary: 1.7;
+    --letter-spacing--primary: -0.011em;
+    --text-base-size: 1em;
+    --text-scale-ratio: 1.2;
+
+    --text-xxs: calc(var(--text-base-size) / var(--text-scale-ratio) / var(--text-scale-ratio) / var(--text-scale-ratio));
+    --text-xs: calc(var(--text-base-size) / var(--text-scale-ratio) / var(--text-scale-ratio));
+    --text-sm: calc(var(--text-base-size) / var(--text-scale-ratio));
+    --text-md: var(--text-base-size);
+    --text-lg: calc(var(--text-base-size) * var(--text-scale-ratio));
+    --text-xl: calc(var(--text-base-size) * var(--text-scale-ratio) * var(--text-scale-ratio));
+    --text-xxl: calc(var(--text-base-size) * var(--text-scale-ratio) * var(--text-scale-ratio) * var(--text-scale-ratio));
+    --text-xxxl: calc(var(--text-base-size) * var(--text-scale-ratio) * var(--text-scale-ratio) * var(--text-scale-ratio) * var(--text-scale-ratio));
+    --text-xxxxl: calc(var(--text-base-size) * var(--text-scale-ratio) * var(--text-scale-ratio) * var(--text-scale-ratio) * var(--text-scale-ratio) * var(--text-scale-ratio));
+    --text-xxxxxl: calc(var(--text-base-size) * var(--text-scale-ratio) * var(--text-scale-ratio) * var(--text-scale-ratio) * var(--text-scale-ratio) * var(--text-scale-ratio) * var(--text-scale-ratio));
+
+    --vp-c-brand-1: #3451b2;
+    --vp-c-brand-2: #3a5ccc;
+    --vp-c-brand-3: #5672cd;
+    --vp-c-brand-soft: rgba(100, 108, 255, 0.1);
+    --vp-c-glow: rgba(100, 108, 255, 0.18);
+    --vp-c-bg: #ffffff;
+    --vp-c-bg-elevated: #ffffff;
+    --vp-c-bg-soft: #f6f6f7;
+    --vp-c-bg-mute: #ececf0;
+    --vp-c-divider: rgba(60, 60, 67, 0.12);
+    --vp-c-text-1: #1f1f23;
+    --vp-c-text-2: #5f5f67;
+    --vp-c-text-3: #929298;
+    --vp-c-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.04);
+    --vp-c-shadow-2: 0 8px 24px rgba(0, 0, 0, 0.06);
+    --vp-c-shadow-3: 0 16px 48px rgba(100, 108, 255, 0.12);
+
+    --color-hue-red: {{ colours.hue('red') }};
+    --color-hue-pink: {{ colours.hue('pink') }};
+    --color-hue-purple: {{ colours.hue('purple') }};
+    --color-hue-deep-purple: {{ colours.hue('deep-purple') }};
+    --color-hue-indigo: {{ colours.hue('indigo') }};
+    --color-hue-blue: {{ colours.hue('blue') }};
+    --color-hue-light-blue: {{ colours.hue('light-blue') }};
+    --color-hue-cyan: {{ colours.hue('cyan') }};
+    --color-hue-teal: {{ colours.hue('teal') }};
+    --color-hue-green: {{ colours.hue('green') }};
+    --color-hue-phpdocumentor-green: {{ colours.hue('indigo') }};
+    --color-hue-light-green: {{ colours.hue('light-green') }};
+    --color-hue-lime: {{ colours.hue('lime') }};
+    --color-hue-yellow: {{ colours.hue('yellow') }};
+    --color-hue-amber: {{ colours.hue('amber') }};
+    --color-hue-orange: {{ colours.hue('orange') }};
+    --color-hue-deep-orange: {{ colours.hue('deep-orange') }};
+    --color-hue-brown: {{ colours.hue('brown') }};
+
+    --primary-color-hue: var(--color-hue-indigo);
+    --primary-color-saturation: 48%;
+    --primary-color: var(--vp-c-brand-3);
+    --primary-color-darken: var(--vp-c-brand-2);
+    --primary-color-darker: var(--vp-c-brand-1);
+    --primary-color-darkest: #1e2a52;
+    --primary-color-lighten: var(--vp-c-divider);
+    --primary-color-lighter: var(--vp-c-brand-soft);
+    --dark-gray: var(--vp-c-divider);
+    --light-gray: var(--vp-c-bg-mute);
+    --text-color: var(--vp-c-text-1);
+
+    --header-height: 4rem;
+    --header-bg-color: rgba(255, 255, 255, 0.82);
+    --code-background-color: var(--vp-c-bg-soft);
+    --code-border-color: var(--vp-c-divider);
+    --button-border-color: var(--vp-c-divider);
+    --button-color: transparent;
+    --button-color-primary: var(--vp-c-brand-3);
+    --button-text-color: var(--vp-c-text-2);
+    --button-text-color-primary: #ffffff;
+    --popover-background-color: rgba(255, 255, 255, 0.96);
+    --link-color-primary: var(--vp-c-brand-1);
+    --link-hover-color-primary: var(--vp-c-brand-2);
+    --form-field-border-color: var(--vp-c-divider);
+    --form-field-color: var(--vp-c-bg-soft);
+    --admonition-success-color: var(--vp-c-brand-3);
+    --admonition-border-color: var(--vp-c-divider);
+    --table-separator-color: var(--vp-c-divider);
+    --title-text-color: var(--vp-c-text-1);
+    --sidebar-border-color: var(--vp-c-divider);
+
+    --container-width: 1440px;
+    --spacing-base-size: 1rem;
+    --spacing-scale-ratio: 1.5;
+    --spacing-xxxs: calc(var(--spacing-base-size) / var(--spacing-scale-ratio) / var(--spacing-scale-ratio) / var(--spacing-scale-ratio) / var(--spacing-scale-ratio));
+    --spacing-xxs: calc(var(--spacing-base-size) / var(--spacing-scale-ratio) / var(--spacing-scale-ratio) / var(--spacing-scale-ratio));
+    --spacing-xs: calc(var(--spacing-base-size) / var(--spacing-scale-ratio) / var(--spacing-scale-ratio));
+    --spacing-sm: calc(var(--spacing-base-size) / var(--spacing-scale-ratio));
+    --spacing-md: var(--spacing-base-size);
+    --spacing-lg: calc(var(--spacing-base-size) * var(--spacing-scale-ratio));
+    --spacing-xl: calc(var(--spacing-base-size) * var(--spacing-scale-ratio) * var(--spacing-scale-ratio));
+    --spacing-xxl: calc(var(--spacing-base-size) * var(--spacing-scale-ratio) * var(--spacing-scale-ratio) * var(--spacing-scale-ratio));
+    --spacing-xxxl: calc(var(--spacing-base-size) * var(--spacing-scale-ratio) * var(--spacing-scale-ratio) * var(--spacing-scale-ratio) * var(--spacing-scale-ratio));
+    --spacing-xxxxl: calc(var(--spacing-base-size) * var(--spacing-scale-ratio) * var(--spacing-scale-ratio) * var(--spacing-scale-ratio) * var(--spacing-scale-ratio) * var(--spacing-scale-ratio));
+
+    --border-radius-base-size: 10px;
+    --transition-theme: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+[data-theme="dark"] {
+    color-scheme: dark;
+
+    --vp-c-brand-1: #a8b1ff;
+    --vp-c-brand-2: #9499ff;
+    --vp-c-brand-3: #7c83ff;
+    --vp-c-brand-soft: rgba(100, 108, 255, 0.16);
+    --vp-c-glow: rgba(100, 108, 255, 0.28);
+    --vp-c-bg: #161618;
+    --vp-c-bg-elevated: #202127;
+    --vp-c-bg-soft: #202127;
+    --vp-c-bg-mute: #2e2e32;
+    --vp-c-divider: rgba(82, 82, 89, 0.48);
+    --vp-c-text-1: rgba(255, 255, 245, 0.94);
+    --vp-c-text-2: rgba(235, 235, 245, 0.65);
+    --vp-c-text-3: rgba(235, 235, 245, 0.38);
+    --vp-c-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.32);
+    --vp-c-shadow-2: 0 8px 28px rgba(0, 0, 0, 0.42);
+    --vp-c-shadow-3: 0 16px 48px rgba(100, 108, 255, 0.18);
+
+    --primary-color-darkest: rgba(255, 255, 245, 0.94);
+    --header-bg-color: rgba(22, 22, 24, 0.86);
+    --popover-background-color: rgba(32, 33, 39, 0.96);
+}

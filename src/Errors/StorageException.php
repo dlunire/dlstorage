@@ -29,24 +29,22 @@ use RuntimeException;
 use Throwable;
 
 /**
- * Excepción para errores de almacenamiento, lectura de archivos y validación de formato.
+ * Excepción de operaciones de almacenamiento y E/S de archivos.
  *
- * Se lanza cuando fallan operaciones de persistencia: archivo inexistente, firma
- * inválida, permisos insuficientes, rangos de lectura incorrectos o rutas inválidas.
+ * Códigos HTTP semánticos usados internamente: 404 (no encontrado), 416 (rango inválido), 500 (error general).
  *
- * @package     DLStorage\Errors
- * @version     v0.2.0
- * @author      David E. Luna M. <info@dlunire.dev>
- * @copyright   Copyright (c) 2026 David E. Luna M.
- * @license     AGPL-3.0-or-later
+ * @package   DLStorage\Errors
+ * @version   v0.2.0
+ * @license   AGPL-3.0-or-later
+ * @author    David E. Luna M. <info@dlunire.dev>
+ * @copyright Copyright (c) 2026 David E. Luna M.
  */
 final class StorageException extends RuntimeException {
+
     /**
-     * Constructor personalizado para StorageException.
-     *
-     * @param string         $message  Mensaje descriptivo del error.
-     * @param int            $code     Código de error (por defecto 500).
-     * @param Throwable|null $previous Excepción anterior, si la hay.
+     * @param string         $message  Descripción del error.
+     * @param int            $code     Código semántico (por defecto 500).
+     * @param Throwable|null $previous Excepción encadenada.
      */
     public function __construct(string $message, int $code = 500, ?Throwable $previous = null) {
         parent::__construct($message, $code, $previous);

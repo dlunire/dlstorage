@@ -1,10 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="utf-8">
+    <script>
+        (function () {
+            try {
+                var stored = localStorage.getItem('dlstorage-docs-theme');
+                var theme = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+                document.documentElement.setAttribute('data-theme', theme);
+            } catch (e) {
+                document.documentElement.setAttribute('data-theme', 'light');
+            }
+        })();
+    </script>
             <title>DLStorage API</title>
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="color-scheme" content="light dark">
     <base href="../">
     <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png"/>
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png"/>
@@ -12,12 +25,12 @@
     <link rel="apple-touch-icon" href="images/apple-touch-icon.png"/>
     <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="css/base.css">
-            <link rel="preconnect" href="https://fonts.gstatic.com">
-        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@100;200;300;400;600;700&display=swap" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="css/template.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0/css/all.min.css" integrity="sha256-ybRkN9dBjhcS2qrW1z+hfCxq+1aBdwyQM5wlQoQVt/0=" crossorigin="anonymous" />
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/themes/prism-okaidia.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/themes/prism.min.css" id="prism-theme-light">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" id="prism-theme-dark" disabled>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/line-numbers/prism-line-numbers.css">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/line-highlight/prism-line-highlight.css">
                 <script src="https://cdn.jsdelivr.net/npm/fuse.js@3.4.6"></script>
@@ -28,11 +41,18 @@
     </head>
 <body id="top">
     <header class="phpdocumentor-header phpdocumentor-section">
-    <h1 class="phpdocumentor-title"><a href="" class="phpdocumentor-title__link">DLStorage API</a></h1>
-    <input class="phpdocumentor-header__menu-button" type="checkbox" id="menu-button" name="menu-button" />
-    <label class="phpdocumentor-header__menu-icon" for="menu-button">
-        <i class="fas fa-bars"></i>
+    <h1 class="phpdocumentor-title">
+    <a href="" class="phpdocumentor-title__link">
+        <span class="phpdocumentor-title__brand">DLStorage</span>
+        <span class="dlstorage-version-badge">v0.2.0</span>
+    </a>
+</h1>    <input class="phpdocumentor-header__menu-button" type="checkbox" id="menu-button" name="menu-button" />
+    <label class="phpdocumentor-header__menu-icon" for="menu-button" aria-label="Abrir menú">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
     </label>
+    <div class="dlstorage-header-actions">
     <section data-search-form class="phpdocumentor-search">
     <label>
         <span class="visually-hidden">Search for</span>
@@ -44,12 +64,31 @@
     </label>
 </section>
 
-    <nav class="phpdocumentor-topnav">
+    <button
+        type="button"
+        class="dlstorage-theme-toggle"
+        data-theme-toggle
+        aria-pressed="false"
+        aria-label="Cambiar a modo oscuro"
+        title="Cambiar tema"
+    >
+        <span class="dlstorage-theme-toggle__icon dlstorage-theme-toggle__icon--light" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.75"/>
+                <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/>
+            </svg>
+        </span>
+        <span class="dlstorage-theme-toggle__icon dlstorage-theme-toggle__icon--dark" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M21 14.5A7.5 7.5 0 0 1 9.5 3 6.5 6.5 0 1 0 21 14.5Z" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"/>
+            </svg>
+        </span>
+    </button>
+</div>    <nav class="phpdocumentor-topnav">
     <ul class="phpdocumentor-topnav__menu">
         </ul>
 </nav>
 </header>
-
     <main class="phpdocumentor">
         <div class="phpdocumentor-section">
             <input class="phpdocumentor-sidebar__menu-button" type="checkbox" id="sidebar-button" name="sidebar-button" />
@@ -140,17 +179,13 @@
         <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Traits/StorageTrait.php"><a href="files/src-traits-storagetrait.html"><abbr title="src/Traits/StorageTrait.php">StorageTrait.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">46</span>
+    <span class="phpdocumentor-element-found-in__line">41</span>
 
     </aside>
 
-            <p class="phpdocumentor-summary">Operaciones de rutas, lectura binaria y metadatos del formato `.dlstorage`.</p>
+            <p class="phpdocumentor-summary">Rutas de proyecto, metadatos del formato `.dlstorage` y lectura binaria parcial.</p>
 
 
-    <section class="phpdocumentor-description"><p>Proporciona la firma (<code class="prettyprint">DLStorage</code>), la versión (<code class="prettyprint">v0.1.0</code>), resolución de rutas
-relativas al directorio raíz del proyecto y lectura parcial de archivos binarios.</p>
-<p>Consumido por <a href="classes/DLStorage-Storage-DataStorage.html"><abbr title="\DLStorage\Storage\DataStorage">DataStorage</abbr></a> y por <a href="classes/DLStorage-Traits-BinaryLengthTrait.html"><abbr title="\DLStorage\Traits\BinaryLengthTrait">BinaryLengthTrait</abbr></a>.</p>
-</section>
 
 
     <h5 class="phpdocumentor-tag-list__heading" id="tags">
@@ -220,14 +255,14 @@ relativas al directorio raíz del proyecto y lectura parcial de archivos binario
     <span>
                         &nbsp;: string            </span>
 </dt>
-<dd>Firma de la cabecera del archivo.</dd>
+<dd>Firma ASCII que identifica un archivo DLStorage válido.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -protected">
     <a class="" href="classes/DLStorage-Traits-StorageTrait.html#property_version">$version</a>
     <span>
                         &nbsp;: string            </span>
 </dt>
-<dd>Versión del archivo de almacenamiento de bytes transformados.</dd>
+<dd>Versión del formato almacenado en la cabecera del archivo.</dd>
 
     </dl>
 
@@ -242,51 +277,49 @@ relativas al directorio raíz del proyecto y lectura parcial de archivos binario
     <span>
                                 &nbsp;: string    </span>
 </dt>
-<dd>Obtiene el directorio raíz del sistema.</dd>
+<dd>Obtiene el directorio raíz del proyecto.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/DLStorage-Traits-StorageTrait.html#method_get_file_path">get_file_path()</a>
     <span>
                                 &nbsp;: string    </span>
 </dt>
-<dd>Devuelve la ruta absoluta completa donde se almacenará un archivo, dentro del
-sistema de almacenamiento gestionado por la clase. Puede opcionalmente crear
-el directorio contenedor si no existe.</dd>
+<dd>Resuelve la ruta absoluta de un archivo relativo al proyecto.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/DLStorage-Traits-StorageTrait.html#method_read_filename">read_filename()</a>
     <span>
                                 &nbsp;: string    </span>
 </dt>
-<dd>Lee un rango de bytes de un archivo binario.</dd>
+<dd>Lee un rango inclusivo de bytes de un archivo (índices 1-based).</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/DLStorage-Traits-StorageTrait.html#method_validate_saved_data">validate_saved_data()</a>
     <span>
                                 &nbsp;: bool    </span>
 </dt>
-<dd>Valida si se trata de un archivo estructura binaria válida</dd>
+<dd>Comprueba si los primeros 9 bytes del archivo coinciden con la firma DLStorage.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -protected">
     <a class="" href="classes/DLStorage-Traits-StorageTrait.html#method_get_signature">get_signature()</a>
     <span>
                                 &nbsp;: string    </span>
 </dt>
-<dd>Devuelve la firma del archivo en formato hexadecimal.</dd>
+<dd>Devuelve la firma como cadena hexadecimal.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -protected">
     <a class="" href="classes/DLStorage-Traits-StorageTrait.html#method_get_version">get_version()</a>
     <span>
                                 &nbsp;: string    </span>
 </dt>
-<dd>Devuelve la versión del archivo en formato hexadecimal.</dd>
+<dd>Devuelve la versión como cadena hexadecimal.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -protected">
     <a class="" href="classes/DLStorage-Traits-StorageTrait.html#method_validate_filename">validate_filename()</a>
     <span>
                                 &nbsp;: void    </span>
 </dt>
-<dd>Valida si el archivo existe y no es un directorio, aparte de ser legible.</dd>
+<dd>Verifica que la ruta apunte a un archivo existente y legible.</dd>
 
     </dl>
 
@@ -319,11 +352,11 @@ el directorio contenedor si no existe.</dd>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Traits/StorageTrait.php"><a href="files/src-traits-storagetrait.html"><abbr title="src/Traits/StorageTrait.php">StorageTrait.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">96</span>
+    <span class="phpdocumentor-element-found-in__line">55</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Firma de la cabecera del archivo.</p>
+        <p class="phpdocumentor-summary">Firma ASCII que identifica un archivo DLStorage válido.</p>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
@@ -332,37 +365,11 @@ el directorio contenedor si no existe.</dd>
     <span class="phpdocumentor-signature__name">$signature</span>
      = <span class="phpdocumentor-signature__default-value">&quot;DLStorage&quot;</span></code>
 
-        <section class="phpdocumentor-description"><p>Esta propiedad almacena la firma que identifica de manera única el formato
-del archivo de almacenamiento de datos transformados. La firma es una secuencia
-de caracteres que se coloca al inicio del archivo, sirviendo como una &quot;marca&quot;
-para indicar que el archivo es reconocido por el sistema y sigue el formato
-adecuado.</p>
-<p><strong>Representación en formato hexadecimal:</strong>
-La firma &quot;DLStorage&quot; se representa en hexadecimal como:</p>
-<pre class="prettyprint"><code class="language-bash">44 4c 53 74 6f 72 61 67 65
-</code></pre>
-<p>Este valor permite verificar la integridad del archivo y validar que el contenido
-corresponde a un archivo del sistema, facilitando la detección de archivos
-corruptos o de un formato incorrecto.</p>
+    
+        <section class="phpdocumentor-description"><p>Valor por defecto: <code class="prettyprint">&quot;DLStorage&quot;</code> (9 bytes).</p>
 </section>
 
     
-    
-    <h5 class="phpdocumentor-tag-list__heading" id="property_signature_tags">
-        Tags
-        <a href="classes/DLStorage-Traits-StorageTrait.html#property_signature_tags" class="headerlink"><i class="fas fa-link"></i></a>
-
-    </h5>
-    <dl class="phpdocumentor-tag-list">
-                    <dt class="phpdocumentor-tag-list__entry">
-                <span class="phpdocumentor-tag__name">since</span>
-            </dt>
-                            <dd class="phpdocumentor-tag-list__definition">
-                                                                                                            <section class="phpdocumentor-description"><p>v0.1.0 Introducción de la firma de cabecera para validación de formato de archivo.</p>
-</section>
-
-                                    </dd>
-                        </dl>
 
         
         
@@ -385,11 +392,11 @@ corruptos o de un formato incorrecto.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Traits/StorageTrait.php"><a href="files/src-traits-storagetrait.html"><abbr title="src/Traits/StorageTrait.php">StorageTrait.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">71</span>
+    <span class="phpdocumentor-element-found-in__line">48</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Versión del archivo de almacenamiento de bytes transformados.</p>
+        <p class="phpdocumentor-summary">Versión del formato almacenado en la cabecera del archivo.</p>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
@@ -398,37 +405,11 @@ corruptos o de un formato incorrecto.</p>
     <span class="phpdocumentor-signature__name">$version</span>
      = <span class="phpdocumentor-signature__default-value">&quot;v0.1.0&quot;</span></code>
 
-        <section class="phpdocumentor-description"><p>Esta propiedad almacena la versión actual del formato de archivo utilizado para
-la persistencia de los datos transformados mediante el sistema de transformación
-de bytes. El valor está representado en formato de cadena y puede ser utilizado
-para identificar cambios en la estructura o el esquema de los datos, asegurando
-la compatibilidad entre versiones del sistema.</p>
-<p><strong>Versión en formato hexadecimal:</strong>
-La versión &quot;v0.1.0&quot; está representada en hexadecimal como:</p>
-<pre class="prettyprint"><code class="language-bash">76 30 2e 31 2e 30
-</code></pre>
-<p>Esta representación hexadecimal permite realizar comparaciones y verificaciones
-a nivel de bytes, útil para tareas como la validación o la compatibilidad
-entre diferentes versiones de archivos transformados.</p>
+    
+        <section class="phpdocumentor-description"><p>Valor por defecto: <code class="prettyprint">&quot;v0.1.0&quot;</code>.</p>
 </section>
 
     
-    
-    <h5 class="phpdocumentor-tag-list__heading" id="property_version_tags">
-        Tags
-        <a href="classes/DLStorage-Traits-StorageTrait.html#property_version_tags" class="headerlink"><i class="fas fa-link"></i></a>
-
-    </h5>
-    <dl class="phpdocumentor-tag-list">
-                    <dt class="phpdocumentor-tag-list__entry">
-                <span class="phpdocumentor-tag__name">since</span>
-            </dt>
-                            <dd class="phpdocumentor-tag-list__definition">
-                                                                                                            <section class="phpdocumentor-description"><p>v0.1.0 Introducción del campo de versión en el archivo de almacenamiento.</p>
-</section>
-
-                                    </dd>
-                        </dl>
 
         
         
@@ -456,11 +437,11 @@ entre diferentes versiones de archivos transformados.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Traits/StorageTrait.php"><a href="files/src-traits-storagetrait.html"><abbr title="src/Traits/StorageTrait.php">StorageTrait.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">336</span>
+    <span class="phpdocumentor-element-found-in__line">250</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Obtiene el directorio raíz del sistema.</p>
+        <p class="phpdocumentor-summary">Obtiene el directorio raíz del proyecto.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -469,46 +450,12 @@ entre diferentes versiones de archivos transformados.</p>
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Devuelve la ruta absoluta del directorio raíz de la aplicación.</p>
-<p>Para lograrlo, se obtiene el directorio de trabajo actual (<code class="prettyprint">getcwd()</code>), se retrocede
-un nivel hacia el directorio padre (<code class="prettyprint">dirname()</code>), y luego se resuelve la ruta absoluta
-mediante <code class="prettyprint">realpath()</code>. Finalmente, se elimina cualquier espacio innecesario con <code class="prettyprint">trim()</code>.</p>
-<p>Esto es útil para establecer rutas base dentro de la aplicación, evitando
-problemas de rutas relativas al trabajar con diferentes entornos de desarrollo o despliegue.</p>
+        <section class="phpdocumentor-description"><p>Calcula: <code class="prettyprint">realpath(dirname(getcwd()))</code>. Asume que el CWD está un nivel
+por debajo de la raíz (p. ej. <code class="prettyprint">public/</code>).</p>
 </section>
 
     
     
-    <h5 class="phpdocumentor-tag-list__heading" id="method_get_document_root_tags">
-        Tags
-        <a href="classes/DLStorage-Traits-StorageTrait.html#method_get_document_root_tags" class="headerlink"><i class="fas fa-link"></i></a>
-
-    </h5>
-    <dl class="phpdocumentor-tag-list">
-                    <dt class="phpdocumentor-tag-list__entry">
-                <span class="phpdocumentor-tag__name">example</span>
-            </dt>
-                            <dd class="phpdocumentor-tag-list__definition">
-                                                                                                            <section class="phpdocumentor-description"><p>Example</p>
-<pre class="prettyprint"><code class="prettyprint">// Ejemplo de uso
-$root_path = $this-&gt;get_document_root();
-echo $root_path;
-// Resultado esperado: /var/www/html/my-app
-</code></pre>
-</section>
-
-                                    </dd>
-                                <dt class="phpdocumentor-tag-list__entry">
-                <span class="phpdocumentor-tag__name">note</span>
-            </dt>
-                            <dd class="phpdocumentor-tag-list__definition">
-                                                                                                            <section class="phpdocumentor-description"><p>Asegúrate de tener los permisos adecuados para acceder al directorio raíz de la aplicación.
-Este método asume que la estructura de carpetas sigue un patrón estándar donde
-el directorio raíz se encuentra un nivel por encima del directorio de ejecución actual.</p>
-</section>
-
-                                    </dd>
-                        </dl>
 
         
     
@@ -516,7 +463,7 @@ el directorio raíz se encuentra un nivel por encima del directorio de ejecució
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">string</span>
                     &mdash;
-                <section class="phpdocumentor-description"><p>Ruta absoluta del directorio raíz de la aplicación.</p>
+                <section class="phpdocumentor-description"><p>Ruta absoluta sin espacios laterales. Puede ser cadena vacía si <code class="prettyprint">realpath</code> falla.</p>
 </section>
 
             </section>
@@ -536,13 +483,11 @@ el directorio raíz se encuentra un nivel por encima del directorio de ejecució
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Traits/StorageTrait.php"><a href="files/src-traits-storagetrait.html"><abbr title="src/Traits/StorageTrait.php">StorageTrait.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">135</span>
+    <span class="phpdocumentor-element-found-in__line">73</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Devuelve la ruta absoluta completa donde se almacenará un archivo, dentro del
-sistema de almacenamiento gestionado por la clase. Puede opcionalmente crear
-el directorio contenedor si no existe.</p>
+        <p class="phpdocumentor-summary">Resuelve la ruta absoluta de un archivo relativo al proyecto.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -551,9 +496,9 @@ el directorio contenedor si no existe.</p>
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Si se establece <code class="prettyprint">$create_dir</code> en <code class="prettyprint">true</code>, la función asegura que el directorio
-padre del archivo exista, creándolo si es necesario. En caso de que exista un
-archivo con el mismo nombre que el directorio, se lanza una excepción.</p>
+        <section class="phpdocumentor-description"><p>Base: <abbr title="\DLStorage\Traits\get_document_root()">get_document_root()</abbr>. Si <code class="prettyprint">$storage</code> es <code class="prettyprint">true</code>, antepone <code class="prettyprint">storage/</code>.
+Normaliza separadores <code class="prettyprint">\</code> y <code class="prettyprint">/</code> al separador del SO.</p>
+<p>Con <code class="prettyprint">$create_dir = true</code>, crea el directorio padre con <code class="prettyprint">mkdir(..., 0755, true)</code>.</p>
 </section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
@@ -563,7 +508,7 @@ archivo con el mismo nombre que el directorio, se lanza una excepción.</p>
                 : <span class="phpdocumentor-argument-list__argument__type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Nombre relativo del archivo (puede contener subdirectorios).</p>
+                    <section class="phpdocumentor-description"><p>Ruta relativa (puede incluir subdirectorios).</p>
 </section>
 
             </dd>
@@ -572,8 +517,7 @@ archivo con el mismo nombre que el directorio, se lanza una excepción.</p>
                 : <span class="phpdocumentor-argument-list__argument__type">bool</span>
                  = <span class="phpdocumentor-argument-list__argument__default-value">false</span>            </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Indica si se debe crear el directorio contenedor si no existe.
-Por defecto es <code class="prettyprint">false</code>.</p>
+                    <section class="phpdocumentor-description"><p>Crea el directorio contenedor si no existe.</p>
 </section>
 
             </dd>
@@ -582,9 +526,7 @@ Por defecto es <code class="prettyprint">false</code>.</p>
                 : <span class="phpdocumentor-argument-list__argument__type">bool</span>
                  = <span class="phpdocumentor-argument-list__argument__default-value">true</span>            </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Si es <code class="prettyprint">true</code>, el archivo se almacenará dentro del directorio
-<code class="prettyprint">storage/</code> gestionado por el sistema. Si es <code class="prettyprint">false</code>, la ruta se
-resolverá directamente en la raíz del documento. Por defecto es <code class="prettyprint">true</code>.</p>
+                    <section class="phpdocumentor-description"><p><code class="prettyprint">true</code>: bajo <code class="prettyprint">storage/</code>. <code class="prettyprint">false</code>: bajo la raíz del proyecto.</p>
 </section>
 
             </dd>
@@ -602,40 +544,7 @@ resolverá directamente en la raíz del documento. Por defecto es <code class="p
             </dt>
                             <dd class="phpdocumentor-tag-list__definition">
                                                                 <span class="phpdocumentor-tag-link"><a href="classes/DLStorage-Errors-StorageException.html"><abbr title="\DLStorage\Errors\StorageException">StorageException</abbr></a></span>
-                                                                                        <section class="phpdocumentor-description"><p>Si <code class="prettyprint">$create_dir</code> es <code class="prettyprint">true</code> y existe un archivo con el mismo nombre que el directorio contenedor.</p>
-</section>
-
-                                    </dd>
-                                <dt class="phpdocumentor-tag-list__entry">
-                <span class="phpdocumentor-tag__name">example</span>
-            </dt>
-                            <dd class="phpdocumentor-tag-list__definition">
-                                                                                                            <section class="phpdocumentor-description"><p>Ejemplo de uso</p>
-<pre class="prettyprint"><code class="language-php">// Usando almacenamiento interno
-$ruta = $storage-&gt;get_file_path(&quot;documentos/ejemplo.txt&quot;, true);
-// Resultado: /ruta/absoluta/al/proyecto/storage/documentos/ejemplo.txt
-
-// Usando ruta directa (fuera de /storage)
-$ruta = $storage-&gt;get_file_path(&quot;documentos/ejemplo.txt&quot;, true, false);
-// Resultado: /ruta/absoluta/al/proyecto/documentos/ejemplo.txt
-</code></pre>
-</section>
-
-                                    </dd>
-                                <dt class="phpdocumentor-tag-list__entry">
-                <span class="phpdocumentor-tag__name">note</span>
-            </dt>
-                            <dd class="phpdocumentor-tag-list__definition">
-                                                                                                            <section class="phpdocumentor-description"><p>Los separadores de directorio son normalizados automáticamente al formato del sistema operativo.</p>
-</section>
-
-                                    </dd>
-                                <dt class="phpdocumentor-tag-list__entry">
-                <span class="phpdocumentor-tag__name">warning</span>
-            </dt>
-                            <dd class="phpdocumentor-tag-list__definition">
-                                                                                                            <section class="phpdocumentor-description"><p>Si el nombre proporcionado en <code class="prettyprint">$filename</code> genera una colisión con un archivo
-en lugar de un directorio, y <code class="prettyprint">$create_dir</code> es <code class="prettyprint">true</code>, la operación fallará.</p>
+                                                                                        <section class="phpdocumentor-description"><p>Si <code class="prettyprint">$create_dir</code> es <code class="prettyprint">true</code> y un archivo ocupa el nombre del directorio (500).</p>
 </section>
 
                                     </dd>
@@ -647,7 +556,7 @@ en lugar de un directorio, y <code class="prettyprint">$create_dir</code> es <co
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">string</span>
                     &mdash;
-                <section class="phpdocumentor-description"><p>Ruta absoluta del archivo dentro del almacenamiento gestionado.</p>
+                <section class="phpdocumentor-description"><p>Ruta absoluta del archivo.</p>
 </section>
 
             </section>
@@ -667,11 +576,11 @@ en lugar de un directorio, y <code class="prettyprint">$create_dir</code> es <co
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Traits/StorageTrait.php"><a href="files/src-traits-storagetrait.html"><abbr title="src/Traits/StorageTrait.php">StorageTrait.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">209</span>
+    <span class="phpdocumentor-element-found-in__line">146</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Lee un rango de bytes de un archivo binario.</p>
+        <p class="phpdocumentor-summary">Lee un rango inclusivo de bytes de un archivo (índices 1-based).</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -680,9 +589,8 @@ en lugar de un directorio, y <code class="prettyprint">$create_dir</code> es <co
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Este método permite leer una porción de un archivo binario, especificando los índices de inicio y fin del rango a leer.
-Si el rango es inválido o excede el tamaño del archivo, se lanzan excepciones apropiadas.
-El archivo se abre en modo binario, asegurando que la lectura no se vea afectada por la codificación de caracteres.</p>
+        <section class="phpdocumentor-description"><p>Abre el archivo en modo binario (<code class="prettyprint">rb</code>), posiciona con <code class="prettyprint">fseek</code> y lee <code class="prettyprint">$to - $from + 1</code> bytes.
+No valida previamente la existencia del archivo.</p>
 </section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
@@ -692,7 +600,7 @@ El archivo se abre en modo binario, asegurando que la lectura no se vea afectada
                 : <span class="phpdocumentor-argument-list__argument__type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Ruta del archivo a leer.</p>
+                    <section class="phpdocumentor-description"><p>Ruta absoluta o relativa al archivo.</p>
 </section>
 
             </dd>
@@ -701,7 +609,7 @@ El archivo se abre en modo binario, asegurando que la lectura no se vea afectada
                 : <span class="phpdocumentor-argument-list__argument__type">int</span>
                  = <span class="phpdocumentor-argument-list__argument__default-value">1</span>            </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Offset de inicio de la lectura (1 basado).</p>
+                    <section class="phpdocumentor-description"><p>Byte inicial (≥ 1).</p>
 </section>
 
             </dd>
@@ -710,7 +618,7 @@ El archivo se abre en modo binario, asegurando que la lectura no se vea afectada
                 : <span class="phpdocumentor-argument-list__argument__type">int</span>
                  = <span class="phpdocumentor-argument-list__argument__default-value">1</span>            </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Offset final de la lectura (1 basado).</p>
+                    <section class="phpdocumentor-description"><p>Byte final (≥ <code class="prettyprint">$from</code>).</p>
 </section>
 
             </dd>
@@ -728,25 +636,8 @@ El archivo se abre en modo binario, asegurando que la lectura no se vea afectada
             </dt>
                             <dd class="phpdocumentor-tag-list__definition">
                                                                 <span class="phpdocumentor-tag-link"><a href="classes/DLStorage-Errors-StorageException.html"><abbr title="\DLStorage\Errors\StorageException">StorageException</abbr></a></span>
-                                                                                        <section class="phpdocumentor-description"><p>Si el rango es inválido, el archivo no se puede acceder, o no se puede leer correctamente.</p>
-</section>
-
-                                    </dd>
-                            <dd class="phpdocumentor-tag-list__definition">
-                                                                <span class="phpdocumentor-tag-link"><a href="classes/DLStorage-Errors-StorageException.html"><abbr title="\DLStorage\Errors\StorageException">StorageException</abbr></a></span>
-                                                                                        <section class="phpdocumentor-description"><p>Si el rango de lectura excede el tamaño del archivo.</p>
-</section>
-
-                                    </dd>
-                            <dd class="phpdocumentor-tag-list__definition">
-                                                                <span class="phpdocumentor-tag-link"><a href="classes/DLStorage-Errors-StorageException.html"><abbr title="\DLStorage\Errors\StorageException">StorageException</abbr></a></span>
-                                                                                        <section class="phpdocumentor-description"><p>Si hay un error de entrada/salida al acceder a los metadatos del archivo.</p>
-</section>
-
-                                    </dd>
-                            <dd class="phpdocumentor-tag-list__definition">
-                                                                <span class="phpdocumentor-tag-link"><a href="classes/DLStorage-Errors-StorageException.html"><abbr title="\DLStorage\Errors\StorageException">StorageException</abbr></a></span>
-                                                                                        <section class="phpdocumentor-description"><p>Si no se puede posicionar el puntero al byte indicado en el archivo.</p>
+                                                                                        <section class="phpdocumentor-description"><p>Rango inválido (500), archivo inaccesible (500), rango fuera de tamaño (416),
+error de seek (500) o lectura vacía/fallida (500).</p>
 </section>
 
                                     </dd>
@@ -758,7 +649,7 @@ El archivo se abre en modo binario, asegurando que la lectura no se vea afectada
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">string</span>
                     &mdash;
-                <section class="phpdocumentor-description"><p>Los bytes leídos del archivo.</p>
+                <section class="phpdocumentor-description"><p>Bytes leídos.</p>
 </section>
 
             </section>
@@ -778,11 +669,11 @@ El archivo se abre en modo binario, asegurando que la lectura no se vea afectada
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Traits/StorageTrait.php"><a href="files/src-traits-storagetrait.html"><abbr title="src/Traits/StorageTrait.php">StorageTrait.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">182</span>
+    <span class="phpdocumentor-element-found-in__line">121</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Valida si se trata de un archivo estructura binaria válida</p>
+        <p class="phpdocumentor-summary">Comprueba si los primeros 9 bytes del archivo coinciden con la firma DLStorage.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -799,13 +690,29 @@ El archivo se abre en modo binario, asegurando que la lectura no se vea afectada
                 : <span class="phpdocumentor-argument-list__argument__type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Ruta relativa del archivo (sin extensión <code class="prettyprint">.dlstorage</code>).</p>
+                    <section class="phpdocumentor-description"><p>Ruta relativa resuelta con <abbr title="\DLStorage\Traits\get_file_path()">get_file_path()</abbr> (sin extensión <code class="prettyprint">.dlstorage</code>).</p>
 </section>
 
             </dd>
             </dl>
 
     
+    <h5 class="phpdocumentor-tag-list__heading" id="method_validate_saved_data_tags">
+        Tags
+        <a href="classes/DLStorage-Traits-StorageTrait.html#method_validate_saved_data_tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">throws</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                                                <span class="phpdocumentor-tag-link"><a href="classes/DLStorage-Errors-StorageException.html"><abbr title="\DLStorage\Errors\StorageException">StorageException</abbr></a></span>
+                                                                                        <section class="phpdocumentor-description"><p>Si el archivo no existe o la lectura falla (propagada desde <abbr title="\DLStorage\Traits\read_filename()">read_filename()</abbr>).</p>
+</section>
+
+                                    </dd>
+                        </dl>
 
         
     
@@ -813,7 +720,7 @@ El archivo se abre en modo binario, asegurando que la lectura no se vea afectada
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">bool</span>
                     &mdash;
-                <section class="phpdocumentor-description"><p><code class="prettyprint">true</code> si la firma de los primeros 9 bytes coincide con <code class="prettyprint">DLStorage</code>.</p>
+                <section class="phpdocumentor-description"><p><code class="prettyprint">true</code> si la firma hex de los bytes 1–9 coincide con <abbr title="\DLStorage\Traits\get_signature()">get_signature()</abbr>.</p>
 </section>
 
             </section>
@@ -833,11 +740,11 @@ El archivo se abre en modo binario, asegurando que la lectura no se vea afectada
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Traits/StorageTrait.php"><a href="files/src-traits-storagetrait.html"><abbr title="src/Traits/StorageTrait.php">StorageTrait.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">357</span>
+    <span class="phpdocumentor-element-found-in__line">263</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Devuelve la firma del archivo en formato hexadecimal.</p>
+        <p class="phpdocumentor-summary">Devuelve la firma como cadena hexadecimal.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">protected</span>
@@ -846,10 +753,7 @@ El archivo se abre en modo binario, asegurando que la lectura no se vea afectada
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Convierte los bytes binarios de la propiedad <code class="prettyprint">$signature</code>
-a una representación legible como cadena hexadecimal.</p>
-</section>
-
+    
     
     
 
@@ -859,7 +763,7 @@ a una representación legible como cadena hexadecimal.</p>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">string</span>
                     &mdash;
-                <section class="phpdocumentor-description"><p>Firma binaria representada en hexadecimal.</p>
+                <section class="phpdocumentor-description"><p><code class="prettyprint">bin2hex($this-&gt;signature)</code> — p. ej. <code class="prettyprint">444c53746f72616765</code> para <code class="prettyprint">&quot;DLStorage&quot;</code>.</p>
 </section>
 
             </section>
@@ -879,11 +783,11 @@ a una representación legible como cadena hexadecimal.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Traits/StorageTrait.php"><a href="files/src-traits-storagetrait.html"><abbr title="src/Traits/StorageTrait.php">StorageTrait.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">369</span>
+    <span class="phpdocumentor-element-found-in__line">272</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Devuelve la versión del archivo en formato hexadecimal.</p>
+        <p class="phpdocumentor-summary">Devuelve la versión como cadena hexadecimal.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">protected</span>
@@ -892,10 +796,7 @@ a una representación legible como cadena hexadecimal.</p>
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Convierte los bytes binarios de la propiedad <code class="prettyprint">$version</code>
-a una representación legible como cadena hexadecimal.</p>
-</section>
-
+    
     
     
 
@@ -905,7 +806,7 @@ a una representación legible como cadena hexadecimal.</p>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">string</span>
                     &mdash;
-                <section class="phpdocumentor-description"><p>Versión binaria representada en hexadecimal.</p>
+                <section class="phpdocumentor-description"><p><code class="prettyprint">bin2hex($this-&gt;version)</code> — p. ej. bytes ASCII de <code class="prettyprint">&quot;v0.1.0&quot;</code> en hex.</p>
 </section>
 
             </section>
@@ -925,11 +826,11 @@ a una representación legible como cadena hexadecimal.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Traits/StorageTrait.php"><a href="files/src-traits-storagetrait.html"><abbr title="src/Traits/StorageTrait.php">StorageTrait.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">284</span>
+    <span class="phpdocumentor-element-found-in__line">218</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Valida si el archivo existe y no es un directorio, aparte de ser legible.</p>
+        <p class="phpdocumentor-summary">Verifica que la ruta apunte a un archivo existente y legible.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">protected</span>
@@ -946,7 +847,7 @@ a una representación legible como cadena hexadecimal.</p>
                 : <span class="phpdocumentor-argument-list__argument__type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Archivo a ser analizado</p>
+                    <section class="phpdocumentor-description"><p>Ruta absoluta del archivo.</p>
 </section>
 
             </dd>
@@ -964,7 +865,9 @@ a una representación legible como cadena hexadecimal.</p>
             </dt>
                             <dd class="phpdocumentor-tag-list__definition">
                                                                 <span class="phpdocumentor-tag-link"><a href="classes/DLStorage-Errors-StorageException.html"><abbr title="\DLStorage\Errors\StorageException">StorageException</abbr></a></span>
-                                                                                    
+                                                                                        <section class="phpdocumentor-description"><p>Archivo inexistente (404), es un directorio (500) o sin permiso de lectura (500).</p>
+</section>
+
                                     </dd>
                         </dl>
 

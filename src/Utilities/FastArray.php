@@ -30,11 +30,11 @@ namespace DLStorage\Utilities;
 use IteratorAggregate;
 
 /**
- * Colección de arrays con API orientada a métodos encadenables y seguimiento de longitud.
+ * Colección indexada con API encadenable y contador de longitud explícito.
  *
- * Implementa `IteratorAggregate` para permitir iteración con `foreach`. Los métodos
- * públicos siguen la convención `snake_case` de DLStorage, salvo `getIterator()`
- * requerido por la interfaz de PHP.
+ * Mantiene un array interno y la propiedad `$length` sincronizada con las
+ * operaciones de inserción y eliminación. Implementa `IteratorAggregate` para
+ * `foreach`; los métodos públicos usan `snake_case`, salvo `getIterator()`.
  *
  * @package    DLStorage\Utilities
  * @version    v0.2.0
@@ -44,28 +44,29 @@ use IteratorAggregate;
  *
  * @template T
  *
- * @note Los métodos `item`, `first`, `last`, `pop` y `shift` lanzan
- *       {@see \OutOfBoundsException} ante índices inválidos o arrays vacíos.
+ * @abstract Debe extenderse para instanciar. Los métodos que devuelven `static`
+ *           crean instancias de la subclase concreta.
+ *
+ * @note `item`, `first`, `last`, `pop` y `shift` lanzan {@see \OutOfBoundsException}
+ *       con código `400` si el índice es inválido o la colección está vacía.
  */
 abstract class FastArray implements IteratorAggregate {
     /**
-     * Almacenamiento interno de elementos.
+     * Elementos almacenados con índices numéricos consecutivos.
      *
      * @var array<int, mixed>
      */
     private array $data;
 
     /**
-     * Longitud del array.
-     *
-     * @var integer $length
+     * Número de elementos; se actualiza en cada mutación, no se infiere con `count()`.
      */
     private int $length;
 
     /**
-     * Constructor que inicializa el array y su longitud.
+     * Inicializa la colección vacía y agrega los elementos de `$data`.
      *
-     * @param array $data
+     * @param array<int, mixed> $data Elementos iniciales (puede ser vacío).
      */
     public function __construct(array $data = []) {
         $this->clear();
@@ -73,15 +74,9 @@ abstract class FastArray implements IteratorAggregate {
     }
 
     /**
-     * Agrega un nuevo elemento al final del array interno, preservando el orden de inserción.
-     * 
-     * @param mixed $value Valor que será insertado en el array. 
-     *                     Se permiten valores de cualquier tipo de dato admitido por PHP.
-     * 
-     * @return void
-     * 
-     * @note Este método incrementa automáticamente la propiedad {@see $length} para reflejar
-     *       el tamaño actualizado del array.
+     * Añade un elemento al final e incrementa `$length`.
+     *
+     * @param mixed $value Valor a insertar.
      */
     public function push(mixed $value): void {
         $this->data[] = $value;
@@ -89,15 +84,7 @@ abstract class FastArray implements IteratorAggregate {
     }
 
     /**
-     * Elimina todos los elementos del array interno y reinicia su longitud.
-     * 
-     * Este método deja la estructura en su estado inicial, con un array vacío y
-     * la propiedad {@see $length} restablecida a `0`.
-     * 
-     * @return void
-     * 
-     * @note A diferencia de la reasignación manual del array, este método asegura
-     *       la consistencia entre los datos internos y la longitud registrada.
+     * Vacía el array interno y restablece `$length` a 0.
      */
     public function clear(): void {
         $this->data = [];
@@ -105,44 +92,29 @@ abstract class FastArray implements IteratorAggregate {
     }
 
     /**
-     * Obtiene el array interno de datos sin modificaciones.
-     * 
-     * Devuelve la representación cruda del array utilizado internamente 
-     * para almacenar los elementos. La estructura mantiene el orden de 
-     * inserción y puede contener valores de cualquier tipo.
-     * 
-     * @return array<int,mixed> Array crudo de elementos almacenados.
-     * 
-     * @note Devuelve la referencia interna; las modificaciones externas al array
-     *       retornado afectan el estado de la instancia.
+     * Devuelve el array interno.
+     *
+     * @return array<int, mixed> Copia del array (semántica copy-on-write de PHP al modificar).
      */
     public function get(): array {
         return $this->data;
     }
 
-
     /**
-     * Obtiene la cantidad de elementos almacenados en el array interno.
+     * Devuelve el número de elementos registrado en `$length`.
      *
-     * Devuelve el número total de elementos actualmente contenidos 
-     * en la colección, manteniendo coherencia con las operaciones 
-     * de inserción y eliminación realizadas.
-     *
-     * @return int Número de elementos en el array interno.
+     * @return int Cantidad actual de elementos.
      */
     public function length(): int {
         return $this->length;
     }
 
     /**
-     * Agrega múltiples elementos al array interno.
+     * Concatena los elementos de `$data` al final mediante `array_merge`.
      *
-     * Combina los elementos del array proporcionado con los ya existentes,
-     * manteniendo el orden de inserción. Si el conjunto está vacío, 
-     * la operación no tiene efecto.
+     * No hace nada si `$data` está vacío.
      *
-     * @param array<int,mixed> $data Conjunto de elementos a agregar.
-     * @return void
+     * @param array<int, mixed> $data Elementos a agregar.
      */
     public function add(array $data): void {
         if (empty($data)) {
@@ -153,14 +125,13 @@ abstract class FastArray implements IteratorAggregate {
     }
 
     /**
-     * Obtiene un elemento específico del array interno por su índice.
+     * Obtiene el elemento en el índice indicado.
      *
-     * Valida que el índice se encuentre dentro de los límites del array.
-     * En caso contrario, lanza una excepción.
+     * @param int $index Posición basada en cero (`0` … `$length - 1`).
      *
-     * @param int $index Índice del elemento a recuperar (basado en cero).
-     * @throws \OutOfBoundsException Si el índice está fuera de los límites del array.
-     * @return mixed Elemento almacenado en la posición indicada.
+     * @return mixed Elemento en esa posición.
+     *
+     * @throws \OutOfBoundsException Si `$index` está fuera de rango (código 400).
      */
     public function item(int $index): mixed {
         if ($index < 0 || $index >= $this->length) {
@@ -170,13 +141,11 @@ abstract class FastArray implements IteratorAggregate {
     }
 
     /**
-     * Obtiene el primer elemento del array interno.
+     * Devuelve el primer elemento sin eliminarlo.
      *
-     * Este método devuelve el elemento almacenado en la primera posición
-     * del array. Si el array está vacío, se lanza una excepción.
+     * @return mixed Elemento en el índice 0.
      *
-     * @return mixed Primer elemento del array.
-     * @throws \OutOfBoundsException Si el array no contiene elementos.
+     * @throws \OutOfBoundsException Si la colección está vacía (código 400).
      */
     public function first(): mixed {
         if ($this->length === 0) {
@@ -186,13 +155,11 @@ abstract class FastArray implements IteratorAggregate {
     }
 
     /**
-     * Obtiene el último elemento del array interno.
+     * Devuelve el último elemento sin eliminarlo.
      *
-     * Este método devuelve el elemento almacenado en la última posición
-     * del array. Si el array está vacío, se lanza una excepción.
+     * @return mixed Elemento en el índice `$length - 1`.
      *
-     * @return mixed Último elemento del array.
-     * @throws \OutOfBoundsException Si el array no contiene elementos.
+     * @throws \OutOfBoundsException Si la colección está vacía (código 400).
      */
     public function last(): mixed {
         if ($this->length === 0) {
@@ -203,14 +170,11 @@ abstract class FastArray implements IteratorAggregate {
     }
 
     /**
-     * Extrae y devuelve el último elemento del array interno.
+     * Elimina y devuelve el último elemento con `array_pop`.
      *
-     * Este método elimina el último elemento almacenado en el array 
-     * y lo retorna. La longitud del array se ajusta automáticamente 
-     * al decrementar en una unidad.
+     * @return mixed Valor extraído.
      *
-     * @return mixed Último elemento eliminado y devuelto.
-     * @throws \OutOfBoundsException Si el array no contiene elementos.
+     * @throws \OutOfBoundsException Si la colección está vacía (código 400).
      */
     public function pop(): mixed {
         if ($this->length === 0) {
@@ -222,14 +186,13 @@ abstract class FastArray implements IteratorAggregate {
     }
 
     /**
-     * Extrae y devuelve el primer elemento del array interno.
+     * Elimina y devuelve el primer elemento con `array_shift`.
      *
-     * Este método elimina el primer elemento almacenado en el array 
-     * y lo retorna. La longitud del array se ajusta automáticamente 
-     * al decrementar en una unidad.
+     * Reindexa los índices numéricos restantes.
      *
-     * @return mixed Primer elemento eliminado y devuelto.
-     * @throws \OutOfBoundsException Si el array no contiene elementos.
+     * @return mixed Valor extraído.
+     *
+     * @throws \OutOfBoundsException Si la colección está vacía (código 400).
      */
     public function shift(): mixed {
         if ($this->length === 0) {
@@ -243,76 +206,64 @@ abstract class FastArray implements IteratorAggregate {
     }
 
     /**
-     * Devuelve un iterador para recorrer el array.
+     * Crea un `ArrayIterator` sobre el array interno.
      *
-     * @return \Traversable
+     * @return \Traversable<int, mixed>
      */
     public function get_iterator(): \Traversable {
         return new \ArrayIterator($this->data);
     }
 
     /**
-     * Devuelve un iterador para recorrer el array. Este método es parte de la interfaz IteratorAggregate, por
-     * lo que está utilizando `camelCase` en lugar de `snake_case`.
+     * Implementación de `IteratorAggregate` (convención `camelCase` de PHP).
      *
-     * @return \Traversable
+     * @return \Traversable<int, mixed>
      */
     public function getIterator(): \Traversable {
         return $this->get_iterator();
     }
 
     /**
-     * Modifica el array interno eliminando y/o reemplazando elementos, y devuelve los elementos eliminados.
+     * Elimina y/o reemplaza un tramo del array interno con `array_splice`.
      *
-     * Este método utiliza `array_splice` para:
-     * 1. Eliminar hasta `$length` elementos a partir del índice `$offset`.
-     * 2. Reemplazar los elementos eliminados con los contenidos de `$replacement`.
+     * Modifica `$this->data` in-place, recalcula `$length` con `count()` y devuelve
+     * los elementos eliminados en una nueva instancia de la subclase concreta.
      *
-     * La operación **modifica directamente el array interno** y reindexa los índices numéricos.
-     * Los elementos eliminados se devuelven como un **nuevo objeto FastArray**.
+     * @param int                $offset       Índice de inicio (negativo cuenta desde el final).
+     * @param int|null           $length       Cantidad a eliminar; `null` elimina hasta el final.
+     * @param array<mixed>|mixed $replacement  Valores de reemplazo; si no es array, se envuelve en uno.
      *
-     * @param int $offset Índice de inicio para la eliminación/reemplazo. Puede ser negativo para contar desde el final.
-     * @param int|null $length Número de elementos a eliminar. Si es `null`, elimina hasta el final del array.
-     * @param array<mixed>|mixed $replacement Elementos que reemplazarán a los eliminados. Si no es un array, se convierte automáticamente en uno.
-     *
-     * @return static Una nueva instancia de FastArray que contiene los elementos eliminados.
+     * @return static Nueva instancia con los elementos eliminados.
      *
      * @example
      * ```php
-     * $array = new FastArray([1, 2, 3, 4, 5]);
-     * $removed = $array->splide(1, 2, [8, 9]); // $array ahora: [1, 8, 9, 4, 5]
-     * print_r($removed->get());               // [2, 3]
+     * $array = new class([1, 2, 3, 4, 5]) extends FastArray {};
+     * $removed = $array->splide(1, 2, [8, 9]); // $array: [1, 8, 9, 4, 5]
+     * $removed->get();                          // [2, 3]
      * ```
      */
     public function splide(int $offset, ?int $length = null, mixed $replacement = []): static {
-        /** @var array $removed */
+        /** @var array<int, mixed> $removed */
         $removed = array_splice($this->data, $offset, $length, is_array($replacement) ? $replacement : [$replacement]);
         $this->length = count($this->data);
 
         return new static($removed);
     }
 
-
     /**
-     * Devuelve una porción del array interno sin modificarlo.
+     * Devuelve un subarray sin modificar la instancia actual (`array_slice`).
      *
-     * Utiliza `array_slice` para obtener un subarray a partir de `$offset` y con longitud `$length`.
-     * A diferencia de `splide`, **no modifica el array interno**, sino que devuelve una nueva instancia de FastArray
-     * que contiene únicamente los elementos seleccionados.
+     * @param int      $offset        Índice inicial (negativo cuenta desde el final).
+     * @param int|null $length        Cantidad de elementos; `null` hasta el final.
+     * @param bool     $preserve_keys Conserva índices originales si es `true`.
      *
-     * @param int $offset Índice inicial para la porción. Puede ser negativo para contar desde el final del array.
-     * @param int|null $length Número de elementos a incluir. Si es `null`, se seleccionan hasta el final del array.
-     * @param bool $preserve_keys Indica si se deben conservar los índices originales. Por defecto es `false`.
-     *
-     * @return static Una nueva instancia de FastArray que contiene la porción seleccionada.
+     * @return static Nueva instancia con la porción seleccionada.
      *
      * @example
-     * 
      * ```php
-     * $array = new FastArray([10, 20, 30, 40, 50]);
-     * $sub = $array->slice(1, 3);             // $sub contiene [20, 30, 40]
-     * print_r($array->get());                  // Array original permanece [10, 20, 30, 40, 50]
-     * $sub_preserved = $array->slice(1, 3, true); // Conserva índices: [1 => 20, 2 => 30, 3 => 40]
+     * $array = new class([10, 20, 30, 40, 50]) extends FastArray {};
+     * $sub = $array->slice(1, 3);              // [20, 30, 40]
+     * $array->get();                           // [10, 20, 30, 40, 50] sin cambios
      * ```
      */
     public function slice(int $offset, ?int $length = null, bool $preserve_keys = false): static {
@@ -320,21 +271,9 @@ abstract class FastArray implements IteratorAggregate {
     }
 
     /**
-     * Devuelve el contenido completo del array interno como un array crudo.
+     * Alias de {@see get()}: devuelve el array interno completo.
      *
-     * Este método proporciona acceso directo a los datos almacenados en la instancia,
-     * sin alterar el array original. Es útil cuando se necesita trabajar con los valores
-     * fuera de la clase, o pasarlos a funciones que requieren un array nativo de PHP.
-     *
-     * @method array<int,mixed> toArray()
-     *
-     * @return array<int,mixed> El array crudo que contiene todos los elementos internos.
-     *
-     * @example
-     * ```php
-     * $raw = $fastArray->toArray();
-     * print_r($raw);
-     * ```
+     * @return array<int, mixed>
      */
     public function to_array(): array {
         return $this->data;

@@ -1,0 +1,27 @@
+.phpdocumentor pre {
+    margin-bottom: var(--spacing-md);
+}
+
+.phpdocumentor-code {
+    font-family: var(--font-monospace);
+    background: var(--vp-c-bg-soft);
+    border: 1px solid var(--vp-c-divider);
+    border-radius: var(--border-radius-base-size);
+    font-size: 0.875em;
+    padding: var(--spacing-sm) var(--spacing-md);
+    width: 100%;
+    box-sizing: border-box;
+    color: var(--vp-c-text-1);
+}
+
+.phpdocumentor-code.-dark {
+    background: var(--vp-c-bg-mute);
+    color: var(--vp-c-text-1);
+    box-shadow: none;
+}
+
+pre > .phpdocumentor-code {
+    display: block;
+    white-space: pre;
+    overflow-x: auto;
+}

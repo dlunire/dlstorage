@@ -23,6 +23,8 @@
  * <https://www.gnu.org/licenses/>.
  */
 
+declare(strict_types=1);
+
 namespace DLStorage\Storage;
 
 use DLStorage\Errors\EncodeException;
@@ -30,38 +32,17 @@ use DLStorage\Traits\BinaryLengthTrait;
 use DLStorage\Traits\ForTrait;
 
 /**
- * Generación y manipulación de datos binarios con firmas en la cabecera del flujo de datos.
+ * Codificación y decodificación de datos mediante transformación con entropía.
  *
- * Esta clase proporciona una abstracción para la creación, codificación y
- * manipulación de estructuras binarias utilizadas por los componentes de
- * almacenamiento de DLStorage.
- *
- * Implementa algoritmos para la transformación de datos mediante entropía,
- * compactación de secuencias, reconstrucción de contenido binario y
- * generación de representaciones hexadecimal optimizadas, sirviendo como
- * clase base para los distintos adaptadores de almacenamiento del paquete.
- *
- * Forma parte del ecosistema **DLUnire Runtime**, proporcionando los
- * componentes fundamentales para la serialización, persistencia y
- * procesamiento eficiente de información binaria dentro de aplicaciones
- * desarrolladas sobre la plataforma.
- *
- * Características principales:
- *
- * - Codificación y decodificación de datos mediante entropía configurable.
- * - Manipulación de bloques binarios de longitud fija.
- * - Compactación y expansión de secuencias de relleno.
- * - Conversión entre datos binarios y representaciones hexadecimales.
- * - Base para adaptadores de almacenamiento binario personalizados.
+ * Cada byte de entrada se convierte en un bloque hexadecimal de 10 caracteres
+ * ({@see BinaryLengthTrait::to_hex40()}), opcionalmente alterado por una llave
+ * de entropía. Los bloques se concatenan y forman el payload de un archivo `.dlstorage`.
  *
  * @package    DLStorage\Storage
  * @version    v0.2.0
  * @license    AGPL-3.0-or-later
  * @author     David E. Luna M. <info@dlunire.dev>
  * @copyright  Copyright (c) 2026 David E. Luna M.
- *
- * @see        https://www.dlunire.dev DLUnire Runtime
- * @see        https://github.com/dlunire Ecosistema DLUnire
  *
  * @abstract
  */
@@ -71,65 +52,47 @@ abstract class Data {
     use BinaryLengthTrait;
 
     /**
-     * Reservado para extensiones futuras del recorrido de codificación.
+     * Reservado para extensiones futuras. No utilizado en v0.2.0.
      *
      * @var int
      */
     private int $last_offset = 0;
 
     /**
-     * Codifica la cadena de texto a otro formato utilizando una entropía opcional.
+     * Codifica una cadena de bytes en bloques hexadecimales concatenados.
      *
-     * El método transforma cada carácter de la cadena de entrada en una representación hexadecimal
-     * modificada por una suma acumulada basada en la entropía proporcionada y una función matemática
-     * con base en el índice del carácter y su valor.
+     * Recorre `$input` byte a byte con {@see ForTrait::foreach_string()}, aplica
+     * desplazamiento por entropía (`to_hex40`), sustituye `01` por `ffff` y compacta
+     * ceros iniciales con {@see compact_zero()}.
      *
-     * @param string $input Cadena de texto que se desea codificar.
-     * @param string|null $entropy Cadena opcional utilizada como entropía para alterar la codificación.
+     * @param string      $input   Datos crudos (texto o binario).
+     * @param string|null $entropy Llave opcional. Si es `null`, la suma base es 0.
      *
-     * @return string Retorna la cadena codificada como una representación hexadecimal modificada.
+     * @return string Cadena hexadecimal concatenada (múltiplos de 10 caracteres por bloque).
      */
     public function encode(string $input, ?string $entropy = null): string {
-        /** @var int|float $sum Suma acumulada derivada de los caracteres de la entropía. */
         $sum = 0;
-
-        /** @var string $string_data Cadena resultante tras la transformación. */
         $string_data = "";
         $this->set_entropy_value($sum, $entropy);
         $this->set_entropy($input, $string_data, $sum);
 
-
         return $string_data;
     }
 
-
     /**
-     * Decodifica un mensaje previamente codificado utilizando un esquema de entropía.
-     * 
-     * Toma una cadena de datos codificados y, si se proporciona la entropía utilizada durante 
-     * la codificación, intenta revertir la transformación para recuperar el mensaje original. Si la entropía 
-     * es incorrecta o si los datos han sido corrompidos, el método lanzará una excepción y si no logra
-     * revertir la codificación, devolverá datos corruptos.
+     * Decodifica una cadena previamente codificada con {@see encode()}.
      *
-     * @param string $encoded El contenido codificado que se va a decodificar.
-     * @param string|null $entropy La entropía que se utilizó durante la codificación, si está disponible.
-     *                             Si no se proporciona, el proceso de decodificación puede fallar si se requiere.
-     * 
-     * @return string La cadena decodificada, es decir, el mensaje original antes de la codificación.
-     * 
-     * @throws EncodeException Si la longitud del mensaje resultante no es un número par, lo que indica 
-     *                          que los datos podrían estar corruptos o que la entropía utilizada para la 
-     *                          codificación no es válida.
+     * 1. Restaura ceros compactados con {@see expand_zero()}.
+     * 2. Divide en bloques de 10 caracteres hex.
+     * 3. Revierte la entropía con {@see get_reverse_entropy()}.
+     * 4. Valida que la longitud UTF-8 del resultado sea par; si no, lanza excepción.
      *
-     * @note Este método asume que los datos codificados fueron segmentados en bloques de 10 bytes crudos 
-     *       y que cualquier adición de ceros al final del mensaje original fue tratada previamente.
-     * 
-     * @example
-     * try {
-     *     $decoded_message = $data->get_decode($encodedData, $entropyKey);
-     * } catch (EncodeException $e) {
-     *     echo "Error de decodificación: " . $e->getMessage();
-     * }
+     * @param string      $encoded Cadena hexadecimal producida por `encode()`.
+     * @param string|null $entropy Misma llave usada al codificar.
+     *
+     * @return string Cadena de bytes originales (caracteres de un solo byte).
+     *
+     * @throws EncodeException Si la longitud resultante es impar (entropía incorrecta o datos corruptos, código 403).
      */
     public function get_decode(string $encoded, ?string $entropy = null): string {
         $this->expand_zero($encoded);
@@ -138,10 +101,7 @@ abstract class Data {
 
         $value = $this->get_reverse_entropy($blocks, $entropy);
 
-        /** @var int $length */
         $length = mb_strlen($value, 'UTF-8');
-
-        /** @var bool $is_pair */
         $is_pair = ($length & 1) == 0;
 
         if (!$is_pair) {
@@ -152,32 +112,30 @@ abstract class Data {
     }
 
     /**
-     * Reconstruye y devuelve el contenido original a partir de una cadena codificada.
+     * Decodifica hexadecimal a binario.
      *
-     * La salida puede contener datos binarios o texto, dependiendo del contenido original.
-     * 
-     * @param string $encode  Cadena codificada en formato hexadecimal.
-     * @param string|null $entropy  Entropía utilizada durante la codificación, si corresponde.
-     * @return string  Contenido reconstruido en formato binario.
+     * Equivalente a `hex2bin(get_decode($encode, $entropy))`.
+     *
+     * @param string      $encode  Payload hexadecimal del archivo.
+     * @param string|null $entropy Llave de entropía usada al codificar.
+     *
+     * @return string Contenido binario original.
+     *
+     * @throws EncodeException Si la decodificación falla (propagada desde {@see get_decode()}).
      */
     public function get_content(string $encode, ?string $entropy = null): string {
         return hex2bin($this->get_decode($encode, $entropy));
     }
 
     /**
-     * Compacta una secuencia continua de ceros convirtiéndola en una representación hexadecimal.
+     * Compacta ceros iniciales reemplazándolos por el marcador `01`.
      *
-     * Detecta la primera secuencia de ceros consecutivos en la cadena de entrada y la
-     * reemplaza por una cadena de dos caracteres hexadecimales (`0x00`).
+     * Aplica `preg_replace("/^0+/", '01', $input)` sobre la cadena pasada por referencia.
+     * Si `preg_replace` falla, la cadena no se modifica.
      *
-     * Por ejemplo, una entrada como `"00000ABC"` devolverá `"01ABC"`
-     *
-     * @param string $input Cadena de texto a ser analizada y compactada.
-     *
-     * @return void
+     * @param string $input Cadena hexadecimal a compactar (por referencia).
      */
     protected function compact_zero(string &$input): void {
-        /** @var string|false $input Reemplazo de la secuencia de ceros por la longitud en hexadecimal. */
         $input = preg_replace("/^0+/", '01', $input);
 
         if (!is_string($input)) {
@@ -186,33 +144,13 @@ abstract class Data {
     }
 
     /**
-     * Revertir la compactación de ceros en una cadena de texto.
+     * Expande el marcador `01` restaurando bloques de ceros compactados.
      *
-     * Toma una cadena de texto que ha sido previamente compactada, es decir, donde las secuencias 
-     * de ceros consecutivos han sido sustituidas por el marcador especial "01". El proceso de compactación se 
-     * realiza normalmente para reducir el tamaño de los datos, pero al decodificar o procesar la información 
-     * nuevamente, es necesario restaurar los ceros a su forma original.
+     * Divide `$input` por `01`, descarta segmentos vacíos, reemplaza `ffff` por `01`
+     * en cada bloque y rellena cada uno a 10 caracteres con {@see get_padding_zero()}.
+     * El resultado reemplaza `$input` por referencia.
      *
-     * El método también maneja posibles transformaciones adicionales, como la restauración de valores "ffff" 
-     * a "01" dentro de los bloques de datos.
-     *
-     * @param string &$input Entrada que contiene la cadena compactada, la cual será modificada por el método 
-     *                       para restaurar los ceros originales. 
-     *                       Este parámetro se pasa por referencia y se actualizará con la cadena resultante.
-     * 
-     * @return void No retorna ningún valor. La cadena de entrada es modificada directamente.
-     * 
-     * @note Este proceso es necesario cuando los datos han sido compactados previamente y es esencial para 
-     *       restaurar su formato original antes de cualquier procesamiento adicional. Si la entrada contiene 
-     *       bloques de datos válidos, estos serán reconstruidos adecuadamente con ceros restaurados.
-     * 
-     * @example Ejemplo
-     * 
-     * ```
-     * $data = "01ABC01DE"; // Cadena compactada
-     * $data_processor->expand_zero($data);
-     * echo $data; // La cadena ahora tendrá los ceros restaurados.
-     * ```
+     * @param string $input Cadena compactada (por referencia).
      */
     public function expand_zero(string &$input): void {
         /** @var string[] $blocks */
@@ -222,7 +160,9 @@ abstract class Data {
         $buffer = [];
 
         foreach ($blocks as $block) {
-            if (!is_string($block) || empty(trim($block))) continue;
+            if (!is_string($block) || empty(trim($block))) {
+                continue;
+            }
             $block = str_replace("ffff", "01", $block);
             $buffer[] = $this->get_padding_zero($block);
         }
@@ -231,21 +171,12 @@ abstract class Data {
     }
 
     /**
-     * Rellena una secuencia hexadecimal con ceros hasta alcanzar 10 caracteres.
+     * Rellena una cadena hexadecimal hasta 10 caracteres.
      *
-     * Los bloques de codificación se segmentan en grupos de 10 caracteres hexadecimales
-     * (véase {@see get_decode()} con `str_split($encoded, 10)`).
+     * @param string $input Secuencia hexadecimal.
+     * @param bool   $right `false` (defecto): relleno izquierdo. `true`: relleno derecho.
      *
-     * Agrega ceros al principio o al final según `$right`. Por defecto rellena a la izquierda.
-     *
-     * @param string $input Secuencia hexadecimal a rellenar.
-     * @param bool   $right Si es `true`, rellena a la derecha; si es `false`, a la izquierda.
-     *
-     * @return string Secuencia hexadecimal de exactamente 10 caracteres.
-     *
-     * @example
-     * $padded = $this->get_padding_zero("123");          // Devuelve "0000000123"
-     * $padded_right = $this->get_padding_zero("123", true); // Devuelve "1230000000"
+     * @return string Cadena de exactamente 10 caracteres hex.
      */
     private function get_padding_zero(string $input, bool $right = false): string {
         return str_pad(
@@ -257,30 +188,15 @@ abstract class Data {
     }
 
     /**
-     * Establece y construye la cadena de datos a partir de la entropía proporcionada.
+     * Construye la cadena codificada procesando cada byte de `$input`.
      *
-     * Procesa la cadena de entrada (`$input`) aplicando un algoritmo basado en entropía, 
-     * el cual ajusta cada carácter de la cadena según un valor calculado a partir de su índice y la 
-     * entropía base (`$sum`). El resultado de este proceso es una cadena codificada que se almacena 
-     * en la variable `$string_data`.
+     * Por cada byte: calcula entropía con {@see BinaryLengthTrait::get_entropy()},
+     * convierte con `to_hex40()`, reemplaza `01` → `ffff`, compacta ceros y acumula
+     * el bloque en `$string_data`.
      *
-     * Para cada carácter de la entrada, se calcula un valor en función de la entropía y se convierte 
-     * a su representación hexadecimal. Además, se realizan transformaciones adicionales, como la 
-     * compactación de secuencias de ceros y la sustitución de ciertos valores (p. ej., `01` por `ffff`).
-     *
-     * El resultado final es una cadena procesada que tiene en cuenta la entropía y otras transformaciones 
-     * necesarias para su almacenamiento o manipulación.
-     *
-     * @param string $input Secuncia de entrada que será procesada y transformada. Se tratará como bytes crudos.
-     * @param string &$string_data Cadena de salida construida a partir de la entropía. Este parámetro se modifica por referencia.
-     * @param int|float $sum Valor base de la entropía. Determina cómo se ajusta cada valor durante el proceso. El valor predeterminado es 0.
-     *
-     * @return void
-     *
-     * @example
-     * // Construir la cadena a partir de un input y la entropía base.
-     * $data->set_entropy("Hello, World", $string_data, 5);
-     * echo $string_data;  // Resultado de la cadena transformada con la entropía aplicada.
+     * @param string       $input       Datos de entrada en bytes crudos.
+     * @param string       $string_data Acumulador de salida (por referencia).
+     * @param int|float    $sum         Valor base de entropía (0 si no se proporcionó llave).
      */
     private function set_entropy(string $input, string &$string_data, int|float $sum = 0): void {
 
@@ -289,10 +205,8 @@ abstract class Data {
 
         $this->foreach_string($input, function (int $byte, int $index) use ($sum, &$buffer) {
 
-            /** @var int $entropy */
             $entropy = $this->get_entropy($index, $sum);
 
-            /** @var string $current_data */
             $current_data = $this->to_hex40($byte, $entropy);
 
             $current_data = str_replace("01", "ffff", $current_data);
@@ -306,35 +220,18 @@ abstract class Data {
     }
 
     /**
-     * Revierte la entropía aplicada a los bloques y devuelve el valor original.
+     * Revierte la entropía de bloques hex de 10 caracteres.
      *
-     * Procesa los bloques de datos, revertiendo el efecto de la entropía aplicada previamente 
-     * para obtener la cadena original. Cada bloque de 40 bits es analizado y transformado utilizando el valor 
-     * de entropía proporcionado o el valor calculado, en caso de que no se pase explícitamente. Los bloques 
-     * se reordenan y se procesan para recuperar los datos antes de ser codificados con la entropía.
+     * Por cada bloque llama a {@see BinaryLengthTrait::from_hex40()} con su índice
+     * y la suma de entropía, concatenando los bytes resultantes.
      *
-     * El valor de la entropía puede ser proporcionado como un parámetro opcional, o en su defecto, se utilizará 
-     * el valor predeterminado. Este proceso implica aplicar un cálculo inverso de la entropía y reconstruir la 
-     * cadena original a partir de los bloques dados.
+     * @param string[]    $blocks  Bloques de 10 caracteres hex.
+     * @param string|null $entropy Llave usada al codificar; `null` deja suma en 0.
      *
-     * @param array $blocks Bloques de 40 bits que contienen los datos codificados, que serán procesados 
-     *                       para revertir la entropía.
-     * @param string|null $entropy (Opcional) Valor de entropía utilizado en la codificación. Si no se proporciona, 
-     *                             se utilizará un valor predeterminado o calculado automáticamente.
-     *
-     * @return string La cadena original obtenida después de revertir la entropía aplicada.
-     *
-     * @example Ejemplo
-     * ```
-     * // Revertir la entropía de una serie de bloques.
-     * $blocks = ["block1", "block2", "block3"];
-     * $original_data = $data->get_reverse_entropy($blocks, "entropy_value");
-     * echo $original_data;  // Resultado de la cadena original antes de la entropía.
-     * ```
+     * @return string Cadena de caracteres de un byte reconstruida.
      */
     private function get_reverse_entropy(array &$blocks, ?string $entropy = null): string {
 
-        /** @var int $sum */
         $sum = 0;
 
         $this->set_entropy_value($sum, $entropy);
@@ -350,38 +247,14 @@ abstract class Data {
     }
 
     /**
-     * Obtiene el código numérico de un carácter basado en su representación binaria hexadecimal,
-     * ajustado por su posición en la cadena.
+     * Calcula `hexdec(bin2hex($char)) + $index` para un carácter y su posición.
      *
-     * Este método toma un carácter de tipo string y calcula su valor numérico acumulado. Primero,
-     * convierte el carácter a su representación binaria en formato hexadecimal mediante `bin2hex()`, 
-     * luego convierte esta representación a un valor decimal con `hexdec()`. A continuación, se ajusta 
-     * este valor sumando el índice del carácter incrementado en 1.
+     * @internal No invocado por la biblioteca en v0.2.0. Reservado para uso futuro.
      *
-     * La operación realizada en este método permite obtener un valor de entropía numérica basado en el 
-     * valor binario del carácter, mientras que también toma en cuenta la posición del carácter en la 
-     * cadena, lo que lo hace útil para cálculos de entropía acumulada.
+     * @param string $char  Carácter de un byte.
+     * @param int    $index Índice en la cadena.
      *
-     * ### Fórmula aplicada:
-     * 
-     * Sea \( e_i \) un carácter en la cadena, su valor numérico ajustado será:
-     * 
-     * \[
-     * f(e_i, i) = \text{hexdec}(\text{bin2hex}(e_i)) + (i + 1)
-     * \]
-     * 
-     * Donde:
-     * - \( e_i \) es el carácter procesado.
-     * - \( i \) es el índice del carácter en la cadena.
-     * - La función \( f(e_i, i) \) representa el valor numérico ajustado del carácter, teniendo en cuenta su
-     *   valor binario y su posición en la cadena.
-     * 
-     * @param string $char  Carácter cuyo valor numérico se desea obtener.
-     * @param int    $index Índice del carácter dentro de la cadena de entropía.
-     *
-     * @return int Valor decimal: `hexdec(bin2hex($char)) + $index`.
-     *
-     * @internal Método auxiliar reservado; actualmente no es invocado por la biblioteca.
+     * @return int Valor numérico ajustado.
      */
     private function get_char_code(string $char, int $index): int {
         return hexdec(bin2hex($char)) + $index;

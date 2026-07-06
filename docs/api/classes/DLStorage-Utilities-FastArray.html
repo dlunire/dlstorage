@@ -1,10 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="utf-8">
+    <script>
+        (function () {
+            try {
+                var stored = localStorage.getItem('dlstorage-docs-theme');
+                var theme = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+                document.documentElement.setAttribute('data-theme', theme);
+            } catch (e) {
+                document.documentElement.setAttribute('data-theme', 'light');
+            }
+        })();
+    </script>
             <title>DLStorage API</title>
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="color-scheme" content="light dark">
     <base href="../">
     <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png"/>
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png"/>
@@ -12,12 +25,12 @@
     <link rel="apple-touch-icon" href="images/apple-touch-icon.png"/>
     <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="css/base.css">
-            <link rel="preconnect" href="https://fonts.gstatic.com">
-        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@100;200;300;400;600;700&display=swap" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="css/template.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0/css/all.min.css" integrity="sha256-ybRkN9dBjhcS2qrW1z+hfCxq+1aBdwyQM5wlQoQVt/0=" crossorigin="anonymous" />
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/themes/prism-okaidia.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/themes/prism.min.css" id="prism-theme-light">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" id="prism-theme-dark" disabled>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/line-numbers/prism-line-numbers.css">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/line-highlight/prism-line-highlight.css">
                 <script src="https://cdn.jsdelivr.net/npm/fuse.js@3.4.6"></script>
@@ -28,11 +41,18 @@
     </head>
 <body id="top">
     <header class="phpdocumentor-header phpdocumentor-section">
-    <h1 class="phpdocumentor-title"><a href="" class="phpdocumentor-title__link">DLStorage API</a></h1>
-    <input class="phpdocumentor-header__menu-button" type="checkbox" id="menu-button" name="menu-button" />
-    <label class="phpdocumentor-header__menu-icon" for="menu-button">
-        <i class="fas fa-bars"></i>
+    <h1 class="phpdocumentor-title">
+    <a href="" class="phpdocumentor-title__link">
+        <span class="phpdocumentor-title__brand">DLStorage</span>
+        <span class="dlstorage-version-badge">v0.2.0</span>
+    </a>
+</h1>    <input class="phpdocumentor-header__menu-button" type="checkbox" id="menu-button" name="menu-button" />
+    <label class="phpdocumentor-header__menu-icon" for="menu-button" aria-label="Abrir menú">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
     </label>
+    <div class="dlstorage-header-actions">
     <section data-search-form class="phpdocumentor-search">
     <label>
         <span class="visually-hidden">Search for</span>
@@ -44,12 +64,31 @@
     </label>
 </section>
 
-    <nav class="phpdocumentor-topnav">
+    <button
+        type="button"
+        class="dlstorage-theme-toggle"
+        data-theme-toggle
+        aria-pressed="false"
+        aria-label="Cambiar a modo oscuro"
+        title="Cambiar tema"
+    >
+        <span class="dlstorage-theme-toggle__icon dlstorage-theme-toggle__icon--light" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.75"/>
+                <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/>
+            </svg>
+        </span>
+        <span class="dlstorage-theme-toggle__icon dlstorage-theme-toggle__icon--dark" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M21 14.5A7.5 7.5 0 0 1 9.5 3 6.5 6.5 0 1 0 21 14.5Z" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"/>
+            </svg>
+        </span>
+    </button>
+</div>    <nav class="phpdocumentor-topnav">
     <ul class="phpdocumentor-topnav__menu">
         </ul>
 </nav>
 </header>
-
     <main class="phpdocumentor">
         <div class="phpdocumentor-section">
             <input class="phpdocumentor-sidebar__menu-button" type="checkbox" id="sidebar-button" name="sidebar-button" />
@@ -161,16 +200,16 @@
         <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Utilities/FastArray.php"><a href="files/src-utilities-fastarray.html"><abbr title="src/Utilities/FastArray.php">FastArray.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">50</span>
+    <span class="phpdocumentor-element-found-in__line">53</span>
 
     </aside>
 
-            <p class="phpdocumentor-summary">Colección de arrays con API orientada a métodos encadenables y seguimiento de longitud.</p>
+            <p class="phpdocumentor-summary">Colección indexada con API encadenable y contador de longitud explícito.</p>
 
 
-    <section class="phpdocumentor-description"><p>Implementa <code class="prettyprint">IteratorAggregate</code> para permitir iteración con <code class="prettyprint">foreach</code>. Los métodos
-públicos siguen la convención <code class="prettyprint">snake_case</code> de DLStorage, salvo <code class="prettyprint">getIterator()</code>
-requerido por la interfaz de PHP.</p>
+    <section class="phpdocumentor-description"><p>Mantiene un array interno y la propiedad <code class="prettyprint">$length</code> sincronizada con las
+operaciones de inserción y eliminación. Implementa <code class="prettyprint">IteratorAggregate</code> para
+<code class="prettyprint">foreach</code>; los métodos públicos usan <code class="prettyprint">snake_case</code>, salvo <code class="prettyprint">getIterator()</code>.</p>
 </section>
 
 
@@ -219,11 +258,20 @@ requerido por la interfaz de PHP.</p>
                                                                                                         
                                     </dd>
                                 <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">abstract</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                                                                                            <section class="phpdocumentor-description"><p>Debe extenderse para instanciar. Los métodos que devuelven <code class="prettyprint">static</code>
+crean instancias de la subclase concreta.</p>
+</section>
+
+                                    </dd>
+                                <dt class="phpdocumentor-tag-list__entry">
                 <span class="phpdocumentor-tag__name">note</span>
             </dt>
                             <dd class="phpdocumentor-tag-list__definition">
-                                                                                                            <section class="phpdocumentor-description"><p>Los métodos <code class="prettyprint">item</code>, <code class="prettyprint">first</code>, <code class="prettyprint">last</code>, <code class="prettyprint">pop</code> y <code class="prettyprint">shift</code> lanzan
-<abbr title="\OutOfBoundsException">OutOfBoundsException</abbr> ante índices inválidos o arrays vacíos.</p>
+                                                                                                            <section class="phpdocumentor-description"><p><code class="prettyprint">item</code>, <code class="prettyprint">first</code>, <code class="prettyprint">last</code>, <code class="prettyprint">pop</code> y <code class="prettyprint">shift</code> lanzan <abbr title="\OutOfBoundsException">OutOfBoundsException</abbr>
+con código <code class="prettyprint">400</code> si el índice es inválido o la colección está vacía.</p>
 </section>
 
                                     </dd>
@@ -263,14 +311,14 @@ requerido por la interfaz de PHP.</p>
     <span>
                         &nbsp;: array&lt;int, mixed&gt;            </span>
 </dt>
-<dd>Almacenamiento interno de elementos.</dd>
+<dd>Elementos almacenados con índices numéricos consecutivos.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -private">
     <a class="" href="classes/DLStorage-Utilities-FastArray.html#property_length">$length</a>
     <span>
                         &nbsp;: int            </span>
 </dt>
-<dd>Longitud del array.</dd>
+<dd>Número de elementos; se actualiza en cada mutación, no se infiere con `count()`.</dd>
 
     </dl>
 
@@ -285,113 +333,112 @@ requerido por la interfaz de PHP.</p>
     <span>
                                 &nbsp;: mixed    </span>
 </dt>
-<dd>Constructor que inicializa el array y su longitud.</dd>
+<dd>Inicializa la colección vacía y agrega los elementos de `$data`.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/DLStorage-Utilities-FastArray.html#method_add">add()</a>
     <span>
                                 &nbsp;: void    </span>
 </dt>
-<dd>Agrega múltiples elementos al array interno.</dd>
+<dd>Concatena los elementos de `$data` al final mediante `array_merge`.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/DLStorage-Utilities-FastArray.html#method_clear">clear()</a>
     <span>
                                 &nbsp;: void    </span>
 </dt>
-<dd>Elimina todos los elementos del array interno y reinicia su longitud.</dd>
+<dd>Vacía el array interno y restablece `$length` a 0.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/DLStorage-Utilities-FastArray.html#method_first">first()</a>
     <span>
                                 &nbsp;: mixed    </span>
 </dt>
-<dd>Obtiene el primer elemento del array interno.</dd>
+<dd>Devuelve el primer elemento sin eliminarlo.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/DLStorage-Utilities-FastArray.html#method_get">get()</a>
     <span>
                                 &nbsp;: array&lt;int, mixed&gt;    </span>
 </dt>
-<dd>Obtiene el array interno de datos sin modificaciones.</dd>
+<dd>Devuelve el array interno.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/DLStorage-Utilities-FastArray.html#method_get_iterator">get_iterator()</a>
     <span>
-                                &nbsp;: <abbr title="\Traversable">Traversable</abbr>    </span>
+                                &nbsp;: <abbr title="\Traversable">Traversable</abbr>&lt;int, mixed&gt;    </span>
 </dt>
-<dd>Devuelve un iterador para recorrer el array.</dd>
+<dd>Crea un `ArrayIterator` sobre el array interno.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/DLStorage-Utilities-FastArray.html#method_getIterator">getIterator()</a>
     <span>
-                                &nbsp;: <abbr title="\Traversable">Traversable</abbr>    </span>
+                                &nbsp;: <abbr title="\Traversable">Traversable</abbr>&lt;int, mixed&gt;    </span>
 </dt>
-<dd>Devuelve un iterador para recorrer el array. Este método es parte de la interfaz IteratorAggregate, por
-lo que está utilizando `camelCase` en lugar de `snake_case`.</dd>
+<dd>Implementación de `IteratorAggregate` (convención `camelCase` de PHP).</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/DLStorage-Utilities-FastArray.html#method_item">item()</a>
     <span>
                                 &nbsp;: mixed    </span>
 </dt>
-<dd>Obtiene un elemento específico del array interno por su índice.</dd>
+<dd>Obtiene el elemento en el índice indicado.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/DLStorage-Utilities-FastArray.html#method_last">last()</a>
     <span>
                                 &nbsp;: mixed    </span>
 </dt>
-<dd>Obtiene el último elemento del array interno.</dd>
+<dd>Devuelve el último elemento sin eliminarlo.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/DLStorage-Utilities-FastArray.html#method_length">length()</a>
     <span>
                                 &nbsp;: int    </span>
 </dt>
-<dd>Obtiene la cantidad de elementos almacenados en el array interno.</dd>
+<dd>Devuelve el número de elementos registrado en `$length`.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/DLStorage-Utilities-FastArray.html#method_pop">pop()</a>
     <span>
                                 &nbsp;: mixed    </span>
 </dt>
-<dd>Extrae y devuelve el último elemento del array interno.</dd>
+<dd>Elimina y devuelve el último elemento con `array_pop`.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/DLStorage-Utilities-FastArray.html#method_push">push()</a>
     <span>
                                 &nbsp;: void    </span>
 </dt>
-<dd>Agrega un nuevo elemento al final del array interno, preservando el orden de inserción.</dd>
+<dd>Añade un elemento al final e incrementa `$length`.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/DLStorage-Utilities-FastArray.html#method_shift">shift()</a>
     <span>
                                 &nbsp;: mixed    </span>
 </dt>
-<dd>Extrae y devuelve el primer elemento del array interno.</dd>
+<dd>Elimina y devuelve el primer elemento con `array_shift`.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/DLStorage-Utilities-FastArray.html#method_slice">slice()</a>
     <span>
                                 &nbsp;: static    </span>
 </dt>
-<dd>Devuelve una porción del array interno sin modificarlo.</dd>
+<dd>Devuelve un subarray sin modificar la instancia actual (`array_slice`).</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/DLStorage-Utilities-FastArray.html#method_splide">splide()</a>
     <span>
                                 &nbsp;: static    </span>
 </dt>
-<dd>Modifica el array interno eliminando y/o reemplazando elementos, y devuelve los elementos eliminados.</dd>
+<dd>Elimina y/o reemplaza un tramo del array interno con `array_splice`.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/DLStorage-Utilities-FastArray.html#method_to_array">to_array()</a>
     <span>
                                 &nbsp;: array&lt;int, mixed&gt;    </span>
 </dt>
-<dd>Devuelve el contenido completo del array interno como un array crudo.</dd>
+<dd>Alias de {@see get()}: devuelve el array interno completo.</dd>
 
     </dl>
 
@@ -423,11 +470,11 @@ lo que está utilizando `camelCase` en lugar de `snake_case`.</dd>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Utilities/FastArray.php"><a href="files/src-utilities-fastarray.html"><abbr title="src/Utilities/FastArray.php">FastArray.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">56</span>
+    <span class="phpdocumentor-element-found-in__line">59</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Almacenamiento interno de elementos.</p>
+        <p class="phpdocumentor-summary">Elementos almacenados con índices numéricos consecutivos.</p>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
@@ -461,11 +508,11 @@ lo que está utilizando `camelCase` en lugar de `snake_case`.</dd>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Utilities/FastArray.php"><a href="files/src-utilities-fastarray.html"><abbr title="src/Utilities/FastArray.php">FastArray.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">63</span>
+    <span class="phpdocumentor-element-found-in__line">64</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Longitud del array.</p>
+        <p class="phpdocumentor-summary">Número de elementos; se actualiza en cada mutación, no se infiere con `count()`.</p>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
@@ -504,15 +551,15 @@ lo que está utilizando `camelCase` en lugar de `snake_case`.</dd>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Utilities/FastArray.php"><a href="files/src-utilities-fastarray.html"><abbr title="src/Utilities/FastArray.php">FastArray.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">70</span>
+    <span class="phpdocumentor-element-found-in__line">71</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Constructor que inicializa el array y su longitud.</p>
+        <p class="phpdocumentor-summary">Inicializa la colección vacía y agrega los elementos de `$data`.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">__construct</span><span>(</span><span class="phpdocumentor-signature__argument"><span>[</span><span class="phpdocumentor-signature__argument__type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$data</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">[]</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+                    <span class="phpdocumentor-signature__name">__construct</span><span>(</span><span class="phpdocumentor-signature__argument"><span>[</span><span class="phpdocumentor-signature__argument__type">array&lt;int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$data</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">[]</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -522,10 +569,12 @@ lo que está utilizando `camelCase` en lugar de `snake_case`.</dd>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
                 <span class="phpdocumentor-argument-list__argument__name">$data</span>
-                : <span class="phpdocumentor-argument-list__argument__type">array&lt;string|int, mixed&gt;</span>
+                : <span class="phpdocumentor-argument-list__argument__type">array&lt;int, mixed&gt;</span>
                  = <span class="phpdocumentor-argument-list__argument__default-value">[]</span>            </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                
+                    <section class="phpdocumentor-description"><p>Elementos iniciales (puede ser vacío).</p>
+</section>
+
             </dd>
             </dl>
 
@@ -549,11 +598,11 @@ lo que está utilizando `camelCase` en lugar de `snake_case`.</dd>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Utilities/FastArray.php"><a href="files/src-utilities-fastarray.html"><abbr title="src/Utilities/FastArray.php">FastArray.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">147</span>
+    <span class="phpdocumentor-element-found-in__line">119</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Agrega múltiples elementos al array interno.</p>
+        <p class="phpdocumentor-summary">Concatena los elementos de `$data` al final mediante `array_merge`.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -562,9 +611,7 @@ lo que está utilizando `camelCase` en lugar de `snake_case`.</dd>
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Combina los elementos del array proporcionado con los ya existentes,
-manteniendo el orden de inserción. Si el conjunto está vacío,
-la operación no tiene efecto.</p>
+        <section class="phpdocumentor-description"><p>No hace nada si <code class="prettyprint">$data</code> está vacío.</p>
 </section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
@@ -574,7 +621,7 @@ la operación no tiene efecto.</p>
                 : <span class="phpdocumentor-argument-list__argument__type">array&lt;int, mixed&gt;</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Conjunto de elementos a agregar.</p>
+                    <section class="phpdocumentor-description"><p>Elementos a agregar.</p>
 </section>
 
             </dd>
@@ -600,11 +647,11 @@ la operación no tiene efecto.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Utilities/FastArray.php"><a href="files/src-utilities-fastarray.html"><abbr title="src/Utilities/FastArray.php">FastArray.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">102</span>
+    <span class="phpdocumentor-element-found-in__line">89</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Elimina todos los elementos del array interno y reinicia su longitud.</p>
+        <p class="phpdocumentor-summary">Vacía el array interno y restablece `$length` a 0.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -613,28 +660,9 @@ la operación no tiene efecto.</p>
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Este método deja la estructura en su estado inicial, con un array vacío y
-la propiedad $length restablecida a <code class="prettyprint">0</code>.</p>
-</section>
-
     
     
-    <h5 class="phpdocumentor-tag-list__heading" id="method_clear_tags">
-        Tags
-        <a href="classes/DLStorage-Utilities-FastArray.html#method_clear_tags" class="headerlink"><i class="fas fa-link"></i></a>
-
-    </h5>
-    <dl class="phpdocumentor-tag-list">
-                    <dt class="phpdocumentor-tag-list__entry">
-                <span class="phpdocumentor-tag__name">note</span>
-            </dt>
-                            <dd class="phpdocumentor-tag-list__definition">
-                                                                                                            <section class="phpdocumentor-description"><p>A diferencia de la reasignación manual del array, este método asegura
-la consistencia entre los datos internos y la longitud registrada.</p>
-</section>
-
-                                    </dd>
-                        </dl>
+    
 
         
     
@@ -654,11 +682,11 @@ la consistencia entre los datos internos y la longitud registrada.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Utilities/FastArray.php"><a href="files/src-utilities-fastarray.html"><abbr title="src/Utilities/FastArray.php">FastArray.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">181</span>
+    <span class="phpdocumentor-element-found-in__line">150</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Obtiene el primer elemento del array interno.</p>
+        <p class="phpdocumentor-summary">Devuelve el primer elemento sin eliminarlo.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -667,10 +695,7 @@ la consistencia entre los datos internos y la longitud registrada.</p>
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Este método devuelve el elemento almacenado en la primera posición
-del array. Si el array está vacío, se lanza una excepción.</p>
-</section>
-
+    
     
     
     <h5 class="phpdocumentor-tag-list__heading" id="method_first_tags">
@@ -684,7 +709,7 @@ del array. Si el array está vacío, se lanza una excepción.</p>
             </dt>
                             <dd class="phpdocumentor-tag-list__definition">
                                                                 <span class="phpdocumentor-tag-link"><abbr title="\OutOfBoundsException">OutOfBoundsException</abbr></span>
-                                                                                        <section class="phpdocumentor-description"><p>Si el array no contiene elementos.</p>
+                                                                                        <section class="phpdocumentor-description"><p>Si la colección está vacía (código 400).</p>
 </section>
 
                                     </dd>
@@ -696,7 +721,7 @@ del array. Si el array está vacío, se lanza una excepción.</p>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">mixed</span>
                     &mdash;
-                <section class="phpdocumentor-description"><p>Primer elemento del array.</p>
+                <section class="phpdocumentor-description"><p>Elemento en el índice 0.</p>
 </section>
 
             </section>
@@ -716,11 +741,11 @@ del array. Si el array está vacío, se lanza una excepción.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Utilities/FastArray.php"><a href="files/src-utilities-fastarray.html"><abbr title="src/Utilities/FastArray.php">FastArray.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">119</span>
+    <span class="phpdocumentor-element-found-in__line">99</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Obtiene el array interno de datos sin modificaciones.</p>
+        <p class="phpdocumentor-summary">Devuelve el array interno.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -729,29 +754,9 @@ del array. Si el array está vacío, se lanza una excepción.</p>
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Devuelve la representación cruda del array utilizado internamente
-para almacenar los elementos. La estructura mantiene el orden de
-inserción y puede contener valores de cualquier tipo.</p>
-</section>
-
     
     
-    <h5 class="phpdocumentor-tag-list__heading" id="method_get_tags">
-        Tags
-        <a href="classes/DLStorage-Utilities-FastArray.html#method_get_tags" class="headerlink"><i class="fas fa-link"></i></a>
-
-    </h5>
-    <dl class="phpdocumentor-tag-list">
-                    <dt class="phpdocumentor-tag-list__entry">
-                <span class="phpdocumentor-tag__name">note</span>
-            </dt>
-                            <dd class="phpdocumentor-tag-list__definition">
-                                                                                                            <section class="phpdocumentor-description"><p>Devuelve la referencia interna; las modificaciones externas al array
-retornado afectan el estado de la instancia.</p>
-</section>
-
-                                    </dd>
-                        </dl>
+    
 
         
     
@@ -759,7 +764,7 @@ retornado afectan el estado de la instancia.</p>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">array&lt;int, mixed&gt;</span>
                     &mdash;
-                <section class="phpdocumentor-description"><p>Array crudo de elementos almacenados.</p>
+                <section class="phpdocumentor-description"><p>Copia del array (semántica copy-on-write de PHP al modificar).</p>
 </section>
 
             </section>
@@ -779,15 +784,15 @@ retornado afectan el estado de la instancia.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Utilities/FastArray.php"><a href="files/src-utilities-fastarray.html"><abbr title="src/Utilities/FastArray.php">FastArray.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">250</span>
+    <span class="phpdocumentor-element-found-in__line">213</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Devuelve un iterador para recorrer el array.</p>
+        <p class="phpdocumentor-summary">Crea un `ArrayIterator` sobre el array interno.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">get_iterator</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type"><abbr title="\Traversable">Traversable</abbr></span></code>
+                    <span class="phpdocumentor-signature__name">get_iterator</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type"><abbr title="\Traversable">Traversable</abbr>&lt;int, mixed&gt;</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -800,7 +805,7 @@ retornado afectan el estado de la instancia.</p>
     
             <section>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
-        <span class="phpdocumentor-signature__response_type"><abbr title="\Traversable">Traversable</abbr></span>
+        <span class="phpdocumentor-signature__response_type"><abbr title="\Traversable">Traversable</abbr>&lt;int, mixed&gt;</span>
             </section>
 
 </article>
@@ -818,16 +823,15 @@ retornado afectan el estado de la instancia.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Utilities/FastArray.php"><a href="files/src-utilities-fastarray.html"><abbr title="src/Utilities/FastArray.php">FastArray.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">260</span>
+    <span class="phpdocumentor-element-found-in__line">222</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Devuelve un iterador para recorrer el array. Este método es parte de la interfaz IteratorAggregate, por
-lo que está utilizando `camelCase` en lugar de `snake_case`.</p>
+        <p class="phpdocumentor-summary">Implementación de `IteratorAggregate` (convención `camelCase` de PHP).</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">getIterator</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type"><abbr title="\Traversable">Traversable</abbr></span></code>
+                    <span class="phpdocumentor-signature__name">getIterator</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type"><abbr title="\Traversable">Traversable</abbr>&lt;int, mixed&gt;</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -840,7 +844,7 @@ lo que está utilizando `camelCase` en lugar de `snake_case`.</p>
     
             <section>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
-        <span class="phpdocumentor-signature__response_type"><abbr title="\Traversable">Traversable</abbr></span>
+        <span class="phpdocumentor-signature__response_type"><abbr title="\Traversable">Traversable</abbr>&lt;int, mixed&gt;</span>
             </section>
 
 </article>
@@ -858,11 +862,11 @@ lo que está utilizando `camelCase` en lugar de `snake_case`.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Utilities/FastArray.php"><a href="files/src-utilities-fastarray.html"><abbr title="src/Utilities/FastArray.php">FastArray.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">165</span>
+    <span class="phpdocumentor-element-found-in__line">136</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Obtiene un elemento específico del array interno por su índice.</p>
+        <p class="phpdocumentor-summary">Obtiene el elemento en el índice indicado.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -871,10 +875,7 @@ lo que está utilizando `camelCase` en lugar de `snake_case`.</p>
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Valida que el índice se encuentre dentro de los límites del array.
-En caso contrario, lanza una excepción.</p>
-</section>
-
+    
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
@@ -882,7 +883,7 @@ En caso contrario, lanza una excepción.</p>
                 : <span class="phpdocumentor-argument-list__argument__type">int</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Índice del elemento a recuperar (basado en cero).</p>
+                    <section class="phpdocumentor-description"><p>Posición basada en cero (<code class="prettyprint">0</code> … <code class="prettyprint">$length - 1</code>).</p>
 </section>
 
             </dd>
@@ -900,7 +901,7 @@ En caso contrario, lanza una excepción.</p>
             </dt>
                             <dd class="phpdocumentor-tag-list__definition">
                                                                 <span class="phpdocumentor-tag-link"><abbr title="\OutOfBoundsException">OutOfBoundsException</abbr></span>
-                                                                                        <section class="phpdocumentor-description"><p>Si el índice está fuera de los límites del array.</p>
+                                                                                        <section class="phpdocumentor-description"><p>Si <code class="prettyprint">$index</code> está fuera de rango (código 400).</p>
 </section>
 
                                     </dd>
@@ -912,7 +913,7 @@ En caso contrario, lanza una excepción.</p>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">mixed</span>
                     &mdash;
-                <section class="phpdocumentor-description"><p>Elemento almacenado en la posición indicada.</p>
+                <section class="phpdocumentor-description"><p>Elemento en esa posición.</p>
 </section>
 
             </section>
@@ -932,11 +933,11 @@ En caso contrario, lanza una excepción.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Utilities/FastArray.php"><a href="files/src-utilities-fastarray.html"><abbr title="src/Utilities/FastArray.php">FastArray.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">197</span>
+    <span class="phpdocumentor-element-found-in__line">164</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Obtiene el último elemento del array interno.</p>
+        <p class="phpdocumentor-summary">Devuelve el último elemento sin eliminarlo.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -945,10 +946,7 @@ En caso contrario, lanza una excepción.</p>
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Este método devuelve el elemento almacenado en la última posición
-del array. Si el array está vacío, se lanza una excepción.</p>
-</section>
-
+    
     
     
     <h5 class="phpdocumentor-tag-list__heading" id="method_last_tags">
@@ -962,7 +960,7 @@ del array. Si el array está vacío, se lanza una excepción.</p>
             </dt>
                             <dd class="phpdocumentor-tag-list__definition">
                                                                 <span class="phpdocumentor-tag-link"><abbr title="\OutOfBoundsException">OutOfBoundsException</abbr></span>
-                                                                                        <section class="phpdocumentor-description"><p>Si el array no contiene elementos.</p>
+                                                                                        <section class="phpdocumentor-description"><p>Si la colección está vacía (código 400).</p>
 </section>
 
                                     </dd>
@@ -974,7 +972,7 @@ del array. Si el array está vacío, se lanza una excepción.</p>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">mixed</span>
                     &mdash;
-                <section class="phpdocumentor-description"><p>Último elemento del array.</p>
+                <section class="phpdocumentor-description"><p>Elemento en el índice <code class="prettyprint">$length - 1</code>.</p>
 </section>
 
             </section>
@@ -994,11 +992,11 @@ del array. Si el array está vacío, se lanza una excepción.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Utilities/FastArray.php"><a href="files/src-utilities-fastarray.html"><abbr title="src/Utilities/FastArray.php">FastArray.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">133</span>
+    <span class="phpdocumentor-element-found-in__line">108</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Obtiene la cantidad de elementos almacenados en el array interno.</p>
+        <p class="phpdocumentor-summary">Devuelve el número de elementos registrado en `$length`.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -1007,11 +1005,7 @@ del array. Si el array está vacío, se lanza una excepción.</p>
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Devuelve el número total de elementos actualmente contenidos
-en la colección, manteniendo coherencia con las operaciones
-de inserción y eliminación realizadas.</p>
-</section>
-
+    
     
     
 
@@ -1021,7 +1015,7 @@ de inserción y eliminación realizadas.</p>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">int</span>
                     &mdash;
-                <section class="phpdocumentor-description"><p>Número de elementos en el array interno.</p>
+                <section class="phpdocumentor-description"><p>Cantidad actual de elementos.</p>
 </section>
 
             </section>
@@ -1041,11 +1035,11 @@ de inserción y eliminación realizadas.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Utilities/FastArray.php"><a href="files/src-utilities-fastarray.html"><abbr title="src/Utilities/FastArray.php">FastArray.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">215</span>
+    <span class="phpdocumentor-element-found-in__line">179</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Extrae y devuelve el último elemento del array interno.</p>
+        <p class="phpdocumentor-summary">Elimina y devuelve el último elemento con `array_pop`.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -1054,11 +1048,7 @@ de inserción y eliminación realizadas.</p>
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Este método elimina el último elemento almacenado en el array
-y lo retorna. La longitud del array se ajusta automáticamente
-al decrementar en una unidad.</p>
-</section>
-
+    
     
     
     <h5 class="phpdocumentor-tag-list__heading" id="method_pop_tags">
@@ -1072,7 +1062,7 @@ al decrementar en una unidad.</p>
             </dt>
                             <dd class="phpdocumentor-tag-list__definition">
                                                                 <span class="phpdocumentor-tag-link"><abbr title="\OutOfBoundsException">OutOfBoundsException</abbr></span>
-                                                                                        <section class="phpdocumentor-description"><p>Si el array no contiene elementos.</p>
+                                                                                        <section class="phpdocumentor-description"><p>Si la colección está vacía (código 400).</p>
 </section>
 
                                     </dd>
@@ -1084,7 +1074,7 @@ al decrementar en una unidad.</p>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">mixed</span>
                     &mdash;
-                <section class="phpdocumentor-description"><p>Último elemento eliminado y devuelto.</p>
+                <section class="phpdocumentor-description"><p>Valor extraído.</p>
 </section>
 
             </section>
@@ -1104,11 +1094,11 @@ al decrementar en una unidad.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Utilities/FastArray.php"><a href="files/src-utilities-fastarray.html"><abbr title="src/Utilities/FastArray.php">FastArray.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">86</span>
+    <span class="phpdocumentor-element-found-in__line">81</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Agrega un nuevo elemento al final del array interno, preservando el orden de inserción.</p>
+        <p class="phpdocumentor-summary">Añade un elemento al final e incrementa `$length`.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -1125,30 +1115,13 @@ al decrementar en una unidad.</p>
                 : <span class="phpdocumentor-argument-list__argument__type">mixed</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Valor que será insertado en el array.
-Se permiten valores de cualquier tipo de dato admitido por PHP.</p>
+                    <section class="phpdocumentor-description"><p>Valor a insertar.</p>
 </section>
 
             </dd>
             </dl>
 
     
-    <h5 class="phpdocumentor-tag-list__heading" id="method_push_tags">
-        Tags
-        <a href="classes/DLStorage-Utilities-FastArray.html#method_push_tags" class="headerlink"><i class="fas fa-link"></i></a>
-
-    </h5>
-    <dl class="phpdocumentor-tag-list">
-                    <dt class="phpdocumentor-tag-list__entry">
-                <span class="phpdocumentor-tag__name">note</span>
-            </dt>
-                            <dd class="phpdocumentor-tag-list__definition">
-                                                                                                            <section class="phpdocumentor-description"><p>Este método incrementa automáticamente la propiedad $length para reflejar
-el tamaño actualizado del array.</p>
-</section>
-
-                                    </dd>
-                        </dl>
 
         
     
@@ -1168,11 +1141,11 @@ el tamaño actualizado del array.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Utilities/FastArray.php"><a href="files/src-utilities-fastarray.html"><abbr title="src/Utilities/FastArray.php">FastArray.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">234</span>
+    <span class="phpdocumentor-element-found-in__line">197</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Extrae y devuelve el primer elemento del array interno.</p>
+        <p class="phpdocumentor-summary">Elimina y devuelve el primer elemento con `array_shift`.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -1181,9 +1154,7 @@ el tamaño actualizado del array.</p>
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Este método elimina el primer elemento almacenado en el array
-y lo retorna. La longitud del array se ajusta automáticamente
-al decrementar en una unidad.</p>
+        <section class="phpdocumentor-description"><p>Reindexa los índices numéricos restantes.</p>
 </section>
 
     
@@ -1199,7 +1170,7 @@ al decrementar en una unidad.</p>
             </dt>
                             <dd class="phpdocumentor-tag-list__definition">
                                                                 <span class="phpdocumentor-tag-link"><abbr title="\OutOfBoundsException">OutOfBoundsException</abbr></span>
-                                                                                        <section class="phpdocumentor-description"><p>Si el array no contiene elementos.</p>
+                                                                                        <section class="phpdocumentor-description"><p>Si la colección está vacía (código 400).</p>
 </section>
 
                                     </dd>
@@ -1211,7 +1182,7 @@ al decrementar en una unidad.</p>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">mixed</span>
                     &mdash;
-                <section class="phpdocumentor-description"><p>Primer elemento eliminado y devuelto.</p>
+                <section class="phpdocumentor-description"><p>Valor extraído.</p>
 </section>
 
             </section>
@@ -1231,11 +1202,11 @@ al decrementar en una unidad.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Utilities/FastArray.php"><a href="files/src-utilities-fastarray.html"><abbr title="src/Utilities/FastArray.php">FastArray.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">318</span>
+    <span class="phpdocumentor-element-found-in__line">269</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Devuelve una porción del array interno sin modificarlo.</p>
+        <p class="phpdocumentor-summary">Devuelve un subarray sin modificar la instancia actual (`array_slice`).</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -1244,11 +1215,7 @@ al decrementar en una unidad.</p>
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Utiliza <code class="prettyprint">array_slice</code> para obtener un subarray a partir de <code class="prettyprint">$offset</code> y con longitud <code class="prettyprint">$length</code>.
-A diferencia de <code class="prettyprint">splide</code>, <strong>no modifica el array interno</strong>, sino que devuelve una nueva instancia de FastArray
-que contiene únicamente los elementos seleccionados.</p>
-</section>
-
+    
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
@@ -1256,7 +1223,7 @@ que contiene únicamente los elementos seleccionados.</p>
                 : <span class="phpdocumentor-argument-list__argument__type">int</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Índice inicial para la porción. Puede ser negativo para contar desde el final del array.</p>
+                    <section class="phpdocumentor-description"><p>Índice inicial (negativo cuenta desde el final).</p>
 </section>
 
             </dd>
@@ -1265,7 +1232,7 @@ que contiene únicamente los elementos seleccionados.</p>
                 : <span class="phpdocumentor-argument-list__argument__type">int|null</span>
                  = <span class="phpdocumentor-argument-list__argument__default-value">null</span>            </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Número de elementos a incluir. Si es <code class="prettyprint">null</code>, se seleccionan hasta el final del array.</p>
+                    <section class="phpdocumentor-description"><p>Cantidad de elementos; <code class="prettyprint">null</code> hasta el final.</p>
 </section>
 
             </dd>
@@ -1274,7 +1241,7 @@ que contiene únicamente los elementos seleccionados.</p>
                 : <span class="phpdocumentor-argument-list__argument__type">bool</span>
                  = <span class="phpdocumentor-argument-list__argument__default-value">false</span>            </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Indica si se deben conservar los índices originales. Por defecto es <code class="prettyprint">false</code>.</p>
+                    <section class="phpdocumentor-description"><p>Conserva índices originales si es <code class="prettyprint">true</code>.</p>
 </section>
 
             </dd>
@@ -1291,10 +1258,9 @@ que contiene únicamente los elementos seleccionados.</p>
                 <span class="phpdocumentor-tag__name">example</span>
             </dt>
                             <dd class="phpdocumentor-tag-list__definition">
-                                                                                                            <section class="phpdocumentor-description"><pre class="prettyprint"><code class="language-php">$array = new FastArray([10, 20, 30, 40, 50]);
-$sub = $array-&gt;slice(1, 3);             // $sub contiene [20, 30, 40]
-print_r($array-&gt;get());                  // Array original permanece [10, 20, 30, 40, 50]
-$sub_preserved = $array-&gt;slice(1, 3, true); // Conserva índices: [1 =&gt; 20, 2 =&gt; 30, 3 =&gt; 40]
+                                                                                                            <section class="phpdocumentor-description"><pre class="prettyprint"><code class="language-php">$array = new class([10, 20, 30, 40, 50]) extends FastArray };
+$sub = $array-&gt;slice(1, 3);              // [20, 30, 40]
+$array-&gt;get();                           // [10, 20, 30, 40, 50] sin cambios
 </code></pre>
 </section>
 
@@ -1307,7 +1273,7 @@ $sub_preserved = $array-&gt;slice(1, 3, true); // Conserva índices: [1 =&gt; 20
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">static</span>
                     &mdash;
-                <section class="phpdocumentor-description"><p>Una nueva instancia de FastArray que contiene la porción seleccionada.</p>
+                <section class="phpdocumentor-description"><p>Nueva instancia con la porción seleccionada.</p>
 </section>
 
             </section>
@@ -1327,11 +1293,11 @@ $sub_preserved = $array-&gt;slice(1, 3, true); // Conserva índices: [1 =&gt; 20
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Utilities/FastArray.php"><a href="files/src-utilities-fastarray.html"><abbr title="src/Utilities/FastArray.php">FastArray.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">287</span>
+    <span class="phpdocumentor-element-found-in__line">245</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Modifica el array interno eliminando y/o reemplazando elementos, y devuelve los elementos eliminados.</p>
+        <p class="phpdocumentor-summary">Elimina y/o reemplaza un tramo del array interno con `array_splice`.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -1340,13 +1306,8 @@ $sub_preserved = $array-&gt;slice(1, 3, true); // Conserva índices: [1 =&gt; 20
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Este método utiliza <code class="prettyprint">array_splice</code> para:</p>
-<ol>
-<li>Eliminar hasta <code class="prettyprint">$length</code> elementos a partir del índice <code class="prettyprint">$offset</code>.</li>
-<li>Reemplazar los elementos eliminados con los contenidos de <code class="prettyprint">$replacement</code>.</li>
-</ol>
-<p>La operación <strong>modifica directamente el array interno</strong> y reindexa los índices numéricos.
-Los elementos eliminados se devuelven como un <strong>nuevo objeto FastArray</strong>.</p>
+        <section class="phpdocumentor-description"><p>Modifica <code class="prettyprint">$this-&gt;data</code> in-place, recalcula <code class="prettyprint">$length</code> con <code class="prettyprint">count()</code> y devuelve
+los elementos eliminados en una nueva instancia de la subclase concreta.</p>
 </section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
@@ -1356,7 +1317,7 @@ Los elementos eliminados se devuelven como un <strong>nuevo objeto FastArray</st
                 : <span class="phpdocumentor-argument-list__argument__type">int</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Índice de inicio para la eliminación/reemplazo. Puede ser negativo para contar desde el final.</p>
+                    <section class="phpdocumentor-description"><p>Índice de inicio (negativo cuenta desde el final).</p>
 </section>
 
             </dd>
@@ -1365,7 +1326,7 @@ Los elementos eliminados se devuelven como un <strong>nuevo objeto FastArray</st
                 : <span class="phpdocumentor-argument-list__argument__type">int|null</span>
                  = <span class="phpdocumentor-argument-list__argument__default-value">null</span>            </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Número de elementos a eliminar. Si es <code class="prettyprint">null</code>, elimina hasta el final del array.</p>
+                    <section class="phpdocumentor-description"><p>Cantidad a eliminar; <code class="prettyprint">null</code> elimina hasta el final.</p>
 </section>
 
             </dd>
@@ -1374,7 +1335,7 @@ Los elementos eliminados se devuelven como un <strong>nuevo objeto FastArray</st
                 : <span class="phpdocumentor-argument-list__argument__type">array&lt;string|int, mixed&gt;|mixed</span>
                  = <span class="phpdocumentor-argument-list__argument__default-value">[]</span>            </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Elementos que reemplazarán a los eliminados. Si no es un array, se convierte automáticamente en uno.</p>
+                    <section class="phpdocumentor-description"><p>Valores de reemplazo; si no es array, se envuelve en uno.</p>
 </section>
 
             </dd>
@@ -1391,9 +1352,9 @@ Los elementos eliminados se devuelven como un <strong>nuevo objeto FastArray</st
                 <span class="phpdocumentor-tag__name">example</span>
             </dt>
                             <dd class="phpdocumentor-tag-list__definition">
-                                                                                                            <section class="phpdocumentor-description"><pre class="prettyprint"><code class="language-php">$array = new FastArray([1, 2, 3, 4, 5]);
-$removed = $array-&gt;splide(1, 2, [8, 9]); // $array ahora: [1, 8, 9, 4, 5]
-print_r($removed-&gt;get());               // [2, 3]
+                                                                                                            <section class="phpdocumentor-description"><pre class="prettyprint"><code class="language-php">$array = new class([1, 2, 3, 4, 5]) extends FastArray };
+$removed = $array-&gt;splide(1, 2, [8, 9]); // $array: [1, 8, 9, 4, 5]
+$removed-&gt;get();                          // [2, 3]
 </code></pre>
 </section>
 
@@ -1406,7 +1367,7 @@ print_r($removed-&gt;get());               // [2, 3]
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">static</span>
                     &mdash;
-                <section class="phpdocumentor-description"><p>Una nueva instancia de FastArray que contiene los elementos eliminados.</p>
+                <section class="phpdocumentor-description"><p>Nueva instancia con los elementos eliminados.</p>
 </section>
 
             </section>
@@ -1426,11 +1387,11 @@ print_r($removed-&gt;get());               // [2, 3]
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Utilities/FastArray.php"><a href="files/src-utilities-fastarray.html"><abbr title="src/Utilities/FastArray.php">FastArray.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">339</span>
+    <span class="phpdocumentor-element-found-in__line">278</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Devuelve el contenido completo del array interno como un array crudo.</p>
+        <p class="phpdocumentor-summary">Alias de {@see get()}: devuelve el array interno completo.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -1439,40 +1400,15 @@ print_r($removed-&gt;get());               // [2, 3]
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Este método proporciona acceso directo a los datos almacenados en la instancia,
-sin alterar el array original. Es útil cuando se necesita trabajar con los valores
-fuera de la clase, o pasarlos a funciones que requieren un array nativo de PHP.</p>
-</section>
-
     
     
-    <h5 class="phpdocumentor-tag-list__heading" id="method_to_array_tags">
-        Tags
-        <a href="classes/DLStorage-Utilities-FastArray.html#method_to_array_tags" class="headerlink"><i class="fas fa-link"></i></a>
-
-    </h5>
-    <dl class="phpdocumentor-tag-list">
-                    <dt class="phpdocumentor-tag-list__entry">
-                <span class="phpdocumentor-tag__name">example</span>
-            </dt>
-                            <dd class="phpdocumentor-tag-list__definition">
-                                                                                                            <section class="phpdocumentor-description"><pre class="prettyprint"><code class="language-php">$raw = $fastArray-&gt;toArray();
-print_r($raw);
-</code></pre>
-</section>
-
-                                    </dd>
-                        </dl>
+    
 
         
     
             <section>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">array&lt;int, mixed&gt;</span>
-                    &mdash;
-                <section class="phpdocumentor-description"><p>El array crudo que contiene todos los elementos internos.</p>
-</section>
-
             </section>
 
 </article>

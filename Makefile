@@ -1,3 +1,5 @@
+.PHONY: main docs docs-clean
+
 main:
 	php -S localhost:4000 -t public/
 

@@ -29,25 +29,23 @@ use RuntimeException;
 use Throwable;
 
 /**
- * Excepción para errores de codificación y decodificación con entropía.
+ * Excepción de fallo en decodificación con entropía.
  *
- * Se lanza cuando la decodificación produce un resultado inválido, por ejemplo
- * cuando la longitud del mensaje recuperado no es par (entropía incorrecta o
- * datos corruptos).
+ * Lanzada por {@see \DLStorage\Storage\Data::get_decode()} cuando la longitud
+ * del resultado no es par (código 403).
  *
- * @package     DLStorage\Errors
- * @version     v0.2.0
- * @author      David E. Luna M. <info@dlunire.dev>
- * @copyright   Copyright (c) 2026 David E. Luna M.
- * @license     AGPL-3.0-or-later
- *
- * @see \DLStorage\Storage\Data::get_decode()
+ * @package   DLStorage\Errors
+ * @version   v0.2.0
+ * @license   AGPL-3.0-or-later
+ * @author    David E. Luna M. <info@dlunire.dev>
+ * @copyright Copyright (c) 2026 David E. Luna M.
  */
 final class EncodeException extends RuntimeException {
+
     /**
-     * @param string         $message  Mensaje descriptivo del error.
-     * @param int            $code     Código de error HTTP semántico (por defecto 500).
-     * @param Throwable|null $previous Excepción anterior encadenada, si existe.
+     * @param string         $message  Descripción del error.
+     * @param int            $code     Código semántico (por defecto 500; `get_decode` usa 403).
+     * @param Throwable|null $previous Excepción encadenada.
      */
     public function __construct(string $message, int $code = 500, ?Throwable $previous = null) {
         parent::__construct($message, $code, $previous);

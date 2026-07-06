@@ -1,0 +1,36 @@
+.phpdocumentor-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    max-width: var(--container-width);
+    margin: 0 auto;
+}
+
+@media (min-width: {{ breakpoints['md'] }}) {
+    .phpdocumentor-section {
+        flex-wrap: nowrap;
+        align-items: flex-start;
+    }
+}
+
+.phpdocumentor-column.-three {
+    width: 100%;
+}
+
+.phpdocumentor-column.-nine {
+    width: 100%;
+    flex: 1;
+    min-width: 0;
+}
+
+@media (min-width: {{ breakpoints['md'] }}) {
+    .phpdocumentor-column.-three {
+        width: 272px;
+        flex-shrink: 0;
+    }
+
+    .phpdocumentor-column.-nine {
+        width: auto;
+        padding-left: var(--spacing-xl);
+    }
+}

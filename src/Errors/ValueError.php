@@ -28,16 +28,15 @@ namespace DLStorage\Errors;
 use RuntimeException;
 
 /**
- * Excepción para valores de entrada inválidos en operaciones de DLStorage.
+ * Excepción genérica para valores de entrada inválidos.
  *
- * Clase de error genérica disponible para validaciones de parámetros.
- * Actualmente no es lanzada internamente por la biblioteca.
+ * Disponible para validaciones externas. No es lanzada internamente en v0.2.0.
  *
- * @package     DLStorage\Errors
- * @version     v0.2.0
- * @author      David E. Luna M. <info@dlunire.dev>
- * @copyright   Copyright (c) 2026 David E. Luna M.
- * @license     AGPL-3.0-or-later
+ * @package   DLStorage\Errors
+ * @version   v0.2.0
+ * @license   AGPL-3.0-or-later
+ * @author    David E. Luna M. <info@dlunire.dev>
+ * @copyright Copyright (c) 2026 David E. Luna M.
  */
 final class ValueError extends RuntimeException {
 }

@@ -1,10 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="utf-8">
+    <script>
+        (function () {
+            try {
+                var stored = localStorage.getItem('dlstorage-docs-theme');
+                var theme = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+                document.documentElement.setAttribute('data-theme', theme);
+            } catch (e) {
+                document.documentElement.setAttribute('data-theme', 'light');
+            }
+        })();
+    </script>
             <title>DLStorage API</title>
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="color-scheme" content="light dark">
     <base href="../">
     <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png"/>
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png"/>
@@ -12,12 +25,12 @@
     <link rel="apple-touch-icon" href="images/apple-touch-icon.png"/>
     <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="css/base.css">
-            <link rel="preconnect" href="https://fonts.gstatic.com">
-        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@100;200;300;400;600;700&display=swap" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="css/template.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0/css/all.min.css" integrity="sha256-ybRkN9dBjhcS2qrW1z+hfCxq+1aBdwyQM5wlQoQVt/0=" crossorigin="anonymous" />
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/themes/prism-okaidia.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/themes/prism.min.css" id="prism-theme-light">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" id="prism-theme-dark" disabled>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/line-numbers/prism-line-numbers.css">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/line-highlight/prism-line-highlight.css">
                 <script src="https://cdn.jsdelivr.net/npm/fuse.js@3.4.6"></script>
@@ -28,11 +41,18 @@
     </head>
 <body id="top">
     <header class="phpdocumentor-header phpdocumentor-section">
-    <h1 class="phpdocumentor-title"><a href="" class="phpdocumentor-title__link">DLStorage API</a></h1>
-    <input class="phpdocumentor-header__menu-button" type="checkbox" id="menu-button" name="menu-button" />
-    <label class="phpdocumentor-header__menu-icon" for="menu-button">
-        <i class="fas fa-bars"></i>
+    <h1 class="phpdocumentor-title">
+    <a href="" class="phpdocumentor-title__link">
+        <span class="phpdocumentor-title__brand">DLStorage</span>
+        <span class="dlstorage-version-badge">v0.2.0</span>
+    </a>
+</h1>    <input class="phpdocumentor-header__menu-button" type="checkbox" id="menu-button" name="menu-button" />
+    <label class="phpdocumentor-header__menu-icon" for="menu-button" aria-label="Abrir menú">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
     </label>
+    <div class="dlstorage-header-actions">
     <section data-search-form class="phpdocumentor-search">
     <label>
         <span class="visually-hidden">Search for</span>
@@ -44,12 +64,31 @@
     </label>
 </section>
 
-    <nav class="phpdocumentor-topnav">
+    <button
+        type="button"
+        class="dlstorage-theme-toggle"
+        data-theme-toggle
+        aria-pressed="false"
+        aria-label="Cambiar a modo oscuro"
+        title="Cambiar tema"
+    >
+        <span class="dlstorage-theme-toggle__icon dlstorage-theme-toggle__icon--light" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.75"/>
+                <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/>
+            </svg>
+        </span>
+        <span class="dlstorage-theme-toggle__icon dlstorage-theme-toggle__icon--dark" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M21 14.5A7.5 7.5 0 0 1 9.5 3 6.5 6.5 0 1 0 21 14.5Z" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"/>
+            </svg>
+        </span>
+    </button>
+</div>    <nav class="phpdocumentor-topnav">
     <ul class="phpdocumentor-topnav__menu">
         </ul>
 </nav>
 </header>
-
     <main class="phpdocumentor">
         <div class="phpdocumentor-section">
             <input class="phpdocumentor-sidebar__menu-button" type="checkbox" id="sidebar-button" name="sidebar-button" />
@@ -140,39 +179,13 @@
         <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Traits/ForTrait.php"><a href="files/src-traits-fortrait.html"><abbr title="src/Traits/ForTrait.php">ForTrait.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">71</span>
+    <span class="phpdocumentor-element-found-in__line">39</span>
 
     </aside>
 
-            <p class="phpdocumentor-summary">Trait ForTrait</p>
+            <p class="phpdocumentor-summary">Iteración secuencial sobre cadenas y arreglos mediante callbacks.</p>
 
 
-    <section class="phpdocumentor-description"><p>Proporciona una abstracción reutilizable del bucle <code class="prettyprint">for</code> para recorrer cadenas de texto o arreglos
-y ejecutar un <code class="prettyprint">callback</code> sobre cada elemento. Diseñado para ofrecer una forma más legible y declarativa
-de iterar datos secuenciales.</p>
-<h3>Ejemplo de uso con cadena (equivalente a un bucle <code class="prettyprint">for</code> clásico)</h3>
-<pre class="prettyprint"><code class="language-php">&lt;?php
-$entropy = &quot;ABC123&quot;;
-$sum = 0;
-
-// Forma clásica
-for ($i = 0; $i &lt; strlen($entropy); ++$i) {
-    $sum += intval(mb_ord($entropy[$i]));
-}
-
-// Con ForTrait
-$this-&gt;foreach($entropy, function (string $char) use (&amp;$sum) {
-    $sum += intval(mb_ord($char));
-});
-</code></pre>
-<h3>Ejemplo de uso con arreglo:</h3>
-<pre class="prettyprint"><code class="language-php">&lt;?php
-$items = ['a', 'b', 'c'];
-$this-&gt;foreach($items, function ($item) {
-    echo $item . PHP_EOL;
-});
-</code></pre>
-</section>
 
 
     <h5 class="phpdocumentor-tag-list__heading" id="tags">
@@ -243,14 +256,14 @@ $this-&gt;foreach($items, function ($item) {
     <span>
                                 &nbsp;: void    </span>
 </dt>
-<dd>Itera sobre una cadena de caracteres o un arreglo, ejecutando un callback por cada elemento.</dd>
+<dd>Itera sobre una cadena o arreglo invocando `$callback` por cada posición.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -protected">
     <a class="" href="classes/DLStorage-Traits-ForTrait.html#method_foreach_string">foreach_string()</a>
     <span>
                                 &nbsp;: void    </span>
 </dt>
-<dd>Itera sobre cada byte de una cadena de texto en su representación binaria.</dd>
+<dd>Itera sobre cada byte de una cadena binaria.</dd>
 
     </dl>
 
@@ -281,11 +294,11 @@ $this-&gt;foreach($items, function ($item) {
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Traits/ForTrait.php"><a href="files/src-traits-fortrait.html"><abbr title="src/Traits/ForTrait.php">ForTrait.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">102</span>
+    <span class="phpdocumentor-element-found-in__line">50</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Itera sobre una cadena de caracteres o un arreglo, ejecutando un callback por cada elemento.</p>
+        <p class="phpdocumentor-summary">Itera sobre una cadena o arreglo invocando `$callback` por cada posición.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -294,28 +307,8 @@ $this-&gt;foreach($items, function ($item) {
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Este método proporciona una forma unificada de recorrer secuencialmente estructuras lineales
-(cadenas o arreglos). Para cada carácter (en cadenas) o elemento (en arreglos), se ejecuta
-una función de devolución de llamada proporcionada por el usuario. La función recibe el valor
-actual, su índice y la estructura completa como argumentos.</p>
-<h3>Comportamiento:</h3>
-<ul>
-<li>Si <code class="prettyprint">$data</code> es una cadena, se itera carácter por carácter usando índices numéricos.
-<blockquote>
-<p>⚠️ Esto no es seguro para cadenas multibyte (UTF-8) con caracteres especiales. Utiliza <code class="prettyprint">mb_*</code> si es necesario.</p>
-</blockquote>
-</li>
-<li>Si <code class="prettyprint">$data</code> es un arreglo, se itera elemento por elemento por posición numérica.</li>
-</ul>
-<h3>Ejemplo de uso:</h3>
-<pre class="prettyprint"><code class="language-php">$this-&gt;foreach(['a', 'b', 'c'], function ($value, $index, $all) {
-    echo &quot;Elemento #{$index}: {$value}\n&quot;;
-});
-
-$this-&gt;foreach(&quot;XYZ&quot;, function ($char, $i) {
-    echo &quot;Carácter {$i}: {$char}\n&quot;;
-});
-</code></pre>
+        <section class="phpdocumentor-description"><p>El callback recibe: <code class="prettyprint">($data[$index], $index, $data)</code>.
+Para cadenas usa <code class="prettyprint">strlen()</code> (no seguro para UTF-8 multibyte).</p>
 </section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
@@ -325,7 +318,7 @@ $this-&gt;foreach(&quot;XYZ&quot;, function ($char, $i) {
                 : <span class="phpdocumentor-argument-list__argument__type">string|array&lt;string|int, mixed&gt;</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Datos a iterar. Puede ser una cadena (<code class="prettyprint">string</code>) o un arreglo de cualquier tipo.</p>
+                    <section class="phpdocumentor-description"><p>Cadena o arreglo indexado numéricamente.</p>
 </section>
 
             </dd>
@@ -334,8 +327,7 @@ $this-&gt;foreach(&quot;XYZ&quot;, function ($char, $i) {
                 : <span class="phpdocumentor-argument-list__argument__type">callable</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Función anónima a ejecutar por cada carácter o elemento.
-Recibe tres parámetros: <code class="prettyprint">mixed $value</code>, <code class="prettyprint">int $index</code>, <code class="prettyprint">string|array $original</code>.</p>
+                    <section class="phpdocumentor-description"><p><code class="prettyprint">function(mixed $value, int $index, string|array $original): void</code></p>
 </section>
 
             </dd>
@@ -345,15 +337,7 @@ Recibe tres parámetros: <code class="prettyprint">mixed $value</code>, <code cl
 
         
     
-            <section>
-        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
-        <span class="phpdocumentor-signature__response_type">void</span>
-                    &mdash;
-                <section class="phpdocumentor-description"><p>No devuelve ningún valor; opera por efectos colaterales del callback.</p>
-</section>
-
-            </section>
-
+    
 </article>
                     <article
         class="phpdocumentor-element
@@ -369,11 +353,11 @@ Recibe tres parámetros: <code class="prettyprint">mixed $value</code>, <code cl
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="src/Traits/ForTrait.php"><a href="files/src-traits-fortrait.html"><abbr title="src/Traits/ForTrait.php">ForTrait.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">133</span>
+    <span class="phpdocumentor-element-found-in__line">67</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Itera sobre cada byte de una cadena de texto en su representación binaria.</p>
+        <p class="phpdocumentor-summary">Itera sobre cada byte de una cadena binaria.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">protected</span>
@@ -382,15 +366,8 @@ Recibe tres parámetros: <code class="prettyprint">mixed $value</code>, <code cl
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Esta función convierte la cadena de entrada en una secuencia de bytes (valores enteros entre 0 y 255)
-utilizando codificación binaria sin firmar. Por cada byte iterado, se invoca la función de devolución
-de llamada proporcionada por el usuario, a la cual se le pasan el byte actual, su índice dentro de la
-secuencia y el arreglo completo de bytes.</p>
-<h3>Ejemplo de uso:</h3>
-<pre class="prettyprint"><code class="language-php">$this-&gt;foreach_string(&quot;ABC&quot;, function ($byte, $index, $bytes) {
-    echo &quot;Byte en posición {$index}: {$byte}\n&quot;;
-});
-</code></pre>
+        <section class="phpdocumentor-description"><p>Descompone <code class="prettyprint">$input</code> con <code class="prettyprint">unpack(&quot;C*&quot;, $input)</code> y ejecuta el callback
+por cada byte: <code class="prettyprint">($byte, $index, $bytes)</code>.</p>
 </section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
@@ -400,7 +377,7 @@ secuencia y el arreglo completo de bytes.</p>
                 : <span class="phpdocumentor-argument-list__argument__type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Cadena de entrada a ser analizada como secuencia de bytes.</p>
+                    <section class="phpdocumentor-description"><p>Cadena binaria.</p>
 </section>
 
             </dd>
@@ -409,8 +386,7 @@ secuencia y el arreglo completo de bytes.</p>
                 : <span class="phpdocumentor-argument-list__argument__type">callable</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Función anónima (closure) que se ejecuta por cada byte.
-Recibe tres parámetros: <code class="prettyprint">int $byte</code>, <code class="prettyprint">int $index</code>, <code class="prettyprint">int[] $bytes</code>.</p>
+                    <section class="phpdocumentor-description"><p><code class="prettyprint">function(int $byte, int $index, int[] $bytes): void</code></p>
 </section>
 
             </dd>
@@ -420,15 +396,7 @@ Recibe tres parámetros: <code class="prettyprint">int $byte</code>, <code class
 
         
     
-            <section>
-        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
-        <span class="phpdocumentor-signature__response_type">void</span>
-                    &mdash;
-                <section class="phpdocumentor-description"><p>No retorna ningún valor. Ejecuta el callback por efecto colateral.</p>
-</section>
-
-            </section>
-
+    
 </article>
             </section>
 

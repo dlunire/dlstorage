@@ -3,7 +3,7 @@ Search.appendIndex(
                 {
             "fqsen": "\\DLStorage\\Errors\\EncodeException",
             "name": "EncodeException",
-            "summary": "Excepci\u00F3n\u0020para\u0020errores\u0020de\u0020codificaci\u00F3n\u0020y\u0020decodificaci\u00F3n\u0020con\u0020entrop\u00EDa.",
+            "summary": "Excepci\u00F3n\u0020de\u0020fallo\u0020en\u0020decodificaci\u00F3n\u0020con\u0020entrop\u00EDa.",
             "url": "classes/DLStorage-Errors-EncodeException.html"
         },                {
             "fqsen": "\\DLStorage\\Errors\\EncodeException\u003A\u003A__construct\u0028\u0029",
@@ -13,97 +13,107 @@ Search.appendIndex(
         },                {
             "fqsen": "\\DLStorage\\Errors\\StorageException",
             "name": "StorageException",
-            "summary": "Excepci\u00F3n\u0020para\u0020errores\u0020de\u0020almacenamiento,\u0020lectura\u0020de\u0020archivos\u0020y\u0020validaci\u00F3n\u0020de\u0020formato.",
+            "summary": "Excepci\u00F3n\u0020de\u0020operaciones\u0020de\u0020almacenamiento\u0020y\u0020E\/S\u0020de\u0020archivos.",
             "url": "classes/DLStorage-Errors-StorageException.html"
         },                {
             "fqsen": "\\DLStorage\\Errors\\StorageException\u003A\u003A__construct\u0028\u0029",
             "name": "__construct",
-            "summary": "Constructor\u0020personalizado\u0020para\u0020StorageException.",
+            "summary": "",
             "url": "classes/DLStorage-Errors-StorageException.html#method___construct"
         },                {
             "fqsen": "\\DLStorage\\Errors\\ValueError",
             "name": "ValueError",
-            "summary": "Excepci\u00F3n\u0020para\u0020valores\u0020de\u0020entrada\u0020inv\u00E1lidos\u0020en\u0020operaciones\u0020de\u0020DLStorage.",
+            "summary": "Excepci\u00F3n\u0020gen\u00E9rica\u0020para\u0020valores\u0020de\u0020entrada\u0020inv\u00E1lidos.",
             "url": "classes/DLStorage-Errors-ValueError.html"
         },                {
             "fqsen": "\\DLStorage\\Storage\\Data",
             "name": "Data",
-            "summary": "Generaci\u00F3n\u0020y\u0020manipulaci\u00F3n\u0020de\u0020datos\u0020binarios\u0020con\u0020firmas\u0020en\u0020la\u0020cabecera\u0020del\u0020flujo\u0020de\u0020datos.",
+            "summary": "Codificaci\u00F3n\u0020y\u0020decodificaci\u00F3n\u0020de\u0020datos\u0020mediante\u0020transformaci\u00F3n\u0020con\u0020entrop\u00EDa.",
             "url": "classes/DLStorage-Storage-Data.html"
         },                {
             "fqsen": "\\DLStorage\\Storage\\Data\u003A\u003Aencode\u0028\u0029",
             "name": "encode",
-            "summary": "Codifica\u0020la\u0020cadena\u0020de\u0020texto\u0020a\u0020otro\u0020formato\u0020utilizando\u0020una\u0020entrop\u00EDa\u0020opcional.",
+            "summary": "Codifica\u0020una\u0020cadena\u0020de\u0020bytes\u0020en\u0020bloques\u0020hexadecimales\u0020concatenados.",
             "url": "classes/DLStorage-Storage-Data.html#method_encode"
         },                {
             "fqsen": "\\DLStorage\\Storage\\Data\u003A\u003Aget_decode\u0028\u0029",
             "name": "get_decode",
-            "summary": "Decodifica\u0020un\u0020mensaje\u0020previamente\u0020codificado\u0020utilizando\u0020un\u0020esquema\u0020de\u0020entrop\u00EDa.",
+            "summary": "Decodifica\u0020una\u0020cadena\u0020previamente\u0020codificada\u0020con\u0020\u007B\u0040see\u0020encode\u0028\u0029\u007D.",
             "url": "classes/DLStorage-Storage-Data.html#method_get_decode"
         },                {
             "fqsen": "\\DLStorage\\Storage\\Data\u003A\u003Aget_content\u0028\u0029",
             "name": "get_content",
-            "summary": "Reconstruye\u0020y\u0020devuelve\u0020el\u0020contenido\u0020original\u0020a\u0020partir\u0020de\u0020una\u0020cadena\u0020codificada.",
+            "summary": "Decodifica\u0020hexadecimal\u0020a\u0020binario.",
             "url": "classes/DLStorage-Storage-Data.html#method_get_content"
         },                {
             "fqsen": "\\DLStorage\\Storage\\Data\u003A\u003Acompact_zero\u0028\u0029",
             "name": "compact_zero",
-            "summary": "Compacta\u0020una\u0020secuencia\u0020continua\u0020de\u0020ceros\u0020convirti\u00E9ndola\u0020en\u0020una\u0020representaci\u00F3n\u0020hexadecimal.",
+            "summary": "Compacta\u0020ceros\u0020iniciales\u0020reemplaz\u00E1ndolos\u0020por\u0020el\u0020marcador\u0020\u006001\u0060.",
             "url": "classes/DLStorage-Storage-Data.html#method_compact_zero"
         },                {
             "fqsen": "\\DLStorage\\Storage\\Data\u003A\u003Aexpand_zero\u0028\u0029",
             "name": "expand_zero",
-            "summary": "Revertir\u0020la\u0020compactaci\u00F3n\u0020de\u0020ceros\u0020en\u0020una\u0020cadena\u0020de\u0020texto.",
+            "summary": "Expande\u0020el\u0020marcador\u0020\u006001\u0060\u0020restaurando\u0020bloques\u0020de\u0020ceros\u0020compactados.",
             "url": "classes/DLStorage-Storage-Data.html#method_expand_zero"
         },                {
             "fqsen": "\\DLStorage\\Storage\\Data\u003A\u003Aget_padding_zero\u0028\u0029",
             "name": "get_padding_zero",
-            "summary": "Rellena\u0020una\u0020secuencia\u0020hexadecimal\u0020con\u0020ceros\u0020hasta\u0020alcanzar\u002010\u0020caracteres.",
+            "summary": "Rellena\u0020una\u0020cadena\u0020hexadecimal\u0020hasta\u002010\u0020caracteres.",
             "url": "classes/DLStorage-Storage-Data.html#method_get_padding_zero"
         },                {
             "fqsen": "\\DLStorage\\Storage\\Data\u003A\u003Aset_entropy\u0028\u0029",
             "name": "set_entropy",
-            "summary": "Establece\u0020y\u0020construye\u0020la\u0020cadena\u0020de\u0020datos\u0020a\u0020partir\u0020de\u0020la\u0020entrop\u00EDa\u0020proporcionada.",
+            "summary": "Construye\u0020la\u0020cadena\u0020codificada\u0020procesando\u0020cada\u0020byte\u0020de\u0020\u0060\u0024input\u0060.",
             "url": "classes/DLStorage-Storage-Data.html#method_set_entropy"
         },                {
             "fqsen": "\\DLStorage\\Storage\\Data\u003A\u003Aget_reverse_entropy\u0028\u0029",
             "name": "get_reverse_entropy",
-            "summary": "Revierte\u0020la\u0020entrop\u00EDa\u0020aplicada\u0020a\u0020los\u0020bloques\u0020y\u0020devuelve\u0020el\u0020valor\u0020original.",
+            "summary": "Revierte\u0020la\u0020entrop\u00EDa\u0020de\u0020bloques\u0020hex\u0020de\u002010\u0020caracteres.",
             "url": "classes/DLStorage-Storage-Data.html#method_get_reverse_entropy"
         },                {
             "fqsen": "\\DLStorage\\Storage\\Data\u003A\u003A\u0024last_offset",
             "name": "last_offset",
-            "summary": "Reservado\u0020para\u0020extensiones\u0020futuras\u0020del\u0020recorrido\u0020de\u0020codificaci\u00F3n.",
+            "summary": "Reservado\u0020para\u0020extensiones\u0020futuras.\u0020No\u0020utilizado\u0020en\u0020v0.2.0.",
             "url": "classes/DLStorage-Storage-Data.html#property_last_offset"
         },                {
             "fqsen": "\\DLStorage\\Storage\\DataStorage",
             "name": "DataStorage",
-            "summary": "Abstracci\u00F3n\u0020base\u0020para\u0020sistemas\u0020de\u0020almacenamiento\u0020persistente.",
+            "summary": "Capa\u0020intermedia\u0020que\u0020combina\u0020codificaci\u00F3n\u0020\u0028\u007B\u0040see\u0020Data\u007D\u0029\u0020con\u0020rutas\u0020de\u0020archivo\u0020\u0028\u007B\u0040see\u0020StorageTrait\u007D\u0029.",
             "url": "classes/DLStorage-Storage-DataStorage.html"
         },                {
             "fqsen": "\\DLStorage\\Storage\\SaveData",
             "name": "SaveData",
-            "summary": "Implementa\u0020los\u0020mecanismos\u0020de\u0020persistencia\u0020binaria\u0020administrados\u0020por\u0020DLStorage.",
+            "summary": "Persistencia\u0020de\u0020archivos\u0020en\u0020formato\u0020binario\u0020\u0060.dlstorage\u0060.",
             "url": "classes/DLStorage-Storage-SaveData.html"
         },                {
             "fqsen": "\\DLStorage\\Storage\\SaveData\u003A\u003Asave_data\u0028\u0029",
             "name": "save_data",
-            "summary": "Guarda\u0020la\u0020informaci\u00F3n\u0020transformada\u0020en\u0020un\u0020archivo\u0020binario\u0020con\u0020encabezado\u0020estructurado.",
+            "summary": "Codifica\u0020y\u0020persiste\u0020datos\u0020en\u0020un\u0020archivo\u0020\u0060.dlstorage\u0060.",
             "url": "classes/DLStorage-Storage-SaveData.html#method_save_data"
+        },                {
+            "fqsen": "\\DLStorage\\Storage\\SaveData\u003A\u003Aread_storage_data\u0028\u0029",
+            "name": "read_storage_data",
+            "summary": "Lee\u0020un\u0020archivo\u0020\u0060.dlstorage\u0060\u0020y\u0020devuelve\u0020el\u0020contenido\u0020original\u0020decodificado.",
+            "url": "classes/DLStorage-Storage-SaveData.html#method_read_storage_data"
+        },                {
+            "fqsen": "\\DLStorage\\Storage\\SaveData\u003A\u003Aget_file_content\u0028\u0029",
+            "name": "get_file_content",
+            "summary": "Lee\u0020el\u0020contenido\u0020crudo\u0020de\u0020un\u0020archivo\u0020del\u0020proyecto\u0020sin\u0020decodificarlo.",
+            "url": "classes/DLStorage-Storage-SaveData.html#method_get_file_content"
         },                {
             "fqsen": "\\DLStorage\\Storage\\SaveData\u003A\u003Adelete_padding\u0028\u0029",
             "name": "delete_padding",
-            "summary": "Normaliza\u0020el\u0020relleno\u0020de\u0020ceros\u0020en\u0020una\u0020cadena\u0020hexadecimal.",
+            "summary": "Colapsa\u0020ceros\u0020iniciales\u0020de\u0020relleno\u0020en\u0020una\u0020cadena\u0020hexadecimal.",
             "url": "classes/DLStorage-Storage-SaveData.html#method_delete_padding"
         },                {
             "fqsen": "\\DLStorage\\Storage\\SaveData\u003A\u003Anormalize_hex_payload\u0028\u0029",
             "name": "normalize_hex_payload",
-            "summary": "Normaliza\u0020el\u0020contenido\u0020hexadecimal\u0020codificado\u0020para\u0020asegurar\u0020compatibilidad\u0020binaria.",
+            "summary": "Garantiza\u0020longitud\u0020par\u0020del\u0020payload\u0020hexadecimal\u0020antes\u0020de\u0020\u0060hex2bin\u0028\u0029\u0060.",
             "url": "classes/DLStorage-Storage-SaveData.html#method_normalize_hex_payload"
         },                {
             "fqsen": "\\DLStorage\\Storage\\SaveData\u003A\u003Aget_section_size\u0028\u0029",
             "name": "get_section_size",
-            "summary": "Calcula\u0020la\u0020longitud\u0020de\u0020la\u0020secci\u00F3n\u0020a\u0020partir\u0020del\u0020contenido\u0020en\u0020hexadecimal\ny\u0020devuelve\u0020su\u0020representaci\u00F3n\u0020como\u0020una\u0020cadena\u0020de\u00208\u0020caracteres\u0020hexadecimales\n\u002832\u0020bits,\u0020big\u002Dendian\u0029,\u0020rellenada\u0020con\u0020ceros\u0020a\u0020la\u0020izquierda.",
+            "summary": "Calcula\u0020el\u0020tama\u00F1o\u0020en\u0020bytes\u0020de\u0020una\u0020cadena\u0020hexadecimal\u0020y\u0020lo\u0020devuelve\u0020como\u0020campo\u0020de\u00204\u0020bytes.",
             "url": "classes/DLStorage-Storage-SaveData.html#method_get_section_size"
         },                {
             "fqsen": "\\DLStorage\\Storage\\Storage",
@@ -123,7 +133,7 @@ Search.appendIndex(
         },                {
             "fqsen": "\\DLStorage\\Storage\\Storage\u003A\u003Anormalize_separator\u0028\u0029",
             "name": "normalize_separator",
-            "summary": "Normaliza\u0020los\u0020separadores\u0020de\u0020directorio.",
+            "summary": "Sustituye\u0020cada\u0020\u0060\/\u0060\u0020de\u0020\u0060\u0024this\u002D\u003Efilename\u0060\u0020por\u0020\u0060DIRECTORY_SEPARATOR\u0060.",
             "url": "classes/DLStorage-Storage-Storage.html#method_normalize_separator"
         },                {
             "fqsen": "\\DLStorage\\Storage\\Storage\u003A\u003Areadfile\u0028\u0029",
@@ -138,12 +148,12 @@ Search.appendIndex(
         },                {
             "fqsen": "\\DLStorage\\Storage\\Storage\u003A\u003Aget_current_signature\u0028\u0029",
             "name": "get_current_signature",
-            "summary": "Obtiene\u0020la\u0020firma\u0020de\u0020cabecera\u0020del\u0020formato\u0020en\u0020representaci\u00F3n\u0020binaria.",
+            "summary": "Devuelve\u0020la\u0020firma\u0020del\u0020formato\u0020como\u0020bytes\u0020ASCII.",
             "url": "classes/DLStorage-Storage-Storage.html#method_get_current_signature"
         },                {
             "fqsen": "\\DLStorage\\Storage\\Storage\u003A\u003Aget_current_version\u0028\u0029",
             "name": "get_current_version",
-            "summary": "Obtiene\u0020la\u0020versi\u00F3n\u0020del\u0020formato\u0020en\u0020representaci\u00F3n\u0020binaria.",
+            "summary": "Devuelve\u0020la\u0020versi\u00F3n\u0020del\u0020formato\u0020almacenada\u0020en\u0020la\u0020cabecera\u0020como\u0020bytes\u0020ASCII.",
             "url": "classes/DLStorage-Storage-Storage.html#method_get_current_version"
         },                {
             "fqsen": "\\DLStorage\\Storage\\Storage\u003A\u003ASEPARATOR",
@@ -158,237 +168,232 @@ Search.appendIndex(
         },                {
             "fqsen": "\\DLStorage\\Storage\\Storage\u003A\u003A\u0024entropy",
             "name": "entropy",
-            "summary": "Entrop\u00EDa\u0020empleada\u0020para\u0020los\u0020procesos\u0020de\u0020codificaci\u00F3n\u0020y\u0020decodificaci\u00F3n.",
+            "summary": "Llave\u0020de\u0020entrop\u00EDa\u0020pasada\u0020al\u0020constructor\u0020para\u0020\u0060generate\u0028\u0029\u0060\u0020y\u0020\u0060readfile\u0028\u0029\u0060.",
             "url": "classes/DLStorage-Storage-Storage.html#property_entropy"
         },                {
             "fqsen": "\\DLStorage\\Storage\\Storage\u003A\u003A\u0024offset",
             "name": "offset",
-            "summary": "Posici\u00F3n\u0020actual\u0020del\u0020recorrido\u0020del\u0020aut\u00F3mata\u0020durante\u0020la\u0020normalizaci\u00F3n.",
+            "summary": "\u00CDndice\u0020del\u0020recorrido\u0020durante\u0020\u007B\u0040see\u0020normalize_separator\u0028\u0029\u007D.\u0020Solo\u0020se\u0020usa\u0020en\u0020el\u0020constructor.",
             "url": "classes/DLStorage-Storage-Storage.html#property_offset"
         },                {
             "fqsen": "\\DLStorage\\Storage\\Storage\u003A\u003A\u0024size",
             "name": "size",
-            "summary": "Longitud\u0020de\u0020la\u0020ruta\u0020expresada\u0020en\u0020bytes.",
+            "summary": "Longitud\u0020en\u0020bytes\u0020de\u0020la\u0020ruta\u0020antes\u0020de\u0020normalizar\u0020separadores.",
             "url": "classes/DLStorage-Storage-Storage.html#property_size"
         },                {
             "fqsen": "\\DLStorage\\Traits\\BinaryLengthTrait",
             "name": "BinaryLengthTrait",
-            "summary": "Transformaci\u00F3n\u0020num\u00E9rica\u0020de\u0020bytes,\u0020entrop\u00EDa\u0020y\u0020bloques\u0020hexadecimales\u0020de\u002040\u0020bits.",
+            "summary": "Transformaci\u00F3n\u0020num\u00E9rica\u0020de\u0020bytes\u0020y\u0020c\u00E1lculo\u0020heur\u00EDstico\u0020de\u0020entrop\u00EDa.",
             "url": "classes/DLStorage-Traits-BinaryLengthTrait.html"
         },                {
             "fqsen": "\\DLStorage\\Traits\\BinaryLengthTrait\u003A\u003Aget_binary_length\u0028\u0029",
             "name": "get_binary_length",
-            "summary": "Calcula\u0020la\u0020suma\u0020aritm\u00E9tica\u0020de\u0020todos\u0020los\u0020bytes\u0020de\u0020una\u0020cadena\u0020binaria.",
+            "summary": "Suma\u0020aritm\u00E9tica\u0020de\u0020todos\u0020los\u0020bytes\u0020de\u0020una\u0020cadena.",
             "url": "classes/DLStorage-Traits-BinaryLengthTrait.html#method_get_binary_length"
         },                {
             "fqsen": "\\DLStorage\\Traits\\BinaryLengthTrait\u003A\u003Ato_hex40\u0028\u0029",
             "name": "to_hex40",
-            "summary": "Convierte\u0020un\u0020byte\u0020a\u0020su\u0020representaci\u00F3n\u0020hexadecimal\u0020de\u002040\u0020bits,\u0020con\u0020posibilidad\u0020de\u0020aplicar\u0020entrop\u00EDa.",
+            "summary": "Convierte\u0020un\u0020byte\u0020desplazado\u0020a\u0020bloque\u0020hex\u0020de\u002010\u0020caracteres.",
             "url": "classes/DLStorage-Traits-BinaryLengthTrait.html#method_to_hex40"
         },                {
             "fqsen": "\\DLStorage\\Traits\\BinaryLengthTrait\u003A\u003Afrom_hex40\u0028\u0029",
             "name": "from_hex40",
-            "summary": "Obtiene\u0020el\u0020valor\u0020hexadecimal\u0020de\u0020un\u0020bloque\u0020de\u0020bytes\u0020con\u0020entrop\u00EDa\u0020revertida.",
+            "summary": "Revierte\u0020un\u0020bloque\u0020de\u002010\u0020caracteres\u0020hex\u0020a\u0020un\u0020car\u00E1cter\u0020de\u0020un\u0020byte.",
             "url": "classes/DLStorage-Traits-BinaryLengthTrait.html#method_from_hex40"
         },                {
             "fqsen": "\\DLStorage\\Traits\\BinaryLengthTrait\u003A\u003Aget_entropy\u0028\u0029",
             "name": "get_entropy",
-            "summary": "Calcula\u0020un\u0020valor\u0020de\u0020entrop\u00EDa\u0020basado\u0020en\u0020un\u0020\u00EDndice\u0020y\u0020una\u0020suma\u0020acumulada.",
+            "summary": "Calcula\u0020el\u0020desplazamiento\u0020de\u0020entrop\u00EDa\u0020para\u0020un\u0020\u00EDndice\u0020dado.",
             "url": "classes/DLStorage-Traits-BinaryLengthTrait.html#method_get_entropy"
         },                {
             "fqsen": "\\DLStorage\\Traits\\BinaryLengthTrait\u003A\u003Aset_entropy_value\u0028\u0029",
             "name": "set_entropy_value",
-            "summary": "Calcula\u0020y\u0020acumula\u0020un\u0020valor\u0020de\u0020entrop\u00EDa\u0020basado\u0020en\u0020los\u0020caracteres\u0020de\u0020una\u0020cadena\u0020dada.",
+            "summary": "Asigna\u0020la\u0020suma\u0020de\u0020entrop\u00EDa\u0020a\u0020partir\u0020de\u0020una\u0020llave.",
             "url": "classes/DLStorage-Traits-BinaryLengthTrait.html#method_set_entropy_value"
         },                {
             "fqsen": "\\DLStorage\\Traits\\BinaryLengthTrait\u003A\u003Aget_circular_value\u0028\u0029",
             "name": "get_circular_value",
-            "summary": "Calcula\u0020un\u0020valor\u0020circular\u0020a\u0020partir\u0020de\u0020un\u0020valor\u0020num\u00E9rico\u0020dado.",
+            "summary": "Transformaci\u00F3n\u0020circular\u0020acotada\u0020para\u0020dispersi\u00F3n\u0020num\u00E9rica.",
             "url": "classes/DLStorage-Traits-BinaryLengthTrait.html#method_get_circular_value"
         },                {
             "fqsen": "\\DLStorage\\Traits\\BinaryLengthTrait\u003A\u003Aget_entropy_file\u0028\u0029",
             "name": "get_entropy_file",
-            "summary": "Calcula\u0020una\u0020m\u00E9trica\u0020de\u0020\u0022entrop\u00EDa\u0022\u0020simplificada\u0020basada\u0020en\u0020el\u0020contenido\u0020de\u0020un\u0020archivo.",
+            "summary": "M\u00E9trica\u0020heur\u00EDstica\u0020del\u0020contenido\u0020de\u0020un\u0020archivo.",
             "url": "classes/DLStorage-Traits-BinaryLengthTrait.html#method_get_entropy_file"
         },                {
             "fqsen": "\\DLStorage\\Traits\\BinaryLengthTrait\u003A\u003Aget_entropy_value\u0028\u0029",
             "name": "get_entropy_value",
-            "summary": "Devuelve\u0020la\u0020entrop\u00EDa\u0020base\u0020o\u0020\u0060seed\u0060\u0020en\u0020funci\u00F3n\u0020de\u0020los\u0020bytes\u0020como\u0020argumento.",
+            "summary": "Calcula\u0020un\u0020valor\u0020entero\u0020determinista\u0020a\u0020partir\u0020de\u0020bytes\u0020de\u0020entrada.",
             "url": "classes/DLStorage-Traits-BinaryLengthTrait.html#method_get_entropy_value"
         },                {
             "fqsen": "\\DLStorage\\Traits\\BinaryLengthTrait\u003A\u003Acalculate_coefficient\u0028\u0029",
             "name": "calculate_coefficient",
-            "summary": "Calcula\u0020y\u0020asigna\u0020un\u0020coeficiente\u0020seguro\u0020a\u0020partir\u0020de\u0020una\u0020semilla\u0020num\u00E9rica.",
+            "summary": "Deriva\u0020y\u0020almacena\u0020\u0060\u0024this\u002D\u003Ecoefficient\u0060\u0020a\u0020partir\u0020de\u0020una\u0020semilla.",
             "url": "classes/DLStorage-Traits-BinaryLengthTrait.html#method_calculate_coefficient"
         },                {
             "fqsen": "\\DLStorage\\Traits\\BinaryLengthTrait\u003A\u003A\u0024coefficient",
             "name": "coefficient",
-            "summary": "",
+            "summary": "Coeficiente\u0020derivado\u0020de\u0020la\u0020entrop\u00EDa\u0020de\u0020entrada,\u0020usado\u0020en\u0020\u007B\u0040see\u0020get_circular_value\u0028\u0029\u007D.",
             "url": "classes/DLStorage-Traits-BinaryLengthTrait.html#property_coefficient"
-        },                {
-            "fqsen": "\\DLStorage\\Traits\\BinaryLengthTrait\u003A\u003A\u0024entropy_value",
-            "name": "entropy_value",
-            "summary": "",
-            "url": "classes/DLStorage-Traits-BinaryLengthTrait.html#property_entropy_value"
         },                {
             "fqsen": "\\DLStorage\\Traits\\BinaryLengthTrait\u003A\u003A\u0024seed",
             "name": "seed",
-            "summary": "Semilla\u0020base\u0020utilizada\u0020para\u0020c\u00E1lculos\u0020internos\u0020relacionados\u0020con\u0020transformaciones\u0020num\u00E9ricas.",
+            "summary": "Constante\u0020sumada\u0020en\u0020\u007B\u0040see\u0020to_hex40\u0028\u0029\u007D\u0020y\u0020restada\u0020en\u0020\u007B\u0040see\u0020from_hex40\u0028\u0029\u007D.",
             "url": "classes/DLStorage-Traits-BinaryLengthTrait.html#property_seed"
         },                {
             "fqsen": "\\DLStorage\\Traits\\ForTrait",
             "name": "ForTrait",
-            "summary": "Trait\u0020ForTrait",
+            "summary": "Iteraci\u00F3n\u0020secuencial\u0020sobre\u0020cadenas\u0020y\u0020arreglos\u0020mediante\u0020callbacks.",
             "url": "classes/DLStorage-Traits-ForTrait.html"
         },                {
             "fqsen": "\\DLStorage\\Traits\\ForTrait\u003A\u003Aforeach\u0028\u0029",
             "name": "foreach",
-            "summary": "Itera\u0020sobre\u0020una\u0020cadena\u0020de\u0020caracteres\u0020o\u0020un\u0020arreglo,\u0020ejecutando\u0020un\u0020callback\u0020por\u0020cada\u0020elemento.",
+            "summary": "Itera\u0020sobre\u0020una\u0020cadena\u0020o\u0020arreglo\u0020invocando\u0020\u0060\u0024callback\u0060\u0020por\u0020cada\u0020posici\u00F3n.",
             "url": "classes/DLStorage-Traits-ForTrait.html#method_foreach"
         },                {
             "fqsen": "\\DLStorage\\Traits\\ForTrait\u003A\u003Aforeach_string\u0028\u0029",
             "name": "foreach_string",
-            "summary": "Itera\u0020sobre\u0020cada\u0020byte\u0020de\u0020una\u0020cadena\u0020de\u0020texto\u0020en\u0020su\u0020representaci\u00F3n\u0020binaria.",
+            "summary": "Itera\u0020sobre\u0020cada\u0020byte\u0020de\u0020una\u0020cadena\u0020binaria.",
             "url": "classes/DLStorage-Traits-ForTrait.html#method_foreach_string"
         },                {
             "fqsen": "\\DLStorage\\Traits\\StorageTrait",
             "name": "StorageTrait",
-            "summary": "Operaciones\u0020de\u0020rutas,\u0020lectura\u0020binaria\u0020y\u0020metadatos\u0020del\u0020formato\u0020\u0060.dlstorage\u0060.",
+            "summary": "Rutas\u0020de\u0020proyecto,\u0020metadatos\u0020del\u0020formato\u0020\u0060.dlstorage\u0060\u0020y\u0020lectura\u0020binaria\u0020parcial.",
             "url": "classes/DLStorage-Traits-StorageTrait.html"
         },                {
             "fqsen": "\\DLStorage\\Traits\\StorageTrait\u003A\u003Aget_file_path\u0028\u0029",
             "name": "get_file_path",
-            "summary": "Devuelve\u0020la\u0020ruta\u0020absoluta\u0020completa\u0020donde\u0020se\u0020almacenar\u00E1\u0020un\u0020archivo,\u0020dentro\u0020del\nsistema\u0020de\u0020almacenamiento\u0020gestionado\u0020por\u0020la\u0020clase.\u0020Puede\u0020opcionalmente\u0020crear\nel\u0020directorio\u0020contenedor\u0020si\u0020no\u0020existe.",
+            "summary": "Resuelve\u0020la\u0020ruta\u0020absoluta\u0020de\u0020un\u0020archivo\u0020relativo\u0020al\u0020proyecto.",
             "url": "classes/DLStorage-Traits-StorageTrait.html#method_get_file_path"
         },                {
             "fqsen": "\\DLStorage\\Traits\\StorageTrait\u003A\u003Avalidate_saved_data\u0028\u0029",
             "name": "validate_saved_data",
-            "summary": "Valida\u0020si\u0020se\u0020trata\u0020de\u0020un\u0020archivo\u0020estructura\u0020binaria\u0020v\u00E1lida",
+            "summary": "Comprueba\u0020si\u0020los\u0020primeros\u00209\u0020bytes\u0020del\u0020archivo\u0020coinciden\u0020con\u0020la\u0020firma\u0020DLStorage.",
             "url": "classes/DLStorage-Traits-StorageTrait.html#method_validate_saved_data"
         },                {
             "fqsen": "\\DLStorage\\Traits\\StorageTrait\u003A\u003Aread_filename\u0028\u0029",
             "name": "read_filename",
-            "summary": "Lee\u0020un\u0020rango\u0020de\u0020bytes\u0020de\u0020un\u0020archivo\u0020binario.",
+            "summary": "Lee\u0020un\u0020rango\u0020inclusivo\u0020de\u0020bytes\u0020de\u0020un\u0020archivo\u0020\u0028\u00EDndices\u00201\u002Dbased\u0029.",
             "url": "classes/DLStorage-Traits-StorageTrait.html#method_read_filename"
         },                {
             "fqsen": "\\DLStorage\\Traits\\StorageTrait\u003A\u003Avalidate_filename\u0028\u0029",
             "name": "validate_filename",
-            "summary": "Valida\u0020si\u0020el\u0020archivo\u0020existe\u0020y\u0020no\u0020es\u0020un\u0020directorio,\u0020aparte\u0020de\u0020ser\u0020legible.",
+            "summary": "Verifica\u0020que\u0020la\u0020ruta\u0020apunte\u0020a\u0020un\u0020archivo\u0020existente\u0020y\u0020legible.",
             "url": "classes/DLStorage-Traits-StorageTrait.html#method_validate_filename"
         },                {
             "fqsen": "\\DLStorage\\Traits\\StorageTrait\u003A\u003Aget_document_root\u0028\u0029",
             "name": "get_document_root",
-            "summary": "Obtiene\u0020el\u0020directorio\u0020ra\u00EDz\u0020del\u0020sistema.",
+            "summary": "Obtiene\u0020el\u0020directorio\u0020ra\u00EDz\u0020del\u0020proyecto.",
             "url": "classes/DLStorage-Traits-StorageTrait.html#method_get_document_root"
         },                {
             "fqsen": "\\DLStorage\\Traits\\StorageTrait\u003A\u003Aget_signature\u0028\u0029",
             "name": "get_signature",
-            "summary": "Devuelve\u0020la\u0020firma\u0020del\u0020archivo\u0020en\u0020formato\u0020hexadecimal.",
+            "summary": "Devuelve\u0020la\u0020firma\u0020como\u0020cadena\u0020hexadecimal.",
             "url": "classes/DLStorage-Traits-StorageTrait.html#method_get_signature"
         },                {
             "fqsen": "\\DLStorage\\Traits\\StorageTrait\u003A\u003Aget_version\u0028\u0029",
             "name": "get_version",
-            "summary": "Devuelve\u0020la\u0020versi\u00F3n\u0020del\u0020archivo\u0020en\u0020formato\u0020hexadecimal.",
+            "summary": "Devuelve\u0020la\u0020versi\u00F3n\u0020como\u0020cadena\u0020hexadecimal.",
             "url": "classes/DLStorage-Traits-StorageTrait.html#method_get_version"
         },                {
             "fqsen": "\\DLStorage\\Traits\\StorageTrait\u003A\u003A\u0024version",
             "name": "version",
-            "summary": "Versi\u00F3n\u0020del\u0020archivo\u0020de\u0020almacenamiento\u0020de\u0020bytes\u0020transformados.",
+            "summary": "Versi\u00F3n\u0020del\u0020formato\u0020almacenado\u0020en\u0020la\u0020cabecera\u0020del\u0020archivo.",
             "url": "classes/DLStorage-Traits-StorageTrait.html#property_version"
         },                {
             "fqsen": "\\DLStorage\\Traits\\StorageTrait\u003A\u003A\u0024signature",
             "name": "signature",
-            "summary": "Firma\u0020de\u0020la\u0020cabecera\u0020del\u0020archivo.",
+            "summary": "Firma\u0020ASCII\u0020que\u0020identifica\u0020un\u0020archivo\u0020DLStorage\u0020v\u00E1lido.",
             "url": "classes/DLStorage-Traits-StorageTrait.html#property_signature"
         },                {
             "fqsen": "\\DLStorage\\Utilities\\FastArray",
             "name": "FastArray",
-            "summary": "Colecci\u00F3n\u0020de\u0020arrays\u0020con\u0020API\u0020orientada\u0020a\u0020m\u00E9todos\u0020encadenables\u0020y\u0020seguimiento\u0020de\u0020longitud.",
+            "summary": "Colecci\u00F3n\u0020indexada\u0020con\u0020API\u0020encadenable\u0020y\u0020contador\u0020de\u0020longitud\u0020expl\u00EDcito.",
             "url": "classes/DLStorage-Utilities-FastArray.html"
         },                {
             "fqsen": "\\DLStorage\\Utilities\\FastArray\u003A\u003A__construct\u0028\u0029",
             "name": "__construct",
-            "summary": "Constructor\u0020que\u0020inicializa\u0020el\u0020array\u0020y\u0020su\u0020longitud.",
+            "summary": "Inicializa\u0020la\u0020colecci\u00F3n\u0020vac\u00EDa\u0020y\u0020agrega\u0020los\u0020elementos\u0020de\u0020\u0060\u0024data\u0060.",
             "url": "classes/DLStorage-Utilities-FastArray.html#method___construct"
         },                {
             "fqsen": "\\DLStorage\\Utilities\\FastArray\u003A\u003Apush\u0028\u0029",
             "name": "push",
-            "summary": "Agrega\u0020un\u0020nuevo\u0020elemento\u0020al\u0020final\u0020del\u0020array\u0020interno,\u0020preservando\u0020el\u0020orden\u0020de\u0020inserci\u00F3n.",
+            "summary": "A\u00F1ade\u0020un\u0020elemento\u0020al\u0020final\u0020e\u0020incrementa\u0020\u0060\u0024length\u0060.",
             "url": "classes/DLStorage-Utilities-FastArray.html#method_push"
         },                {
             "fqsen": "\\DLStorage\\Utilities\\FastArray\u003A\u003Aclear\u0028\u0029",
             "name": "clear",
-            "summary": "Elimina\u0020todos\u0020los\u0020elementos\u0020del\u0020array\u0020interno\u0020y\u0020reinicia\u0020su\u0020longitud.",
+            "summary": "Vac\u00EDa\u0020el\u0020array\u0020interno\u0020y\u0020restablece\u0020\u0060\u0024length\u0060\u0020a\u00200.",
             "url": "classes/DLStorage-Utilities-FastArray.html#method_clear"
         },                {
             "fqsen": "\\DLStorage\\Utilities\\FastArray\u003A\u003Aget\u0028\u0029",
             "name": "get",
-            "summary": "Obtiene\u0020el\u0020array\u0020interno\u0020de\u0020datos\u0020sin\u0020modificaciones.",
+            "summary": "Devuelve\u0020el\u0020array\u0020interno.",
             "url": "classes/DLStorage-Utilities-FastArray.html#method_get"
         },                {
             "fqsen": "\\DLStorage\\Utilities\\FastArray\u003A\u003A\u0024length",
             "name": "length",
-            "summary": "Longitud\u0020del\u0020array.",
+            "summary": "N\u00FAmero\u0020de\u0020elementos\u003B\u0020se\u0020actualiza\u0020en\u0020cada\u0020mutaci\u00F3n,\u0020no\u0020se\u0020infiere\u0020con\u0020\u0060count\u0028\u0029\u0060.",
             "url": "classes/DLStorage-Utilities-FastArray.html#property_length"
         },                {
             "fqsen": "\\DLStorage\\Utilities\\FastArray\u003A\u003Aadd\u0028\u0029",
             "name": "add",
-            "summary": "Agrega\u0020m\u00FAltiples\u0020elementos\u0020al\u0020array\u0020interno.",
+            "summary": "Concatena\u0020los\u0020elementos\u0020de\u0020\u0060\u0024data\u0060\u0020al\u0020final\u0020mediante\u0020\u0060array_merge\u0060.",
             "url": "classes/DLStorage-Utilities-FastArray.html#method_add"
         },                {
             "fqsen": "\\DLStorage\\Utilities\\FastArray\u003A\u003Aitem\u0028\u0029",
             "name": "item",
-            "summary": "Obtiene\u0020un\u0020elemento\u0020espec\u00EDfico\u0020del\u0020array\u0020interno\u0020por\u0020su\u0020\u00EDndice.",
+            "summary": "Obtiene\u0020el\u0020elemento\u0020en\u0020el\u0020\u00EDndice\u0020indicado.",
             "url": "classes/DLStorage-Utilities-FastArray.html#method_item"
         },                {
             "fqsen": "\\DLStorage\\Utilities\\FastArray\u003A\u003Afirst\u0028\u0029",
             "name": "first",
-            "summary": "Obtiene\u0020el\u0020primer\u0020elemento\u0020del\u0020array\u0020interno.",
+            "summary": "Devuelve\u0020el\u0020primer\u0020elemento\u0020sin\u0020eliminarlo.",
             "url": "classes/DLStorage-Utilities-FastArray.html#method_first"
         },                {
             "fqsen": "\\DLStorage\\Utilities\\FastArray\u003A\u003Alast\u0028\u0029",
             "name": "last",
-            "summary": "Obtiene\u0020el\u0020\u00FAltimo\u0020elemento\u0020del\u0020array\u0020interno.",
+            "summary": "Devuelve\u0020el\u0020\u00FAltimo\u0020elemento\u0020sin\u0020eliminarlo.",
             "url": "classes/DLStorage-Utilities-FastArray.html#method_last"
         },                {
             "fqsen": "\\DLStorage\\Utilities\\FastArray\u003A\u003Apop\u0028\u0029",
             "name": "pop",
-            "summary": "Extrae\u0020y\u0020devuelve\u0020el\u0020\u00FAltimo\u0020elemento\u0020del\u0020array\u0020interno.",
+            "summary": "Elimina\u0020y\u0020devuelve\u0020el\u0020\u00FAltimo\u0020elemento\u0020con\u0020\u0060array_pop\u0060.",
             "url": "classes/DLStorage-Utilities-FastArray.html#method_pop"
         },                {
             "fqsen": "\\DLStorage\\Utilities\\FastArray\u003A\u003Ashift\u0028\u0029",
             "name": "shift",
-            "summary": "Extrae\u0020y\u0020devuelve\u0020el\u0020primer\u0020elemento\u0020del\u0020array\u0020interno.",
+            "summary": "Elimina\u0020y\u0020devuelve\u0020el\u0020primer\u0020elemento\u0020con\u0020\u0060array_shift\u0060.",
             "url": "classes/DLStorage-Utilities-FastArray.html#method_shift"
         },                {
             "fqsen": "\\DLStorage\\Utilities\\FastArray\u003A\u003Aget_iterator\u0028\u0029",
             "name": "get_iterator",
-            "summary": "Devuelve\u0020un\u0020iterador\u0020para\u0020recorrer\u0020el\u0020array.",
+            "summary": "Crea\u0020un\u0020\u0060ArrayIterator\u0060\u0020sobre\u0020el\u0020array\u0020interno.",
             "url": "classes/DLStorage-Utilities-FastArray.html#method_get_iterator"
         },                {
             "fqsen": "\\DLStorage\\Utilities\\FastArray\u003A\u003AgetIterator\u0028\u0029",
             "name": "getIterator",
-            "summary": "Devuelve\u0020un\u0020iterador\u0020para\u0020recorrer\u0020el\u0020array.\u0020Este\u0020m\u00E9todo\u0020es\u0020parte\u0020de\u0020la\u0020interfaz\u0020IteratorAggregate,\u0020por\nlo\u0020que\u0020est\u00E1\u0020utilizando\u0020\u0060camelCase\u0060\u0020en\u0020lugar\u0020de\u0020\u0060snake_case\u0060.",
+            "summary": "Implementaci\u00F3n\u0020de\u0020\u0060IteratorAggregate\u0060\u0020\u0028convenci\u00F3n\u0020\u0060camelCase\u0060\u0020de\u0020PHP\u0029.",
             "url": "classes/DLStorage-Utilities-FastArray.html#method_getIterator"
         },                {
             "fqsen": "\\DLStorage\\Utilities\\FastArray\u003A\u003Asplide\u0028\u0029",
             "name": "splide",
-            "summary": "Modifica\u0020el\u0020array\u0020interno\u0020eliminando\u0020y\/o\u0020reemplazando\u0020elementos,\u0020y\u0020devuelve\u0020los\u0020elementos\u0020eliminados.",
+            "summary": "Elimina\u0020y\/o\u0020reemplaza\u0020un\u0020tramo\u0020del\u0020array\u0020interno\u0020con\u0020\u0060array_splice\u0060.",
             "url": "classes/DLStorage-Utilities-FastArray.html#method_splide"
         },                {
             "fqsen": "\\DLStorage\\Utilities\\FastArray\u003A\u003Aslice\u0028\u0029",
             "name": "slice",
-            "summary": "Devuelve\u0020una\u0020porci\u00F3n\u0020del\u0020array\u0020interno\u0020sin\u0020modificarlo.",
+            "summary": "Devuelve\u0020un\u0020subarray\u0020sin\u0020modificar\u0020la\u0020instancia\u0020actual\u0020\u0028\u0060array_slice\u0060\u0029.",
             "url": "classes/DLStorage-Utilities-FastArray.html#method_slice"
         },                {
             "fqsen": "\\DLStorage\\Utilities\\FastArray\u003A\u003Ato_array\u0028\u0029",
             "name": "to_array",
-            "summary": "Devuelve\u0020el\u0020contenido\u0020completo\u0020del\u0020array\u0020interno\u0020como\u0020un\u0020array\u0020crudo.",
+            "summary": "Alias\u0020de\u0020\u007B\u0040see\u0020get\u0028\u0029\u007D\u003A\u0020devuelve\u0020el\u0020array\u0020interno\u0020completo.",
             "url": "classes/DLStorage-Utilities-FastArray.html#method_to_array"
         },                {
             "fqsen": "\\DLStorage\\Utilities\\FastArray\u003A\u003A\u0024data",
             "name": "data",
-            "summary": "Almacenamiento\u0020interno\u0020de\u0020elementos.",
+            "summary": "Elementos\u0020almacenados\u0020con\u0020\u00EDndices\u0020num\u00E9ricos\u0020consecutivos.",
             "url": "classes/DLStorage-Utilities-FastArray.html#property_data"
         },                {
             "fqsen": "\\",

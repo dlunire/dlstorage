@@ -30,12 +30,7 @@ namespace DLStorage\Traits;
 use DLStorage\Errors\StorageException;
 
 /**
- * Operaciones de rutas, lectura binaria y metadatos del formato `.dlstorage`.
- *
- * Proporciona la firma (`DLStorage`), la versión (`v0.1.0`), resolución de rutas
- * relativas al directorio raíz del proyecto y lectura parcial de archivos binarios.
- *
- * Consumido por {@see \DLStorage\Storage\DataStorage} y por {@see BinaryLengthTrait}.
+ * Rutas de proyecto, metadatos del formato `.dlstorage` y lectura binaria parcial.
  *
  * @package   DLStorage\Traits
  * @version   v0.2.0
@@ -46,91 +41,34 @@ use DLStorage\Errors\StorageException;
 trait StorageTrait {
 
     /**
-     * Versión del archivo de almacenamiento de bytes transformados.
-     * 
-     * Esta propiedad almacena la versión actual del formato de archivo utilizado para
-     * la persistencia de los datos transformados mediante el sistema de transformación
-     * de bytes. El valor está representado en formato de cadena y puede ser utilizado 
-     * para identificar cambios en la estructura o el esquema de los datos, asegurando
-     * la compatibilidad entre versiones del sistema.
+     * Versión del formato almacenado en la cabecera del archivo.
      *
-     * **Versión en formato hexadecimal:**  
-     * La versión "v0.1.0" está representada en hexadecimal como:
-     * 
-     * ```bash
-     * 76 30 2e 31 2e 30
-     * ```
-     *  
-     * Esta representación hexadecimal permite realizar comparaciones y verificaciones 
-     * a nivel de bytes, útil para tareas como la validación o la compatibilidad 
-     * entre diferentes versiones de archivos transformados.
-     * 
-     * @var string
-     * @since v0.1.0 Introducción del campo de versión en el archivo de almacenamiento.
+     * @var string Valor por defecto: `"v0.1.0"`.
      */
     protected string $version = "v0.1.0";
 
     /**
-     * Firma de la cabecera del archivo.
-     * 
-     * Esta propiedad almacena la firma que identifica de manera única el formato
-     * del archivo de almacenamiento de datos transformados. La firma es una secuencia
-     * de caracteres que se coloca al inicio del archivo, sirviendo como una "marca" 
-     * para indicar que el archivo es reconocido por el sistema y sigue el formato 
-     * adecuado.
-     * 
-     * **Representación en formato hexadecimal:**
-     * La firma "DLStorage" se representa en hexadecimal como:
-     * 
-     * ```bash
-     * 44 4c 53 74 6f 72 61 67 65
-     * ```
-     * 
-     * Este valor permite verificar la integridad del archivo y validar que el contenido
-     * corresponde a un archivo del sistema, facilitando la detección de archivos
-     * corruptos o de un formato incorrecto.
-     * 
-     * @var string
-     * @since v0.1.0 Introducción de la firma de cabecera para validación de formato de archivo.
+     * Firma ASCII que identifica un archivo DLStorage válido.
+     *
+     * @var string Valor por defecto: `"DLStorage"` (9 bytes).
      */
     protected string $signature = "DLStorage";
 
     /**
-     * Devuelve la ruta absoluta completa donde se almacenará un archivo, dentro del
-     * sistema de almacenamiento gestionado por la clase. Puede opcionalmente crear
-     * el directorio contenedor si no existe.
+     * Resuelve la ruta absoluta de un archivo relativo al proyecto.
      *
-     * Si se establece `$create_dir` en `true`, la función asegura que el directorio
-     * padre del archivo exista, creándolo si es necesario. En caso de que exista un
-     * archivo con el mismo nombre que el directorio, se lanza una excepción.
+     * Base: {@see get_document_root()}. Si `$storage` es `true`, antepone `storage/`.
+     * Normaliza separadores `\` y `/` al separador del SO.
      *
-     * @param string $filename   Nombre relativo del archivo (puede contener subdirectorios).
-     * @param bool   $create_dir Indica si se debe crear el directorio contenedor si no existe.
-     *                           Por defecto es `false`.
-     * @param bool   $storage    Si es `true`, el archivo se almacenará dentro del directorio
-     *                           `storage/` gestionado por el sistema. Si es `false`, la ruta se
-     *                           resolverá directamente en la raíz del documento. Por defecto es `true`.
+     * Con `$create_dir = true`, crea el directorio padre con `mkdir(..., 0755, true)`.
      *
-     * @return string Ruta absoluta del archivo dentro del almacenamiento gestionado.
+     * @param string $filename   Ruta relativa (puede incluir subdirectorios).
+     * @param bool   $create_dir Crea el directorio contenedor si no existe.
+     * @param bool   $storage    `true`: bajo `storage/`. `false`: bajo la raíz del proyecto.
      *
-     * @throws StorageException Si `$create_dir` es `true` y existe un archivo con el mismo nombre que el directorio contenedor.
+     * @return string Ruta absoluta del archivo.
      *
-     * @example Ejemplo de uso
-     * 
-     * ```php
-     * // Usando almacenamiento interno
-     * $ruta = $storage->get_file_path("documentos/ejemplo.txt", true);
-     * // Resultado: /ruta/absoluta/al/proyecto/storage/documentos/ejemplo.txt
-     *
-     * // Usando ruta directa (fuera de /storage)
-     * $ruta = $storage->get_file_path("documentos/ejemplo.txt", true, false);
-     * // Resultado: /ruta/absoluta/al/proyecto/documentos/ejemplo.txt
-     * ```
-     *
-     * @note Los separadores de directorio son normalizados automáticamente al formato del sistema operativo.
-     *
-     * @warning Si el nombre proporcionado en `$filename` genera una colisión con un archivo
-     * en lugar de un directorio, y `$create_dir` es `true`, la operación fallará.
+     * @throws StorageException Si `$create_dir` es `true` y un archivo ocupa el nombre del directorio (500).
      */
     public function get_file_path(string $filename, bool $create_dir = false, bool $storage = true): string {
         /** @var string $root */
@@ -154,7 +92,6 @@ trait StorageTrait {
         /** @var string $file_pattern */
         $file_pattern = "/[\\\\\/][^\\\\\/]+$/i";
 
-
         /** @var string $dir */
         $dir = preg_replace($file_pattern, "", $file);
 
@@ -173,11 +110,13 @@ trait StorageTrait {
     }
 
     /**
-     * Valida si se trata de un archivo estructura binaria válida
+     * Comprueba si los primeros 9 bytes del archivo coinciden con la firma DLStorage.
      *
-     * @param string $file Ruta relativa del archivo (sin extensión `.dlstorage`).
+     * @param string $file Ruta relativa resuelta con {@see get_file_path()} (sin extensión `.dlstorage`).
      *
-     * @return bool `true` si la firma de los primeros 9 bytes coincide con `DLStorage`.
+     * @return bool `true` si la firma hex de los bytes 1–9 coincide con {@see get_signature()}.
+     *
+     * @throws StorageException Si el archivo no existe o la lectura falla (propagada desde {@see read_filename()}).
      */
     public function validate_saved_data(string $file): bool {
         /** @var string $filepath */
@@ -190,21 +129,19 @@ trait StorageTrait {
     }
 
     /**
-     * Lee un rango de bytes de un archivo binario.
+     * Lee un rango inclusivo de bytes de un archivo (índices 1-based).
      *
-     * Este método permite leer una porción de un archivo binario, especificando los índices de inicio y fin del rango a leer.
-     * Si el rango es inválido o excede el tamaño del archivo, se lanzan excepciones apropiadas.
-     * El archivo se abre en modo binario, asegurando que la lectura no se vea afectada por la codificación de caracteres.
+     * Abre el archivo en modo binario (`rb`), posiciona con `fseek` y lee `$to - $from + 1` bytes.
+     * No valida previamente la existencia del archivo.
      *
-     * @param string $filename Ruta del archivo a leer.
-     * @param int $from Offset de inicio de la lectura (1 basado).
-     * @param int $to Offset final de la lectura (1 basado).
-     * @return string Los bytes leídos del archivo.
-     * 
-     * @throws StorageException Si el rango es inválido, el archivo no se puede acceder, o no se puede leer correctamente.
-     * @throws StorageException Si el rango de lectura excede el tamaño del archivo.
-     * @throws StorageException Si hay un error de entrada/salida al acceder a los metadatos del archivo.
-     * @throws StorageException Si no se puede posicionar el puntero al byte indicado en el archivo.
+     * @param string $filename Ruta absoluta o relativa al archivo.
+     * @param int    $from     Byte inicial (≥ 1).
+     * @param int    $to       Byte final (≥ `$from`).
+     *
+     * @return string Bytes leídos.
+     *
+     * @throws StorageException Rango inválido (500), archivo inaccesible (500), rango fuera de tamaño (416),
+     *                          error de seek (500) o lectura vacía/fallida (500).
      */
     public function read_filename(string $filename, int $from = 1, int $to = 1): string {
 
@@ -234,7 +171,6 @@ trait StorageTrait {
             );
         }
 
-
         /** @var int $length */
         $length = $to - $from + 1;
 
@@ -257,7 +193,6 @@ trait StorageTrait {
             );
         }
 
-
         /** @var string|false $bytes */
         $bytes = fread($file, $length);
 
@@ -274,12 +209,11 @@ trait StorageTrait {
     }
 
     /**
-     * Valida si el archivo existe y no es un directorio, aparte de ser legible.
+     * Verifica que la ruta apunte a un archivo existente y legible.
      *
-     * @param string $filename Archivo a ser analizado
-     * @return void
-     * 
-     * @throws StorageException
+     * @param string $filename Ruta absoluta del archivo.
+     *
+     * @throws StorageException Archivo inexistente (404), es un directorio (500) o sin permiso de lectura (500).
      */
     protected function validate_filename(string $filename): void {
 
@@ -306,65 +240,34 @@ trait StorageTrait {
     }
 
     /**
-     * Obtiene el directorio raíz del sistema.
+     * Obtiene el directorio raíz del proyecto.
      *
-     * Devuelve la ruta absoluta del directorio raíz de la aplicación.
-     * 
-     * Para lograrlo, se obtiene el directorio de trabajo actual (`getcwd()`), se retrocede 
-     * un nivel hacia el directorio padre (`dirname()`), y luego se resuelve la ruta absoluta 
-     * mediante `realpath()`. Finalmente, se elimina cualquier espacio innecesario con `trim()`.
+     * Calcula: `realpath(dirname(getcwd()))`. Asume que el CWD está un nivel
+     * por debajo de la raíz (p. ej. `public/`).
      *
-     * Esto es útil para establecer rutas base dentro de la aplicación, evitando 
-     * problemas de rutas relativas al trabajar con diferentes entornos de desarrollo o despliegue.
-     *
-     * @return string Ruta absoluta del directorio raíz de la aplicación.
-     *
-     * @example Example
-     * 
-     * ```
-     * // Ejemplo de uso
-     * $root_path = $this->get_document_root();
-     * echo $root_path; 
-     * // Resultado esperado: /var/www/html/my-app
-     *```
-     *
-     * @note
-     * Asegúrate de tener los permisos adecuados para acceder al directorio raíz de la aplicación.
-     * Este método asume que la estructura de carpetas sigue un patrón estándar donde 
-     * el directorio raíz se encuentra un nivel por encima del directorio de ejecución actual.
+     * @return string Ruta absoluta sin espacios laterales. Puede ser cadena vacía si `realpath` falla.
      */
     public function get_document_root(): string {
-        /**
-         * Directorio raíz de la aplicación.
-         *
-         * @var string
-         */
-        $dir = getcwd();       // Obtiene el directorio de trabajo actual.
-        $dir = dirname($dir);  // Retrocede un nivel al directorio padre.
-        $dir = realpath($dir); // Resuelve la ruta absoluta.
+        $dir = getcwd();
+        $dir = dirname($dir);
+        $dir = realpath($dir);
 
-        return trim($dir);     // Elimina posibles espacios en blanco.
+        return trim((string) $dir);
     }
 
     /**
-     * Devuelve la firma del archivo en formato hexadecimal.
+     * Devuelve la firma como cadena hexadecimal.
      *
-     * Convierte los bytes binarios de la propiedad `$signature`
-     * a una representación legible como cadena hexadecimal.
-     *
-     * @return string Firma binaria representada en hexadecimal.
+     * @return string `bin2hex($this->signature)` — p. ej. `444c53746f72616765` para `"DLStorage"`.
      */
     protected function get_signature(): string {
         return bin2hex($this->signature);
     }
 
     /**
-     * Devuelve la versión del archivo en formato hexadecimal.
+     * Devuelve la versión como cadena hexadecimal.
      *
-     * Convierte los bytes binarios de la propiedad `$version`
-     * a una representación legible como cadena hexadecimal.
-     *
-     * @return string Versión binaria representada en hexadecimal.
+     * @return string `bin2hex($this->version)` — p. ej. bytes ASCII de `"v0.1.0"` en hex.
      */
     protected function get_version(): string {
         return bin2hex($this->version);

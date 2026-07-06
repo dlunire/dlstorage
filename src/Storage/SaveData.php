@@ -30,32 +30,16 @@ namespace DLStorage\Storage;
 use DLStorage\Errors\StorageException;
 
 /**
- * Implementa los mecanismos de persistencia binaria administrados por DLStorage.
+ * Persistencia de archivos en formato binario `.dlstorage`.
  *
- * Esta clase proporciona una implementación base para almacenar y recuperar
- * información utilizando el formato binario nativo de DLStorage (`.dlstorage`).
- * Se encarga de construir la estructura física del archivo, gestionar sus
- * metadatos y garantizar la integridad del contenido durante los procesos de
- * escritura y lectura.
+ * Construye y lee la estructura física del archivo:
  *
- * Durante el almacenamiento, los datos son transformados mediante el sistema
- * de codificación binaria de {@see Data}, encapsulados dentro de una estructura
- * compuesta por una firma de identificación, información de versión y
- * metadatos de longitud, permitiendo verificar posteriormente la validez del
- * archivo antes de reconstruir su contenido original.
+ * ```
+ * [firma 9B][tamaño_cabecera 4B][versión NB][tamaño_payload 4B][payload NB]
+ * ```
  *
- * Esta clase sirve como implementación común para los componentes de
- * persistencia del ecosistema **DLUnire Runtime**, proporcionando una base
- * uniforme para desarrollar sistemas de almacenamiento seguros, portables e
- * independientes de motores de bases de datos.
- *
- * Características principales:
- *
- * - Escritura y lectura de archivos `.dlstorage`.
- * - Verificación de firmas e integridad estructural.
- * - Compatibilidad con codificación mediante entropía.
- * - Gestión automática de rutas de almacenamiento.
- * - Normalización de cargas binarias y metadatos internos.
+ * El payload es la salida hexadecimal de {@see Data::encode()}, convertida a binario
+ * mediante `hex2bin()` al escribir el archivo.
  *
  * @package    DLStorage\Storage
  * @version    v0.2.0
@@ -63,50 +47,28 @@ use DLStorage\Errors\StorageException;
  * @author     David E. Luna M. <info@dlunire.dev>
  * @copyright  Copyright (c) 2026 David E. Luna M.
  *
- * @see        DataStorage Abstracción para sistemas de almacenamiento persistente.
- * @see        Storage      Implementación concreta recomendada para uso público.
- * @see        StorageException Excepciones del sistema de almacenamiento.
- *
- * @example Guardar información
- * ```php
- * $storage = new Storage("backup/config", "mi-entropia");
- * $storage->generate($contenido);
- * ```
- *
- * @example Recuperar información
- * ```php
- * $storage = new Storage("backup/config", "mi-entropia");
- * $contenido = $storage->readfile();
- * ```
+ * @see Storage Implementación concreta recomendada.
+ * @see Data    Codificación del payload.
  *
  * @abstract
- * @note Clase abstracta: extiéndala mediante {@see Storage} o una subclase propia.
  */
 abstract class SaveData extends DataStorage {
 
-
     /**
-     * Guarda la información transformada en un archivo binario con encabezado estructurado.
+     * Codifica y persiste datos en un archivo `.dlstorage`.
      *
-     * Este método:
-     * 1. Codifica los datos crudos y los convierte en una cadena hexadecimal segura.
-     * 2. Calcula y concatena la firma, tamaños de sección y versión.
-     * 3. Convierte todo el contenido hexadecimal resultante a binario.
-     * 4. Escribe el archivo con la extensión `.dlstorage`.
-     * 5. Verifica que el archivo se haya creado correctamente.
+     * Flujo:
+     * 1. {@see Data::encode()} transforma `$data` en una cadena hexadecimal.
+     * 2. Se arma una cadena hex con: firma + tamaño(versión) + versión + tamaño(payload) + payload.
+     * 3. `hex2bin()` convierte la cadena completa a binario y se escribe en disco.
+     * 4. Si `$storage` es `true`, la ruta se resuelve bajo `{raíz}/storage/`.
      *
-     * @param string      $filename Nombre del archivo (sin extensión) donde se guardará la información.
-     * @param string      $data     Datos crudos que serán transformados byte por byte.
-     * @param string|null $entropy  Su uso se recomienda. Llave de entropía opcional para modificar el patrón de transformación.
-     * @param bool        $storage  Indica si el archivo debe guardarse dentro del directorio de almacenamiento
-     *                              gestionado por el framework (`true`), o en la ruta exacta indicada por `$filename` (`false`).
+     * @param string      $filename Nombre relativo sin extensión `.dlstorage`.
+     * @param string      $data     Contenido crudo (texto o binario) a codificar.
+     * @param string|null $entropy  Llave de entropía para la codificación. `null` usa suma base 0.
+     * @param bool        $storage  `true`: guarda en `storage/`. `false`: guarda en la raíz del proyecto.
      *
-     * @return void
-     *
-     * @throws StorageException Si ocurre un error al crear el archivo o faltan permisos de escritura.
-     *
-     * @see encode()        Transforma los datos de entrada en una representación segura.
-     * @see get_file_path() Resuelve la ubicación final del archivo según el valor de $storage.
+     * @throws StorageException Si `file_put_contents` falla o el archivo no existe tras la escritura (código 500).
      */
     public function save_data(string $filename, string $data, ?string $entropy = NULL, bool $storage = true): void {
         /** @var string $encode */
@@ -140,29 +102,22 @@ abstract class SaveData extends DataStorage {
     }
 
     /**
-     * Lee un archivo binario `.dlstorage` y recupera su contenido original utilizando una llave de entropía.
-     * 
-     * @internal Este método debe ser invocado únicamente por clases hijas o por el núcleo del framework.
+     * Lee un archivo `.dlstorage` y devuelve el contenido original decodificado.
      *
-     * @param string $filename Nombre base del archivo sin extensión (`.dlstorage` será añadido automáticamente).
-     * @param string|null $entropy Llave de entropía usada para revertir la transformación de bytes.
-     * @param bool $storage Determina el directorio base de lectura:
-     *                      - `true`: El archivo se buscará en `/ruta/al/proyecto/storage`.
-     *                      - `false`: El archivo se buscará en `/ruta/al/proyecto`.
+     * Flujo de lectura (offsets 1-based):
+     * - Bytes 1–9: firma (`DLStorage`).
+     * - Bytes 10–13: tamaño de la sección de versión (entero, 4 bytes).
+     * - Bytes 14..(14+header_size-1): versión.
+     * - 4 bytes siguientes: tamaño del payload.
+     * - Bytes restantes: payload hexadecimal, decodificado con {@see Data::get_content()}.
      *
-     * @throws StorageException Si el archivo no existe, no es un archivo válido de DLStorage o su contenido es ilegible.
-     * @return string Retorna el contenido original recuperado tras aplicar la decodificación.
+     * @param string      $filename Nombre base; se añade `.dlstorage` automáticamente.
+     * @param string|null $entropy  Llave usada al codificar. Debe coincidir con la de escritura.
+     * @param bool        $storage  `true`: busca en `storage/`. `false`: busca en la raíz del proyecto.
      *
-     * @example Ejemplo de uso
-     * ```php
-     * // Recuperar archivo desde el directorio de almacenamiento
-     * $contenido = $this->read_storage_data("reporte-secreto", "clave🔐");
-     * echo $contenido;
+     * @return string Contenido original tras decodificación.
      *
-     * // Recuperar archivo desde el directorio raíz del proyecto
-     * $contenido = $this->read_storage_data("reporte-secreto", "clave🔐", false);
-     * echo $contenido;
-     * ```
+     * @throws StorageException Archivo inexistente (404), firma inválida (500) o error de lectura.
      */
     public function read_storage_data(string $filename, ?string $entropy = NULL, bool $storage = true): string {
 
@@ -201,42 +156,17 @@ abstract class SaveData extends DataStorage {
     }
 
     /**
-     * Devuelve el contenido completo de un archivo a partir de su nombre relativo.
+     * Lee el contenido crudo de un archivo del proyecto sin decodificarlo.
      *
-     * Construye la ruta absoluta hacia un archivo utilizando como base el directorio raíz
-     * del proyecto (retornado por `get_document_root()`). Si el parámetro `$storage` se establece en
-     * `true`, se buscará dentro del subdirectorio `storage`. En caso contrario, se buscará directamente
-     * en el directorio raíz del proyecto. Los separadores de ruta se normalizan para asegurar la
-     * compatibilidad entre sistemas UNIX y Windows.
+     * A diferencia de {@see read_storage_data()}, no valida firma ni aplica decodificación.
+     * Normaliza separadores `/` y `\` al separador del sistema operativo.
      *
-     * @method string get_file_content(string $filename, bool $storage = true)
+     * @param string $filename Ruta relativa al proyecto. Puede incluir subdirectorios y extensión.
+     * @param bool   $storage  `true`: resuelve bajo `{raíz}/storage/`. `false`: bajo la raíz.
      *
-     * @param string $filename Nombre del archivo, relativo al directorio raíz o al subdirectorio `storage`.
-     *                         Puede incluir separadores de tipo UNIX (`/`) o Windows (`\`), que serán
-     *                         convertidos automáticamente al separador correspondiente del sistema.
-     * 
-     * @param bool $storage Indica si el archivo se encuentra dentro del directorio `storage`.  
-     *                      Por defecto es `true`. Si es `false`, la ruta se resolverá directamente
-     *                      desde el directorio raíz del proyecto.
+     * @return string Contenido binario del archivo tal como está en disco.
      *
-     * @return string Contenido completo del archivo solicitado.
-     *
-     * @throws StorageException Si el archivo no existe o no se puede acceder.  
-     *                          El mensaje de la excepción incluirá el nombre del archivo
-     *                          y el código de error HTTP 404.
-     *
-     * @example
-     * ```php
-     * // Leer archivo dentro del directorio "storage":
-     * $content = $storage->get_file_content('credentials/token.dlstorage');
-     *
-     * // Leer archivo en la raíz del proyecto (sin storage):
-     * $content = $storage->get_file_content('config/app.php', false);
-     * echo $content;
-     * ```
-     *
-     * @internal Este método depende del método `get_document_root()`, el cual debe devolver
-     *           la ruta absoluta del directorio raíz del proyecto.
+     * @throws StorageException Si el archivo no existe (código 404).
      */
     public function get_file_content(string $filename, bool $storage = true): string {
         $filename = trim($filename, "\/");
@@ -258,7 +188,6 @@ abstract class SaveData extends DataStorage {
         /** @var string $only_name_file */
         $only_name_file = basename($filename);
 
-        // print_r($file); exit;
         if (!file_exists($file)) {
             throw new StorageException("El archivo «{$only_name_file}» no existe", 404);
         }
@@ -267,48 +196,28 @@ abstract class SaveData extends DataStorage {
     }
 
     /**
-     * Normaliza el relleno de ceros en una cadena hexadecimal.
+     * Colapsa ceros iniciales de relleno en una cadena hexadecimal.
      *
-     * Este método reemplaza cualquier cantidad de ceros iniciales en una cadena hexadecimal por un único `'0'`,
-     * cuando estos ceros fueron agregados como parte del relleno para asegurar una longitud par.
+     * Aplica `preg_replace('/^0+/', '0', $content)`: si hay uno o más ceros al inicio,
+     * los sustituye por un único `0`. Complemento de {@see normalize_hex_payload()}.
      *
-     * ⚠️ Advertencia: Este método no valida si los ceros fueron parte del contenido original o añadidos como relleno.
-     * Debe usarse solo en contextos donde se controle el proceso de normalización y se conozca su origen.
+     * @param string $content Cadena hexadecimal leída del payload.
      *
-     * @see encode() Método que puede generar longitud impar en hexadecimal.
-     * @see normalize_hex_payload() Método que antepone ceros si la longitud es impar.
-     *
-     * @param string $content Cadena hexadecimal posiblemente con ceros iniciales.
-     * @return string Cadena con un único '0' al inicio si existían múltiples ceros.
+     * @return string Cadena con como máximo un `0` inicial.
      */
     private function delete_padding(string $content): string {
         return preg_replace('/^0+/', '0', $content);
     }
 
-
     /**
-     * Normaliza el contenido hexadecimal codificado para asegurar compatibilidad binaria.
+     * Garantiza longitud par del payload hexadecimal antes de `hex2bin()`.
      *
-     * Este método verifica si la longitud del contenido hexadecimal es impar. En tal caso,
-     * antepone un "0" al contenido para garantizar que la longitud final sea par, condición
-     * requerida por funciones como `hex2bin()` para evitar errores durante la conversión a binario.
+     * Si `strlen($content)` es impar, antepone `0` al contenido e incrementa en 1
+     * el valor byte del campo `$size` (representado como 8 caracteres hex).
      *
-     * Dado que esta operación modifica el contenido del payload, también actualiza el valor
-     * de `$size`, el cual representa la longitud del payload en formato hexadecimal, para que
-     * refleje con precisión la nueva longitud real tras la normalización.
-     *
-     * Esta operación es reversible mediante el método `delete_padding()`, que elimina el
-     * relleno agregado y restaura el tamaño original.
-     *
-     * @param string &$size    Referencia al tamaño hexadecimal del payload (en longitud de cadena).
-     * @param string &$content Referencia al contenido hexadecimal codificado a normalizar.
-     *
-     * @return void
-     *
-     * @see delete_padding() Método complementario para revertir la normalización.
-     * @see encode() Método responsable de producir la salida hexadecimal original.
+     * @param string $size    Referencia al tamaño del payload en hex de 8 caracteres.
+     * @param string $content Referencia al payload hexadecimal.
      */
-
     private function normalize_hex_payload(string &$size, string &$content): void {
         /** @var int $payload_int */
         $payload_int = hexdec($size);
@@ -323,16 +232,14 @@ abstract class SaveData extends DataStorage {
     }
 
     /**
-     * Calcula la longitud de la sección a partir del contenido en hexadecimal
-     * y devuelve su representación como una cadena de 8 caracteres hexadecimales
-     * (32 bits, big-endian), rellenada con ceros a la izquierda.
+     * Calcula el tamaño en bytes de una cadena hexadecimal y lo devuelve como campo de 4 bytes.
      *
-     * @param string $hex_content Contenido en formato hexadecimal cuyo tamaño
-     *                            en bytes se determinará al convertirlo a binario.
-     * @return string Cadena de 8 caracteres hexadecimales que representa el
-     *                tamaño en bytes del contenido original.
+     * `intdiv(strlen($hex_content), 2)` obtiene la cantidad de bytes; el resultado se formatea
+     * como cadena hexadecimal de 8 caracteres (relleno izquierdo con ceros).
      *
-     * @since v0.1.0
+     * @param string $hex_content Cadena hexadecimal cuyo tamaño en bytes se medirá.
+     *
+     * @return string Representación de 8 caracteres hex (4 bytes big-endian).
      */
     private function get_section_size(string $hex_content): string {
 
