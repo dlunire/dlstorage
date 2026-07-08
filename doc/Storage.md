@@ -1,5 +1,7 @@
 # Uso de `Storage`
 
+> Tutorial progresivo (MTB): [docs/tutorial/README.md](../docs/tutorial/README.md)
+
 La clase `Storage` constituye la interfaz principal de **DLStorage** para generar y recuperar archivos utilizando el formato binario del proyecto.
 
 ## Crear una instancia

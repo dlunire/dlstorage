@@ -4,7 +4,17 @@ Todos los cambios importantes de este proyecto serán documentados en este archi
 
 ---
 
-## [0.2.1] - 2026-07-06
+## [v0.2.2]
+
+### Documentation / Documentación
+
+- Added a progressive **DLStorage usage tutorial** under `docs/tutorial/` (quick start, Byte Transformation Model / MTB, `.dlstorage` binary format, `Storage` API, entropy key, encode/decode pipelines, paths and permissions, exceptions, DLCore integration, secure operation and MTB limits).
+
+- Se añadió un **tutorial de uso de DLStorage** progresivo en `docs/tutorial/` (inicio rápido, Modelo de Transformación de Bytes, formato binario, clase `Storage`, entropía, pipelines de codificación y decodificación, rutas y permisos, excepciones, integración con `EncryptedCredentials` en DLCore y operación segura), con índice en `docs/README.md`. El tutorial documenta el MTB como transformación de bytes con entropía, no como ofuscación ni cifrado AES.
+
+---
+
+## [v0.2.1] - 2026-07-06
 
 ### Added
 - Infraestructura de documentación API con phpDocumentor: `phpdoc.xml`, targets `docs` y `docs-clean` en el `Makefile`, y salida en `docs/api/`.
@@ -21,7 +31,7 @@ Todos los cambios importantes de este proyecto serán documentados en este archi
 
 ---
 
-## [0.2.0] - 2026-07-05
+## [v0.2.0] - 2026-07-05
 
 ### BREAKING CHANGES
 * **Licencia**: Se cambió la licencia del paquete de `MIT` a **`AGPL-3.0-or-later`**, como parte del modelo de licenciamiento dual del ecosistema DLUnire. Nota: al ser un paquete `0.x`, este cambio se refleja como incremento de versión menor conforme a Semantic Versioning, no de versión mayor. Ver `LICENSE` y `LICENSING.md` en el repositorio principal (`dlunire/dlunire`) para el detalle completo. El campo `license` en `composer.json` fue actualizado en consecuencia.

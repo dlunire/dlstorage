@@ -12,6 +12,28 @@ Una vez instalada la biblioteca, Composer generará el autoload necesario para u
 
 ---
 
+## Tutorial de uso
+
+Guía progresiva en español (11 capítulos): [`docs/tutorial/README.md`](docs/tutorial/README.md)
+
+| # | Tema |
+|---|------|
+| 1 | [Inicio rápido](docs/tutorial/01-inicio-rapido.md) |
+| 2 | [Modelo de Transformación de Bytes (MTB)](docs/tutorial/02-modelo-transformacion-bytes.md) |
+| 3 | [Formato binario `.dlstorage`](docs/tutorial/03-formato-binario.md) |
+| 4 | [Clase `Storage`](docs/tutorial/04-clase-storage.md) |
+| 5 | [Entropía y llave de transformación](docs/tutorial/05-entropia.md) |
+| 6 | [Pipeline de codificación](docs/tutorial/06-pipeline-codificacion.md) |
+| 7 | [Decodificación y validación](docs/tutorial/07-decodificacion-validacion.md) |
+| 8 | [Rutas, `storage/` y permisos](docs/tutorial/08-rutas-permisos.md) |
+| 9 | [Excepciones y diagnóstico](docs/tutorial/09-errores-diagnostico.md) |
+| 10 | [Integración con DLCore](docs/tutorial/10-integracion-dlcore.md) |
+| 11 | [Operación segura y límites del MTB](docs/tutorial/11-operacion-segura.md) |
+
+Referencia por módulo: [`docs/README.md`](docs/README.md). Integración en DLUnire: [tutorial DLCore — credenciales](https://github.com/dlunire/dlcore/blob/master/docs/tutorial/13-credenciales-cifradas.md).
+
+---
+
 ## Configuración inicial
 
 Antes de utilizar `Storage`, incluya el archivo `autoload.php` generado por Composer en su `index.php` o en el punto de entrada principal de su aplicación.
