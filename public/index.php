@@ -39,7 +39,7 @@
 
 declare(strict_types=1);
 
-use DLStorage\Storage\Storage as ST;
+use DLStorage\Storage\Storage;
 
 include dirname(__DIR__)
     . DIRECTORY_SEPARATOR
@@ -49,13 +49,33 @@ include dirname(__DIR__)
 
 header("Content-type: text/plain; charset=utf-8", true, 200);
 
-/** @var ST $st*/
-$st = new ST(
+/** @var non-empty-string $entropy */
+$entropy = bin2hex(random_bytes(220));
+
+/** @var Storage $st*/
+$st = new Storage(
     filename: "test-file",
-    entropy: "Entropia de prueba"
+    entropy: $entropy
 );
 
-$st->generate("Ciencias de la computación", true);
+// bin2hex(random_bytes(20));
+
+/** @var non-empty-string $value */
+$value = bin2hex(random_bytes(4))
+    . "-" . bin2hex(random_bytes(2))
+    . "-" . bin2hex(random_bytes(2))
+    . "-" . bin2hex(random_bytes(12));
+
+$value = "Una frase del español más fácil de encontrar, pero con otra llave de entropía";
+
+$st->generate($value, true);
 
 
-echo $st->readfile(true);
+echo "Original: {$value}\n\n";
+
+if (\is_string($entropy)) {
+    echo "Entropía: {$entropy}\n\n";
+}
+
+print_r("Contenido alterado: " . bin2hex(($st->get_file_content("test-file.dlstorage", true))));
+

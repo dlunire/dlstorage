@@ -160,7 +160,7 @@ abstract class Data {
         $buffer = [];
 
         foreach ($blocks as $block) {
-            if (!is_string($block) || empty(trim($block))) {
+            if (!\is_string($block) || empty(trim($block))) {
                 continue;
             }
             $block = str_replace("ffff", "01", $block);

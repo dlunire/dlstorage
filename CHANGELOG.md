@@ -4,13 +4,6 @@ Todos los cambios importantes de este proyecto serán documentados en este archi
 
 ---
 
-## [Unreleased]
-
-### Added
-- N/A
-
----
-
 ## [0.2.1] - 2026-07-06
 
 ### Added
